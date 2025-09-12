@@ -17,14 +17,22 @@ const Navigation = () => {
         >
           home
         </Link>
-       
+
+        <div className="flex gap-3">
           <Link
-            to="register"
-            className="font-semibold text-md bg-blue-500 px-4 py-2 rounded hover:bg-blue-700 capitalize "
+            to="/login"
+            className="font-semibold text-md bg-zinc-600 px-7 py-2 rounded hover:bg-blue-700 capitalize "
+          >
+            login
+          </Link>
+
+          <Link
+            to="/register"
+            className="font-semibold text-md bg-blue-500 px-6 py-2 rounded hover:bg-blue-700 capitalize "
           >
             signup
           </Link>
-      
+        </div>
       </div>
     </div>
   );

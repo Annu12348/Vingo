@@ -3,16 +3,16 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config.js";
 import debug from "debug";
-const debuglog = debug("development:controllerauth")
+const debuglog = debug("development:controllerauth");
 
 export const RegisterApi = async (req, res) => {
   try {
     const { email, password, fullname, role, contact } = req.body;
 
     const isUserExitest = await userModel.findOne({
-      $or: [{ fullname }, { email }, {contact}],
+      $or: [{ fullname }, { email }, { contact }],
     });
-console.log(isUserExitest)
+
     if (isUserExitest) {
       return res.status(404).json({
         message: "User already exists",
@@ -29,9 +29,11 @@ console.log(isUserExitest)
       password: hashedPassword,
     });
 
-    const token = jwt.sign({ id: user._id }, config.JWT_SECRET_KEY, {expiresIn: "7d"});
+    const token = jwt.sign({ id: user._id }, config.JWT_SECRET_KEY, {
+      expiresIn: "7d",
+    });
     res.cookie("token", token, {
-      maxAge: 7*24*60*24*1000,
+      maxAge: 7 * 24 * 60 * 24 * 1000,
       httpOnly: true,
     });
 
@@ -41,8 +43,8 @@ console.log(isUserExitest)
       token,
     });
   } catch (error) {
-    debuglog(error)
-    console.error(error)
+    debuglog(error);
+    console.error(error);
     res.status(500).json({
       message: "internal server error, please try again later",
     });
@@ -53,19 +55,49 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await userModel.findOne({email});
+    const user = await userModel.findOne({ email });
 
-    const comparePassword = bcryptjs.compare(password, user.password);
-    console.log(comparePassword)
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid email or password"
+      });
+    }
+
+    const comparePassword = await bcryptjs.compare(password, user.password)
+
+    if (!comparePassword) {
+      return res.status(401).json({
+        message: "Invalid email or password"
+      });
+    }
+    
+    const token = jwt.sign({id: user._id}, config.JWT_SECRET_KEY)
+    res.cookie("token", token)
 
     res.status(200).json({
       message: "successfully user login",
-      user
-    })
+      user,
+      token
+    });
   } catch (error) {
-    debuglog(error)
+    debuglog(error);
     res.status(500).json({
       message: "internal server error, please try again later",
     });
   }
 };
+
+export const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token");
+
+    res.status(200).json({
+      message: "hello worls"
+    })
+  } catch (error) {
+    debuglog(error);
+    res.status(500).json({
+      message: "Internal server error: please try again later."
+    })
+  }
+}

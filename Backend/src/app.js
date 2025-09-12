@@ -2,7 +2,7 @@ import  express from 'express'
 const app = express()
 import authRoutes from "./routes/auth.routes.js"
 import cookiParser from "cookie-parser"
-import cors from 'cors'
+import cors from "cors"
 
 app.use(cors({
     origin: "http://localhost:5173",

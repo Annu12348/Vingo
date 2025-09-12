@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import Navigation from "../components/Navigation";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/Authentication/AuthenticationSlice";
 import instance from "../utils/axios";
+import { FcGoogle } from "react-icons/fc";
+import { IoEye } from "react-icons/io5";
+import { IoEyeOff } from "react-icons/io5";
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
   const [val, setVal] = useState({
     fullname: "",
     email: "",
@@ -44,91 +47,142 @@ const Register = () => {
     e.preventDefault();
     registerAoi();
   };
+
+  const clickedHandler = (e) => {
+    e.preventDefault();
+    setShowPassword((prev) => !prev);
+  };
+
   return (
-    <div className="w-full min-h-full p-[0.1px]   ">
-      <Navigation />
-      <div className="w-full mt-18 md:h-[89.7vh] h-[89.2vh] flex justify-center md:p-6 p-3 items-center bg-zinc-200   ">
-        <div className="md:w-[35%] rounded p-4 bg-white ">
-          <h1 className="text-xl font-semibold capitalize text-center tracking-tight leading-none ">
-            register
-          </h1>
-          <form className="mt-6" onSubmit={submitHandler}>
+    <div className="w-full  min-h-full h-[89.2vh] flex justify-center md:p-6 p-3 items-center bg-zinc-200   ">
+      <div className="md:w-[30%] rounded p-5 bg-white ">
+        <h1 className="text-3xl text-[rgb(240,107,41)] font-bold capitalize  tracking-tight leading-none ">
+          vingo
+        </h1>
+        <p className="mt-2 leading-5 text-zinc-600 tracking-tight">
+          Create your account to get started with delicious food deliveries
+        </p>
+        <form className="mt-3" onSubmit={submitHandler}>
+          <div>
+            <label className="text-md text-zinc-900 capitalize font-semibold">
+              full name
+            </label>
             <input
               className="border px-3 py-2 capitalize rounded border-zinc-200 outline-none w-full"
               type="text"
-              placeholder="full name"
+              placeholder="enter your full name"
               required
               value={val.fullname}
               onChange={(e) => setVal({ ...val, fullname: e.target.value })}
             />
+          </div>
+          <div className="mt-3">
+            <label className="text-md text-zinc-900 capitalize font-semibold">
+              mobile
+            </label>
             <input
-              className="border px-3 py-2 mt-6 capitalize rounded border-zinc-200 outline-none w-full"
+              className="border px-3 py-2  capitalize rounded border-zinc-200 outline-none w-full"
               type="text"
-              placeholder="contact"
+              placeholder="enter your contact"
               required
               value={val.contact}
               onChange={(e) => setVal({ ...val, contact: e.target.value })}
             />
+          </div>
+          <div className="mt-3">
+            <label className="text-md text-zinc-900 capitalize font-semibold">
+              email
+            </label>
             <input
-              className="border px-3  py-2 mt-6 rounded border-zinc-200 outline-none w-full"
+              className="border px-3  py-2  rounded border-zinc-200 outline-none w-full"
               type="email"
-              placeholder="email"
+              placeholder="enter your email"
               required
               value={val.email}
               onChange={(e) => setVal({ ...val, email: e.target.value })}
             />
-            <input
-              className="border px-3 py-2 capitalize mt-6 rounded border-zinc-200 outline-none w-full"
-              type="password"
-              placeholder="password"
-              required
-              value={val.password}
-              onChange={(e) => setVal({ ...val, password: e.target.value })}
-            />
-            <div className="mt-6 capitalize font-semibold ">
-              <h1 className="font-semibold mb-1 tracking-tight text-xl leading-none  ">
-                Role
-              </h1>
-              <label className="md:mr-15 mr-10 ">
-                <input
-                  className=""
-                  type="radio"
-                  name="role"
-                  checked={val.role === "user"}
-                  value="user"
-                  onChange={(e) => setVal({ ...val, role: e.target.value })}
-                />
-                user
-              </label>
-              <label className="md:mr-15 mr-10">
-                <input
-                  className=""
-                  type="radio"
-                  name="role"
-                  value="owner"
-                  checked={val.role === "owner"}
-                  onChange={(e) => setVal({ ...val, role: e.target.value })}
-                />
-                owner
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="role"
-                  value="deliveryBoy"
-                  onChange={(e) => setVal({ ...val, role: e.target.value })}
-                  checked={val.role === "deliveryBoy"}
-                />
-                deliveryBoy
-              </label>
+          </div>
+          <div className="mt-3">
+            <label className="text-md text-zinc-900 capitalize font-semibold">
+              password
+            </label>
+            <div className="relative">
+              <input
+                className="border px-3 py-2 capitalize rounded border-zinc-200 outline-none w-full"
+                type={showPassword ? "text" : "password"}
+                placeholder="enter your password"
+                required
+                value={val.password}
+                onChange={(e) => setVal({ ...val, password: e.target.value })}
+              />
+              <button
+                type="button"
+                onClick={clickedHandler}
+                className="text-md absolute top-[33%] right-[3%]"
+                tabIndex={-1}
+              >
+                <span>
+                  {showPassword ? <IoEyeOff /> : <IoEye />}
+                </span>
+              </button>
             </div>
-            <input
-              className="bg-blue-900 mt-6 hover:bg-blue-700 w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none"
-              type="submit"
-              value="register"
-            />
-          </form>
-        </div>
+          </div>
+          <div className="mt-3 capitalize font-semibold ">
+            <h1 className="font-semibold mb-1 tracking-tight text-xl leading-none  ">
+              Role
+            </h1>
+            <label className="md:mr-15 mr-10 ">
+              <input
+                className=""
+                type="radio"
+                name="role"
+                checked={val.role === "user"}
+                value="user"
+                onChange={(e) => setVal({ ...val, role: e.target.value })}
+              />
+              user
+            </label>
+            <label className="md:mr-15 mr-10">
+              <input
+                className=""
+                type="radio"
+                name="role"
+                value="owner"
+                checked={val.role === "owner"}
+                onChange={(e) => setVal({ ...val, role: e.target.value })}
+              />
+              owner
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="deliveryBoy"
+                onChange={(e) => setVal({ ...val, role: e.target.value })}
+                checked={val.role === "deliveryBoy"}
+              />
+              deliveryBoy
+            </label>
+          </div>
+          <input
+            className="bg-[rgb(240,107,41)] mt-3 hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none"
+            type="submit"
+            value="sign up"
+          />
+        </form>
+        <button className="text-black hover:bg-zinc-200 capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-3 border-zinc-300 gap-2  border-1">
+          <span className="text-xl mt-0.5">
+            <FcGoogle />
+          </span>
+          sign up with google
+        </button>
+
+        <h1 className="text-center mt-4 font-semibold text-md tracking-tight ">
+          Already have an account?{" "}
+          <Link className="text-blue-500" to="/login">
+            Login
+          </Link>
+        </h1>
       </div>
     </div>
   );
