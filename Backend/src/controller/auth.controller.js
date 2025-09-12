@@ -10,8 +10,9 @@ export const RegisterApi = async (req, res) => {
     const { email, password, fullname, role, contact } = req.body;
 
     const isUserExitest = await userModel.findOne({
-      $or: [{ fullname }, { email }, {role}, {contact}],
+      $or: [{ fullname }, { email }, {contact}],
     });
+console.log(isUserExitest)
     if (isUserExitest) {
       return res.status(404).json({
         message: "User already exists",
@@ -50,8 +51,16 @@ export const RegisterApi = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
+    const { email, password } = req.body;
+
+    const user = await userModel.findOne({email});
+
+    const comparePassword = bcryptjs.compare(password, user.password);
+    console.log(comparePassword)
+
     res.status(200).json({
-      message: "successfully user login"
+      message: "successfully user login",
+      user
     })
   } catch (error) {
     debuglog(error)

@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import Navigation from "../components/Navigation";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/Authentication/AuthenticationSlice";
+import instance from "../utils/axios";
 
 const Register = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [val, setVal] = useState({
     fullname: "",
     email: "",
@@ -16,14 +20,14 @@ const Register = () => {
 
   const registerAoi = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/auth/register", val, {
+      const response = await instance.post("/auth/register", val, {
         withCredentials: true,
       });
       console.log(response.data);
-      setVal(response.data);
+      dispatch(setUser(response.data));
       toast.success("successfully register");
-      navigate("/")
-      setVal({ 
+      navigate("/");
+      setVal({
         fullname: "",
         email: "",
         password: "",
