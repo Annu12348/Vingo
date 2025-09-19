@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navigation from "../components/Navigation";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -13,6 +12,7 @@ const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [val, setVal] = useState({
     fullname: "",
     email: "",
@@ -23,12 +23,12 @@ const Register = () => {
 
   const registerAoi = async () => {
     try {
+      setLoading(true);
       const response = await instance.post("/auth/register", val, {
         withCredentials: true,
       });
-      console.log(response.data);
       dispatch(setUser(response.data));
-      toast.success("successfully register");
+      toast.success(response.data.message || "successfully register");
       navigate("/");
       setVal({
         fullname: "",
@@ -38,8 +38,19 @@ const Register = () => {
         contact: "",
       });
     } catch (error) {
-      console.error(error);
-      toast.error("please try again later");
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Internal server error");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,9 +132,7 @@ const Register = () => {
                 className="text-md absolute top-[33%] right-[3%]"
                 tabIndex={-1}
               >
-                <span>
-                  {showPassword ? <IoEyeOff /> : <IoEye />}
-                </span>
+                <span>{showPassword ? <IoEyeOff /> : <IoEye />}</span>
               </button>
             </div>
           </div>
@@ -164,11 +173,17 @@ const Register = () => {
               deliveryBoy
             </label>
           </div>
-          <input
-            className="bg-[rgb(240,107,41)] mt-3 hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none"
+          <button
+            className={`bg-[rgb(240,107,41)] mt-3 hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none flex items-center justify-center `}
             type="submit"
-            value="sign up"
-          />
+          >
+            {loading ? (
+                <div className="w-5 h-5 rounded-full border-b-3 border-t-3 animate-spin inline-block"></div>
+               
+            ) : (
+              "sign up"
+            )}
+          </button>
         </form>
         <button className="text-black hover:bg-zinc-200 capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-3 border-zinc-300 gap-2  border-1">
           <span className="text-xl mt-0.5">
