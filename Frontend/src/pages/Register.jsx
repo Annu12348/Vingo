@@ -176,6 +176,7 @@ const Register = () => {
           <button
             className={`bg-[rgb(240,107,41)] mt-3 hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none flex items-center justify-center `}
             type="submit"
+            disabled={loading}
           >
             {loading ? (
                 <div className="w-5 h-5 rounded-full border-b-3 border-t-3 animate-spin inline-block"></div>
