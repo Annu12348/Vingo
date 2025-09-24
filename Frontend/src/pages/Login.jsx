@@ -69,7 +69,7 @@ const Login = () => {
               email
             </label>
             <input
-              className="border px-3 mt-1 capitalize font-semibold  py-2  rounded border-zinc-200 outline-none w-full"
+              className="border px-3 mt-1 font-semibold  py-2  rounded border-zinc-200 outline-none w-full"
               type="email"
               placeholder="enter your email"
               required

@@ -15,7 +15,7 @@ const Navigation = () => {
 
   const logoutApi = async () => {
     try {
-      await instance.get("/auth/logout", { withCredentials: true });
+      await instance.delete("/auth/logout", { withCredentials: true });
       dispatch(setUser(null));
       toast.success("Successfully logged out user");
       navigate("/login");

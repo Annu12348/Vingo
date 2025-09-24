@@ -103,63 +103,100 @@ export const logoutUser = async (req, res) => {
   }
 };
 
-export const resetOtpController = async (req, res) => {
+export const resetController = async (req, res) => {
   try {
     const { email } = req.body;
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(404).json({
-        message: "User not Found",
+        message: "user not found",
       });
     }
 
-    const isResetOtp = Math.floor(1000 + Math.random() * 9000).toString();
-    user.resetOtp = isResetOtp;
-
-    const otp = Date.now(5 * 60 * 1000);
-    user.otpExpires = otp;
-
+    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    user.resetOtp = otp;
+    user.otpExpires = Date.now() + 5 * 60 * 1000;
     user.otpVerify = false;
 
     await user.save();
-    await sendOtpMail(email, isResetOtp);
+    await sendOtpMail(email, otp);
 
     res.status(200).json({
       message: "OTP sent successfully",
       user,
     });
   } catch (error) {
+    debuglog(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
     });
   }
 };
 
-export const verifyOtpController = async (req, res) => {
+export const verifyController = async (req, res) => {
   try {
     const { email, otp } = req.body;
     const user = await userModel.findOne({ email });
-   
-    if(!user){
-      return res.status(200).json({
-        message: "user not found"
-      })
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found",
+      });
     }
 
-    if(!user.resetOtp !== otp){
-      return res.status(200).json({
-        message: "invalid otp"
-      })
+    if (user.resetOtp != otp) {
+      return res.status(404).json({
+        message: "Invalid OTP",
+      });
     }
+    user.resetOtp = undefined;
 
-    
+    if (user.otpExpires < Date.now()) {
+      return res.status(400).json({
+        message: "OTP has expired",
+      });
+    }
+    user.otpExpires = undefined;
+    user.otpVerify = true;
+    await user.save();
 
     res.status(200).json({
-      message: "OTP verified successfully",
+      message: "otp verify",
       user,
     });
   } catch (error) {
-    console.log(error)
+    debuglog(error);
+    res.status(500).json({
+      message: "Internal server error: please try again later.",
+    });
+  }
+};
+
+export const resetPasswordController = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    if (!user.otpVerify) {
+      return res.status(400).json({
+        message: "OTP not verified. Please verify your OTP before resetting password.",
+      });
+    }
+    user.otpVerify = false;
+
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save()
+
+    res.status(200).json({
+      message: "reset password",
+    });
+  } catch (error) {
+    debuglog(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
     });
