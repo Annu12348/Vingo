@@ -83,7 +83,7 @@ const Login = () => {
             </label>
             <div className="relative">
               <input
-                className="border px-3 mt-1 py-2 capitalize rounded border-zinc-200 outline-none w-full"
+                className="border px-3 mt-1 py-2  rounded border-zinc-200 outline-none w-full"
                 type={showPassword ? "text" : "password"}
                 placeholder="enter your password"
                 required

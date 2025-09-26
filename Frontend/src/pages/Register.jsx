@@ -7,12 +7,15 @@ import instance from "../utils/axios";
 import { FcGoogle } from "react-icons/fc";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../FireBase/FireBase";
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("")
   const [val, setVal] = useState({
     fullname: "",
     email: "",
@@ -24,10 +27,11 @@ const Register = () => {
   const registerAoi = async () => {
     try {
       setLoading(true);
+      setErr({});
       const response = await instance.post("/auth/register", val, {
         withCredentials: true,
       });
-      dispatch(setUser(response.data));
+      dispatch(setUser(response.data.user));
       toast.success(response.data.message || "successfully register");
       navigate("/");
       setVal({
@@ -38,17 +42,7 @@ const Register = () => {
         contact: "",
       });
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
-        toast.error(error.response.data.message);
-      } else if (error.message) {
-        toast.error(error.message);
-      } else {
-        toast.error("Internal server error");
-      }
+      setErr({general:  error.response.data.message})
     } finally {
       setLoading(false);
     }
@@ -62,6 +56,40 @@ const Register = () => {
   const clickedHandler = (e) => {
     e.preventDefault();
     setShowPassword((prev) => !prev);
+  };
+
+  const handleGoogleAuth = async () => {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+
+    console.log(result.user);
+    console.log(result.user.displayName);
+    console.log(result.user.email);
+
+    try {
+      const payload = {
+        fullname: result.user.displayName,
+        email: result.user.email,
+        contact: val.contact || "1231234789",
+        role: "user",
+      };
+
+      const response = await instance.post("/auth/google", payload, {
+        withCredentials: true,
+      });
+      console.log(response.data.user);
+      dispatch(setUser(response.data.user));
+      navigate("/");
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        // Backend se message show karo
+        toast.error(error.response.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Internal server error");
+      }
+    }
   };
 
   return (
@@ -179,14 +207,17 @@ const Register = () => {
             disabled={loading}
           >
             {loading ? (
-                <div className="w-5 h-5 rounded-full border-b-3 border-t-3 animate-spin inline-block"></div>
-               
+              <div className="w-5 h-5 rounded-full border-b-3 border-t-3 animate-spin inline-block"></div>
             ) : (
               "sign up"
             )}
           </button>
         </form>
-        <button className="text-black hover:bg-zinc-200 capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-3 border-zinc-300 gap-2  border-1">
+        <p>{err}</p>
+        <button
+          onClick={handleGoogleAuth}
+          className="text-black hover:bg-zinc-200 capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-3 border-zinc-300 gap-2  border-1"
+        >
           <span className="text-xl mt-0.5">
             <FcGoogle />
           </span>

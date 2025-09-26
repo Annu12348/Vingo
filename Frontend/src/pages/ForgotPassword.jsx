@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GoArrowLeft } from "react-icons/go";
 import { toast } from "react-toastify";
 import instance from "../utils/axios";
-import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/Authentication/AuthenticationSlice";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
@@ -12,6 +13,8 @@ const ForgotPassword = () => {
   const [otps, setOtps] = useState();
   const [newPassword, setNewPassword] = useState("");
   const [comfirmPassword, setComfirmPassword] = useState("");
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   //1
   const resetApi = async () => {
@@ -21,8 +24,6 @@ const ForgotPassword = () => {
         withCredentials: true,
       });
       toast.success(response.data.message);
-      console.log(email);
-      console.log(response.data.user);
       setStep(2);
     } catch (error) {
       if (
@@ -50,13 +51,10 @@ const ForgotPassword = () => {
   const verifyApi = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:3000/auth/verify", {email, otp: otps.trim()}, {
+      const response = await instance.post("/auth/verify", {email, otp: otps.trim()}, {
         withCredentials: true,
       });
       toast.success(response.data.message);
-      console.log(otps);
-      console.log(response);
-      setOtps("");
       setStep(3);
     } catch (error) {
       if (
@@ -75,9 +73,47 @@ const ForgotPassword = () => {
     }
   };
 
-  const submitHandler = (e) => {
+  const submitHandler2 = (e) => {
     e.preventDefault();
     verifyApi();
+  };
+
+  //3
+  const resetPasswordApi = async () => {
+    if (newPassword !== comfirmPassword) {
+      toast.error("Passwords do not match");
+      setComfirmPassword("");
+      setNewPassword("")
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      const response = await instance.post("/auth/newpassword", {email, newPassword}, {
+        withCredentials: true,
+      });
+      toast.success(response.data.message);
+      navigate("/login")
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Internal server error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }; 
+
+  const submitHandler3 = (e) => {
+    e.preventDefault();
+    resetPasswordApi()
   };
   return (
     <div className="w-full h-screen bg-zinc-200 flex items-center justify-center p-5 ">
@@ -122,7 +158,7 @@ const ForgotPassword = () => {
         )}
 
         {step == 2 && (
-          <form className="mt-5" onSubmit={submitHandler}>
+          <form className="mt-5" onSubmit={submitHandler2}>
             <div className="flex flex-col">
               <label className="text-md capitalize font-semibold tracking-tight leading-none">
                 OTP
@@ -141,7 +177,10 @@ const ForgotPassword = () => {
               type="submit"
             >
               {loading ? (
-                <div className="w-6 h-6 animate-spin border-b-3 border-t-2 rounded-full "></div>
+                <div className="flex items-center gap-1">
+                  <h1>please wait...</h1>
+                  <div className="w-6 h-6 animate-spin border-b-3  rounded-full "></div>
+                </div>
               ) : (
                 "verify OTP"
               )}
@@ -150,7 +189,7 @@ const ForgotPassword = () => {
         )}
 
         {step == 3 && (
-          <form className="mt-5" onSubmit={submitHandler}>
+          <form className="mt-5" onSubmit={submitHandler3}>
             <div className="flex flex-col">
               <label className="text-md capitalize font-semibold tracking-tight leading-none">
                 new password
@@ -181,7 +220,10 @@ const ForgotPassword = () => {
               type="submit"
             >
               {loading ? (
-                <div className="w-6 h-6 animate-spin border-b-3 border-t-2 rounded-full "></div>
+                <div className="flex items-center gap-1">
+                  <h1>please wait...</h1>
+                  <div className="w-6 h-6 animate-spin border-b-3  rounded-full "></div>
+                </div>
               ) : (
                 "reset password"
               )}

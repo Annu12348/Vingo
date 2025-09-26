@@ -15,9 +15,9 @@ export const sendOtpMail = async (to, otp) => {
     const info = await transporter.sendMail({
       from: config.EMAIL_USER, 
       to, 
-      subject: "Your OTP Code",
+      subject: "Your Vingo Password Reset OTP",
       text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
-      html: `<p>Your OTP is <b>${otp}</b>. It will expire in 5 minutes.</p>`, 
+      html: `<p>Your OTP is <b>${otp}</b>. It will expire in 5 minutes.</p>`
     });
   } catch (err) {
     console.error("Error while sending mail", err);

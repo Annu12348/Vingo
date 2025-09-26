@@ -34,7 +34,7 @@ export const RegisterApi = async (req, res) => {
       expiresIn: "7d",
     });
     res.cookie("token", token, {
-      maxAge: 7 * 24 * 60 * 24 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
 
@@ -109,7 +109,7 @@ export const resetController = async (req, res) => {
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(404).json({
-        message: "user not found",
+        message: "User not found",
       });
     }
 
@@ -123,7 +123,6 @@ export const resetController = async (req, res) => {
 
     res.status(200).json({
       message: "OTP sent successfully",
-      user,
     });
   } catch (error) {
     debuglog(error);
@@ -139,11 +138,11 @@ export const verifyController = async (req, res) => {
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(404).json({
-        message: "user not found",
+        message: "User not found",
       });
     }
 
-    if (user.resetOtp != otp) {
+    if (user.resetOtp !== otp) {
       return res.status(404).json({
         message: "Invalid OTP",
       });
@@ -160,8 +159,7 @@ export const verifyController = async (req, res) => {
     await user.save();
 
     res.status(200).json({
-      message: "otp verify",
-      user,
+      message: "OTP verified successfully",
     });
   } catch (error) {
     debuglog(error);
@@ -183,14 +181,15 @@ export const resetPasswordController = async (req, res) => {
 
     if (!user.otpVerify) {
       return res.status(400).json({
-        message: "OTP not verified. Please verify your OTP before resetting password.",
+        message:
+          "OTP not verified. Please verify your OTP before resetting password.",
       });
     }
     user.otpVerify = false;
 
     const hashedPassword = await bcryptjs.hash(newPassword, 10);
     user.password = hashedPassword;
-    await user.save()
+    await user.save();
 
     res.status(200).json({
       message: "reset password",
@@ -199,6 +198,49 @@ export const resetPasswordController = async (req, res) => {
     debuglog(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
+    });
+  }
+};
+
+export const googleAuthController = async (req, res) => {
+  try {
+    const { email, contact, role, fullname } = req.body;
+
+    let user = await userModel.findOne({ email });
+    if (user) {
+      // Agar email exist karta hai to error bhej do
+      return res.status(400).json({
+        message: "user already exists; Please login instead.",
+      });
+    }
+
+    if (!user) {
+      user = await userModel.create({
+        fullname,
+        email,
+        contact,
+        role,
+      });
+    }
+
+    const token = jwt.sign({ id: user._id }, config.JWT_SECRET_KEY, {
+      expiresIn: "7d",
+    });
+    res.cookie("token", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      message: "Google authentication successful",
+      user,
+      token,
+    });
+  } catch (error) {
+    debuglog(error);
+    res.status(500).json({
+      message: "Internal server error: please try again later.",
+      error: error.message || error,
     });
   }
 };
