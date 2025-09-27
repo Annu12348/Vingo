@@ -18,13 +18,17 @@ export const registerValidator =  [
     .notEmpty()
     .withMessage("Contact is required")
     .isLength({ min: 10, max: 15 })
-    .withMessage("Contact must be between 10 and 15 characters"),
+    .withMessage("Mobile must be between 10 and 15 numbers"),
 
   body("password")
     .notEmpty()
     .withMessage("password is required")
     .isLength({ min: 3, max: 30 })
-    .withMessage("password must be between 3 and 30 characters"),
+    .withMessage("Password must be between 3 and 30 characters"),
+
+  body("role")
+    .isIn(["user", "owner", "deliveryBoy"])
+    .withMessage("Invalid role"),  
 
   (req, res, next) => {
     const error = validationResult(req);

@@ -8,14 +8,11 @@ const App = () => {
     <div className='w-full h-screen'>
       <Router />
       <ToastContainer
-      position='bottom-right'
-      autoClose={2000}
-       /> 
+        position='top-center'
+        autoClose={5000}
+      /> 
     </div>
   )
 }
 
 export default App
-//toast.success
-//toast.error
-//toast.info

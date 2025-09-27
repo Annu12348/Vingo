@@ -15,7 +15,7 @@ export const RegisterApi = async (req, res) => {
     });
 
     if (isUserExitest) {
-      return res.status(404).json({
+      return res.status(409).json({
         message: "User already exists",
       });
     }
@@ -39,8 +39,17 @@ export const RegisterApi = async (req, res) => {
     });
 
     res.status(201).json({
-      message: "register successfully",
-      user,
+      message: "successfully user registered",
+      user: {
+        id: user._id,
+        FullName: user.fullname,
+        email: user.email,
+        contact: user.contact,
+        imageUrl: user.imageUrl,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      },
       token,
     });
   } catch (error) {
@@ -77,7 +86,16 @@ export const loginUser = async (req, res) => {
 
     res.status(200).json({
       message: "successfully user login",
-      user,
+      user: {
+        id: user._id,
+        FullName: user.fullname,
+        email: user.email,
+        contact: user.contact,
+        imageUrl: user.imageUrl,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      },
       token,
     });
   } catch (error) {
@@ -93,7 +111,7 @@ export const logoutUser = async (req, res) => {
     res.clearCookie("token");
 
     res.status(200).json({
-      message: "hello worls",
+      message: "Logout successfully",
     });
   } catch (error) {
     debuglog(error);
@@ -128,6 +146,7 @@ export const resetController = async (req, res) => {
     debuglog(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
+      user,
     });
   }
 };
@@ -233,7 +252,57 @@ export const googleAuthController = async (req, res) => {
 
     res.status(200).json({
       message: "Google authentication successful",
-      user,
+      user: {
+        id: user._id,
+        FullName: user.fullname,
+        email: user.email,
+        imageUrl: user.imageUrl,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      },
+      token,
+    });
+  } catch (error) {
+    debuglog(error);
+    res.status(500).json({
+      message: "Internal server error: please try again later.",
+      error: error.message || error,
+    });
+  }
+};
+
+export const googleAuthLoginController = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    let user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(409).json({
+        message: "User not found",
+      });
+    }
+
+    const token = jwt.sign({ id: user._id }, config.JWT_SECRET_KEY, {
+      expiresIn: "7d",
+    });
+    res.cookie("token", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      message: "Google authentication successful",
+      user: {
+        id: user._id,
+        FullName: user.fullname,
+        email: user.email,
+        imageUrl: user.imageUrl,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      },
       token,
     });
   } catch (error) {

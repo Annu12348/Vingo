@@ -15,7 +15,7 @@ const Register = () => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("")
+  const [err, setErr] = useState({});
   const [val, setVal] = useState({
     fullname: "",
     email: "",
@@ -42,12 +42,28 @@ const Register = () => {
         contact: "",
       });
     } catch (error) {
-      setErr({general:  error.response.data.message})
+      if (error.response && error.response.data && error.response.data.errors) {
+        const fieldsError = {};
+        const err = error.response.data.errors;
+        err.forEach((e) => {
+          fieldsError[e.path] = e.msg;
+        });
+        setErr(fieldsError);
+      } else if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Internal server error");
+      }
     } finally {
       setLoading(false);
     }
   };
-
   const submitHandler = (e) => {
     e.preventDefault();
     registerAoi();
@@ -61,11 +77,6 @@ const Register = () => {
   const handleGoogleAuth = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-
-    console.log(result.user);
-    console.log(result.user.displayName);
-    console.log(result.user.email);
-
     try {
       const payload = {
         fullname: result.user.displayName,
@@ -73,16 +84,17 @@ const Register = () => {
         contact: val.contact || "1231234789",
         role: "user",
       };
-
       const response = await instance.post("/auth/google", payload, {
         withCredentials: true,
       });
-      console.log(response.data.user);
       dispatch(setUser(response.data.user));
       navigate("/");
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
-        // Backend se message show karo
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         toast.error(error.response.data.message);
       } else if (error.message) {
         toast.error(error.message);
@@ -98,8 +110,8 @@ const Register = () => {
         <h1 className="text-3xl text-[rgb(240,107,41)] font-bold capitalize  tracking-tight leading-none ">
           vingo
         </h1>
-        <p className="mt-2 leading-5 text-zinc-600 tracking-tight">
-          Create your account to get started with delicious food deliveries
+        <p className="mt-4 leading-4 font-semibold text-sm text-zinc-600 tracking-tight">
+          Register for Vingo’s industrial-grade platform and streamline your food delivery experience.
         </p>
         <form className="mt-3" onSubmit={submitHandler}>
           <div>
@@ -114,6 +126,11 @@ const Register = () => {
               value={val.fullname}
               onChange={(e) => setVal({ ...val, fullname: e.target.value })}
             />
+            {err.fullname && (
+              <p className="text-red-600 text-[9px]  font-semibold ">
+                *{err.fullname}*
+              </p>
+            )}
           </div>
           <div className="mt-3">
             <label className="text-md text-zinc-900 capitalize font-semibold">
@@ -127,6 +144,11 @@ const Register = () => {
               value={val.contact}
               onChange={(e) => setVal({ ...val, contact: e.target.value })}
             />
+            {err.contact && (
+              <p className="text-red-600 text-[9px]  font-semibold ">
+                *{err.contact}*
+              </p>
+            )}
           </div>
           <div className="mt-3">
             <label className="text-md text-zinc-900 capitalize font-semibold">
@@ -140,6 +162,11 @@ const Register = () => {
               value={val.email}
               onChange={(e) => setVal({ ...val, email: e.target.value })}
             />
+            {err.email && (
+              <p className="text-red-600 text-[9px]  font-semibold ">
+                *{err.email}*
+              </p>
+            )}
           </div>
           <div className="mt-3">
             <label className="text-md text-zinc-900 capitalize font-semibold">
@@ -154,6 +181,11 @@ const Register = () => {
                 value={val.password}
                 onChange={(e) => setVal({ ...val, password: e.target.value })}
               />
+              {err.password && (
+                <p className="text-red-600 text-[9px]  font-semibold ">
+                  *{err.password}*
+                </p>
+              )}
               <button
                 type="button"
                 onClick={clickedHandler}
@@ -201,19 +233,26 @@ const Register = () => {
               deliveryBoy
             </label>
           </div>
+          {err.role && (
+            <p className="text-red-600 text-[9px]  font-semibold ">
+              *{err.role}*
+            </p>
+          )}
           <button
             className={`bg-[rgb(240,107,41)] mt-3 hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none flex items-center justify-center `}
             type="submit"
             disabled={loading}
           >
             {loading ? (
-              <div className="w-5 h-5 rounded-full border-b-3 border-t-3 animate-spin inline-block"></div>
+              <div className="flex items-center gap-1.5">
+                <h1>please wait...</h1>
+                <div className="w-6 h-6 animate-spin border-b-3  rounded-full "></div>
+              </div>
             ) : (
               "sign up"
             )}
           </button>
         </form>
-        <p>{err}</p>
         <button
           onClick={handleGoogleAuth}
           className="text-black hover:bg-zinc-200 capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-3 border-zinc-300 gap-2  border-1"
@@ -224,10 +263,10 @@ const Register = () => {
           sign up with google
         </button>
 
-        <h1 className="text-center mt-4 font-semibold text-md tracking-tight ">
+        <h1 className="text-center mt-4  text-md tracking-tight ">
           Already have an account?{" "}
           <Link className="text-blue-500" to="/login">
-            Login
+            login
           </Link>
         </h1>
       </div>

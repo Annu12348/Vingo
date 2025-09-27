@@ -4,25 +4,31 @@ import { GoArrowLeft } from "react-icons/go";
 import { toast } from "react-toastify";
 import instance from "../utils/axios";
 import { useDispatch } from "react-redux";
-import { setUser } from "../redux/Authentication/AuthenticationSlice";
 
 const ForgotPassword = () => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState();
-  const [otps, setOtps] = useState();
+  const [email, setEmail] = useState("");
+  const [otps, setOtps] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [comfirmPassword, setComfirmPassword] = useState("");
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const [err, setErr] = useState("");
+  console.log(err);
 
   //1
   const resetApi = async () => {
     try {
       setLoading(true);
-      const response = await instance.post("/auth/reset", {email}, {
-        withCredentials: true,
-      });
+      setErr("");
+      const response = await instance.post(
+        "/auth/reset",
+        { email },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
       toast.success(response.data.message);
       setStep(2);
     } catch (error) {
@@ -31,7 +37,7 @@ const ForgotPassword = () => {
         error.response.data &&
         error.response.data.message
       ) {
-        toast.error(error.response.data.message);
+        setErr(error.response.data.message);
       } else if (error.message) {
         toast.error(error.message);
       } else {
@@ -51,9 +57,13 @@ const ForgotPassword = () => {
   const verifyApi = async () => {
     try {
       setLoading(true);
-      const response = await instance.post("/auth/verify", {email, otp: otps.trim()}, {
-        withCredentials: true,
-      });
+      const response = await instance.post(
+        "/auth/verify",
+        { email, otp: otps.trim() },
+        {
+          withCredentials: true,
+        }
+      );
       toast.success(response.data.message);
       setStep(3);
     } catch (error) {
@@ -62,7 +72,7 @@ const ForgotPassword = () => {
         error.response.data &&
         error.response.data.message
       ) {
-        toast.error(error.response.data.message);
+        setErr(error.response.data.message);
       } else if (error.message) {
         toast.error(error.message);
       } else {
@@ -80,20 +90,24 @@ const ForgotPassword = () => {
 
   //3
   const resetPasswordApi = async () => {
-    if (newPassword !== comfirmPassword) {
+    if (newPassword != comfirmPassword) {
       toast.error("Passwords do not match");
       setComfirmPassword("");
-      setNewPassword("")
+      setNewPassword("");
       return;
     }
-    
+
     try {
       setLoading(true);
-      const response = await instance.post("/auth/newpassword", {email, newPassword}, {
-        withCredentials: true,
-      });
+      const response = await instance.post(
+        "/auth/newpassword",
+        { email, newPassword },
+        {
+          withCredentials: true,
+        }
+      );
       toast.success(response.data.message);
-      navigate("/login")
+      navigate("/login");
     } catch (error) {
       if (
         error.response &&
@@ -109,15 +123,15 @@ const ForgotPassword = () => {
     } finally {
       setLoading(false);
     }
-  }; 
+  };
 
   const submitHandler3 = (e) => {
     e.preventDefault();
-    resetPasswordApi()
+    resetPasswordApi();
   };
   return (
-    <div className="w-full h-screen bg-zinc-200 flex items-center justify-center p-5 ">
-      <div className="bg-white p-3 shadow-lg w-[23%] rounded  ">
+    <div className="w-full h-screen bg-zinc-200 flex items-center justify-center p-3 md:p-5 ">
+      <div className="bg-white p-3 shadow-lg md:w-[23%] w-full rounded  ">
         <div className="flex items-center  gap-4">
           <Link to="/login" className="text-2xl">
             <GoArrowLeft />
@@ -154,6 +168,11 @@ const ForgotPassword = () => {
                 "sent OTP"
               )}
             </button>
+            {err && (
+              <h1 className="text-[11px] mt-2 text-center text-red-600 font-semibold ">
+                **{err}**
+              </h1>
+            )}
           </form>
         )}
 
@@ -185,6 +204,11 @@ const ForgotPassword = () => {
                 "verify OTP"
               )}
             </button>
+            {err && (
+              <h1 className="text-[11px] mt-2 text-center text-red-600 font-semibold ">
+                **{err}**
+              </h1>
+            )}
           </form>
         )}
 

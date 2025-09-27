@@ -7,12 +7,15 @@ import instance from "../utils/axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/Authentication/AuthenticationSlice";
 import { toast } from "react-toastify";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "../../FireBase/FireBase";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
   const [users, setUsers] = useState({
     email: "",
     password: "",
@@ -20,11 +23,11 @@ const Login = () => {
 
   const loginApi = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
+      setErr("");
       const res = await instance.post("/auth/login", users, {
         withCredentials: true,
       });
-      console.log(res.data.user);
       navigate("/");
       toast.success("successfully user login");
       dispatch(setUser(res.data.user));
@@ -33,15 +36,19 @@ const Login = () => {
         password: "",
       });
     } catch (error) {
-      if(error.res && error.res.data && error.res.data.message){
-        toast.error(error.res.data.message)
-      } else if (error.message){
-        toast.error(error.message)
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setErr(error.response.data.message);
+      } else if (error.message) {
+        setErr(error.message);
       } else {
-        toast.error("Internal server error")
+        setErr("Internal server error");
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -54,14 +61,44 @@ const Login = () => {
     e.preventDefault();
     setShowPassword((prev) => !prev);
   };
+
+  const handleGoogleAuth = async () => {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    try {
+      const payload = {
+        email: result.user.email,
+      };
+      const response = await instance.post("/auth/googlelogin", payload, {
+        withCredentials: true,
+      });
+      console.log(response.data.user);
+      dispatch(setUser(response.data.user));
+      navigate("/");
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Internal server error");
+      }
+    }
+  };
+
   return (
     <div className="w-full  min-h-full h-[89.2vh] flex justify-center md:p-6 p-3 items-center bg-zinc-200   ">
       <div className="md:w-[30%] rounded p-5 bg-white ">
         <h1 className="text-3xl text-[rgb(240,107,41)] font-bold capitalize  tracking-tight leading-none ">
           vingo
         </h1>
-        <p className="mt-2 leading-5 text-zinc-600 tracking-tight">
-          Create your account to get started with delicious food deliveries
+        <p className="mt-2 leading-4 text-zinc-600 font-semibold text-sm tracking-tight">
+          Welcome to vingo! please log in to access your dashboard and manage
+          your orders efficiently.
         </p>
         <form className="mt-3" onSubmit={submitHandler}>
           <div className="mt-3">
@@ -69,9 +106,9 @@ const Login = () => {
               email
             </label>
             <input
-              className="border px-3 mt-1 font-semibold  py-2  rounded border-zinc-200 outline-none w-full"
+              className="border px-3 mt-1 font-semibold tracking-tight  py-2  rounded border-zinc-200 outline-none w-full"
               type="email"
-              placeholder="enter your email"
+              placeholder="Enter Your Email"
               required
               value={users.email}
               onChange={(e) => setUsers({ ...users, email: e.target.value })}
@@ -83,9 +120,9 @@ const Login = () => {
             </label>
             <div className="relative">
               <input
-                className="border px-3 mt-1 py-2  rounded border-zinc-200 outline-none w-full"
+                className="border px-3 mt-1 py-2  rounded border-zinc-200 font-semibold tracking-tight outline-none w-full"
                 type={showPassword ? "text" : "password"}
-                placeholder="enter your password"
+                placeholder="Enter Your Password"
                 required
                 value={users.password}
                 onChange={(e) =>
@@ -116,24 +153,34 @@ const Login = () => {
             disabled={loading}
           >
             {loading ? (
-                <div className="w-5 h-5 rounded-full border-b-3 border-t-3 animate-spin inline-block"></div>
-               
+              <div className="flex items-center gap-1.5">
+                <h1>please wait...</h1>
+                <div className="w-6 h-6 animate-spin border-b-2 border-t-2  rounded-full "></div>
+              </div>
             ) : (
               "sign up"
             )}
           </button>
+          {err && (
+            <h1 className="text-[12px] mt-2 text-red-600 text-center font-semibold ">
+              **{err}**
+            </h1>
+          )}
         </form>
-        <button className="text-black hover:bg-zinc-200  capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-5 border-zinc-300 gap-2  border-1">
+        <button
+          onClick={handleGoogleAuth}
+          className="text-black hover:bg-zinc-200  capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-5 border-zinc-300 gap-2  border-1"
+        >
           <span className="text-xl mt-0.5">
             <FcGoogle />
           </span>
           sign up with google
         </button>
 
-        <h1 className="text-center mt-5 font-semibold text-md tracking-tight ">
-          Already have an account?{" "}
+        <h1 className="text-center md:mt-5 mt-3.5 font-semibold text-md tracking-tight ">
+          Don't have an account?{" "}
           <Link className="text-blue-500" to="/register">
-            Login
+            Sign up
           </Link>
         </h1>
       </div>
