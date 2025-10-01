@@ -4,7 +4,7 @@ import Navigation from '../components/Navigation'
 const Home = () => {
 
   return (
-    <div className='w-full bg-amber-400 min-h-full'>
+    <div className='w-full md:p-1 py-0.5 bg-white min-h-full'>
       <Navigation />
     </div>
   )

@@ -48,12 +48,12 @@ export const RegisterApi = async (req, res) => {
         imageUrl: user.imageUrl,
         role: user.role,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
       },
       token,
     });
   } catch (error) {
-    debuglog(error);
+    console.error(error);
     console.error(error);
     res.status(500).json({
       message: "internal server error, please try again later",
@@ -94,12 +94,12 @@ export const loginUser = async (req, res) => {
         imageUrl: user.imageUrl,
         role: user.role,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
       },
       token,
     });
   } catch (error) {
-    debuglog(error);
+    console.error(error);
     res.status(500).json({
       message: "internal server error, please try again later",
     });
@@ -114,7 +114,51 @@ export const logoutUser = async (req, res) => {
       message: "Logout successfully",
     });
   } catch (error) {
-    debuglog(error);
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error: please try again later.",
+    });
+  }
+};
+
+export const updatedController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fullname, email, contact, imageUrl } = req.body;
+
+    if (!id) {
+      return res.status(400).json({
+        message: "id is required",
+      });
+    }
+
+    const user = await userModel.findByIdAndUpdate(
+      id,
+      { fullname, contact, email, imageUrl },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Updated successfully",
+      user: {
+        id: user._id,
+        FullName: user.fullname,
+        email: user.email,
+        contact: user.contact,
+        imageUrl: user.imageUrl,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
     });
@@ -259,7 +303,7 @@ export const googleAuthController = async (req, res) => {
         imageUrl: user.imageUrl,
         role: user.role,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
       },
       token,
     });
@@ -301,12 +345,42 @@ export const googleAuthLoginController = async (req, res) => {
         imageUrl: user.imageUrl,
         role: user.role,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
       },
       token,
     });
   } catch (error) {
-    debuglog(error);
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error: please try again later.",
+      error: error.message || error,
+    });
+  }
+};
+
+export const protectedRoutesController = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(404).json({
+        message: "Unauthorized token",
+      });
+    }
+
+    const decoded = jwt.verify(token, config.JWT_SECRET_KEY);
+    if (!decoded) {
+      return res.status(401).json({
+        message: "Unauthorized access",
+      });
+    }
+
+    res.status(200).json({
+      message: "Protected route accessed",
+      userId: decoded.id,
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
       error: error.message || error,

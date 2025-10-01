@@ -7,5 +7,5 @@ const debuglog = debug("development:server")
 connectDataBase()
 
 app.listen(config.PORT || 3000, () => {
-    debuglog(`Server is running on port ${config.PORT}`);
+    console.log(`Server is running on port ${config.PORT}`);
 });

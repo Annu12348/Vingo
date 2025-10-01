@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { config } from "../config/config";
-import userModel from "../models/user.models";
+import { config } from "../config/config.js";
+import userModel from "../models/user.models.js";
 
 export const authenticationMiddleware = async (req, res, next) => {
     try {
@@ -25,7 +25,9 @@ export const authenticationMiddleware = async (req, res, next) => {
             });
         }
 
-        // Haan, ye sahi hai. decoded.userId ko req.userId me assign karna sahi hai taki aage ke middleware ya route handlers me user ki pehchaan ho sake.
+        // Haan, ye sahi hai. decoded.userId ko req.userId me assign karna
+        //  sahi hai taki aage ke middleware ya route handlers me user ki pehchaan ho sake.
+        req.id = user._id
         req.user = user;
 
         next()

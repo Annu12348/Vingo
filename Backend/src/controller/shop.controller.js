@@ -1,0 +1,125 @@
+import shopModel from "../models/shop.models.js";
+import { Imagekit, uploadImages } from "../services/storage.service.js";
+
+export const shopCreateController = async (req, res) => {
+  try {
+    const { name, state, city, address } = req.body;
+    const owner = req.id;
+    if (!name || !owner || !state || !city || !address) {
+      return res.status(400).json({
+        message: "All fields are required.",
+      });
+    }
+
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({
+        message: "no file uploaded",
+      });
+    }
+
+    const imagefile = await uploadImages(
+      req.file.buffer,
+      req.file.originalname
+    );
+    const image = imagefile.url;
+
+    const shop = await shopModel.create({
+      name,
+      city,
+      state,
+      address,
+      image: image,
+      owner,
+    });
+
+    res.status(201).json({
+      message: "Shop created successfully",
+      shop: {
+        name: shop.name,
+        image: shop.image,
+        owner: shop.owner,
+        state: shop.state,
+        city: shop.city,
+        address: shop.address,
+        id: shop._id,
+        fileId: shop.fileId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+};
+
+export const shopUpdatedController = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+    const userId = req.user.id;
+
+    if (!shopId || !userId) {
+      return res.status(400).json({
+        message: "Owner and shopId are required",
+      });
+    }
+
+    const shops = await shopModel.findOne({ owner: userId, _id: shopId });
+    if (!shops) {
+      return res.status(404).json({
+        message: "Shop not found",
+      });
+    }
+
+    const { name, city, state, address } = req.body;
+
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({
+        message: "no images uploaded",
+      });
+    }
+
+    const imagefile = await uploadImages(
+      req.file.buffer,
+      req.file.originalname
+    );
+    const image = imagefile.url;
+    const fileId = imagefile.fileId;
+
+    if (shops.fileId) {
+      try {
+        await Imagekit.deleteFile(shops.fileId);
+      } catch (error) {
+        console.error("Old video delete failed:", error.message);
+      }
+    }
+
+    const shop = await shopModel.findOneAndUpdate(
+      { owner: userId, _id: shopId },
+      { name, city, state, address, image, fileId },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Shop updated successfully",
+      shop: {
+        name: shop.name,
+        image: shop.image,
+        owner: shop.owner,
+        state: shop.state,
+        city: shop.city,
+        address: shop.address,
+        id: shop._id,
+        fileId: shop.fileId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+};
