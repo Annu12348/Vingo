@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setUser } from "../redux/Authentication/AuthenticationSlice";
+import { setUser } from "../redux/reducer/AuthenticationSlice";
 import instance from "../utils/axios";
 import { FcGoogle } from "react-icons/fc";
 import { IoEye } from "react-icons/io5";

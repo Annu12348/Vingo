@@ -123,3 +123,36 @@ export const shopUpdatedController = async (req, res) => {
     });
   }
 };
+
+export const shopfetchedController = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      return res.status(400).json({
+        message: "userId is required",
+      });
+    }
+
+    const { page = 1, limit = 10 } = req.query;
+
+    const shops = await shopModel
+      .find({ owner: userId })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+    if (!shops || shops.length === 0) {
+      return res.status(404).json({
+        message: "No shops found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Shops fetched successfully",
+      shops: shops,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+};

@@ -5,7 +5,7 @@ import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 import instance from "../utils/axios";
 import { useDispatch } from "react-redux";
-import { setUser } from "../redux/Authentication/AuthenticationSlice";
+import { setUser } from "../redux/reducer/AuthenticationSlice";
 import { toast } from "react-toastify";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../FireBase/FireBase";

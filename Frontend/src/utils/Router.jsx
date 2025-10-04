@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import Login from "../pages/Login";
 import ForgotPassword from "../pages/ForgotPassword";
 import ProtectedRoutes from "../components/ProtectedRoutes";
+import CreatedShop from "../pages/CreatedShop";
 
 const Router = () => {
   return (
@@ -20,6 +21,14 @@ const Router = () => {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route
+        path="/shop-create"
+        element={
+          <ProtectedRoutes>
+            <CreatedShop />
+          </ProtectedRoutes>
+        }
+      />
     </Routes>
   );
 };

@@ -1,6 +1,7 @@
 import express from "express";
 import {
   shopCreateController,
+  shopfetchedController,
   shopUpdatedController,
 } from "../controller/shop.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
@@ -22,5 +23,6 @@ router.put(
   upload.single("image"),
   shopUpdatedController
 );
+router.get("/fetch", authenticationMiddleware, shopfetchedController);
 
 export default router;
