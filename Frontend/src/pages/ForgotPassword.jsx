@@ -14,7 +14,6 @@ const ForgotPassword = () => {
   const [comfirmPassword, setComfirmPassword] = useState("");
   const navigate = useNavigate();
   const [err, setErr] = useState("");
-  console.log(err);
 
   //1
   const resetApi = async () => {
@@ -28,7 +27,6 @@ const ForgotPassword = () => {
           withCredentials: true,
         }
       );
-      console.log(response.data);
       toast.success(response.data.message);
       setStep(2);
     } catch (error) {

@@ -6,6 +6,7 @@ import {
 } from "../controller/shop.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
 import multer from "multer";
+import { shopValidator } from "../middleware/shop.validator.js";
 const router = express.Router();
 
 const storage = multer.memoryStorage();
@@ -15,6 +16,7 @@ router.post(
   "/create",
   authenticationMiddleware,
   upload.single("image"),
+  shopValidator,
   shopCreateController
 );
 router.put(

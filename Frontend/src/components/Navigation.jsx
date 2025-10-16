@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../utils/axios";
-import { setUser } from "../redux/reducer/AuthenticationSlice";
+import { setCity, setUser } from "../redux/reducer/AuthenticationSlice";
 import { FaLocationDot } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { CiShoppingCart } from "react-icons/ci";
@@ -11,20 +11,20 @@ import { FiMenu } from "react-icons/fi";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { persistor } from "../redux/store";
+import { setShop } from "../redux/reducer/ShopReducer";
 
 const Navigation = () => {
   const { user } = useSelector((store) => store.Auth);
-  const { shops } = useSelector(store => store.Shops)
   const [values, setValues] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { city } = useSelector((store) => store.Auth);
-  
 
   const logoutApi = async () => {
     try {
       await instance.delete("/auth/logout", { withCredentials: true });
       dispatch(setUser(null));
+      dispatch(setShop([]));
       persistor.purge(); // पुराना data clear
       toast.success("Successfully logged out user");
       navigate("/login");
@@ -76,7 +76,7 @@ const Navigation = () => {
           )}
 
           <div className="flex items-center gap-4 justify-center">
-            {user.role === "user" && (
+            {user?.role === "user" && (
               <span className=" text-2xl md:block hidden relative text-[rgb(240,107,41)]">
                 <CiShoppingCart />
                 <span className="text-[12px] absolute -top-1.5 -right-1.5">
@@ -84,17 +84,29 @@ const Navigation = () => {
                 </span>
               </span>
             )}
-            {shops.length > 0 && user.role === "owner" && (
+
+            {user.role === "owner" && (
               <Link
-                to="/add-food"
+                to="/shop-create "
                 className="text-[13px] hidden md:flex items-center gap-2 rounded capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5"
               >
                 <span className="text-xl">
                   <IoMdAdd />
                 </span>
-                add food item
+                add shop
               </Link>
             )}
+
+            <Link
+              to="/add-food"
+              className="text-[13px] hidden md:flex items-center gap-2 rounded capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5"
+            >
+              <span className="text-xl">
+                <IoMdAdd />
+              </span>
+              add food item
+            </Link>
+
             <Link className="text-[13px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
               <span className="text-xl">
                 <FaFileInvoiceDollar />

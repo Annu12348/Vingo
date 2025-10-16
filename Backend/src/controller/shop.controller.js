@@ -135,7 +135,7 @@ export const shopfetchedController = async (req, res) => {
 
     const { page = 1, limit = 10 } = req.query;
 
-    const shops = await shopModel
+    /*const shops = await shopModel
       .find({ owner: userId })
       .skip((page - 1) * limit)
       .limit(Number(limit));
@@ -143,11 +143,32 @@ export const shopfetchedController = async (req, res) => {
       return res.status(404).json({
         message: "No shops found",
       });
-    }
+    }*/
+
+    const shop = await shopModel
+      .find({ owner: userId })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+      if (!shop) {
+        return res.status(404).json({
+          message: "No shop found",
+        });
+      }
 
     res.status(200).json({
       message: "Shops fetched successfully",
-      shops: shops,
+      shop,
+      /*shops: {
+        name: shops.name,
+        image: shops.image,
+        owner: shops.owner,
+        state: shops.state,
+        city: shops.city,
+        address: shops.address,
+        id: shops._id,
+        fileId: shops.fileId,
+      },*/
     });
   } catch (error) {
     console.error(error);

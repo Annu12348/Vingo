@@ -1,29 +1,32 @@
 import React, { useState } from "react";
 import { GoArrowLeft } from "react-icons/go";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { MdRestaurant } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
+import { setShop } from "../redux/reducer/ShopReducer";
 import { toast } from "react-toastify";
 
-const CreatedShop = () => {
-  const { city } = useSelector((store) => store.Auth);
-  const [err, setErr] = useState({});
-  const [loading, setLoading] = useState(false);
+const EditShop = () => {
+  const { id } = useParams();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const { shop } = useSelector((store) => store.Shop);
+  const currentShop = shop?.find((item) => item._id === id) || {};
+  const [imagePreview, setImagePreview] = useState(currentShop.image || "");
 
-  const [addShop, setAddShop] = useState({
-    name: "",
-    image: "",
-    city: city?.city || "",
-    state: city?.state || "",
-    address: city?.address_line1 || "",
+  const [input, setInput] = useState({
+    name: currentShop.name || "",
+    image: currentShop.image || "",
+    city: currentShop.city || "",
+    state: currentShop.state || "",
+    address: currentShop.address || "",
   });
-  const [imagePreview, setImagePreview] = useState(null);
 
-  const handleImageChange = (e) => {
+  const handleChange = (e) => {
     const file = e.target.files[0];
-    setAddShop({ ...addShop, image: file });
+    setInput({ ...input, image: file });
     if (file) {
       setImagePreview(URL.createObjectURL(file));
     } else {
@@ -31,36 +34,27 @@ const CreatedShop = () => {
     }
   };
 
-  const shopCreatedApi = async () => {
+  const updateShopApi = async () => {
     try {
       setLoading(true);
-      setErr({});
+
       const formData = new FormData();
-      formData.append("name", addShop.name);
-      formData.append("city", addShop.city);
-      formData.append("state", addShop.state);
-      formData.append("address", addShop.address);
-      if (addShop.image) {
-        formData.append("image", addShop.image);
+      formData.append("name", input.name);
+      formData.append("city", input.city);
+      formData.append("state", input.state);
+      formData.append("address", input.address);
+      if (input.image) {
+        formData.append("image", input.image);
       }
-      const response = await instance.post("/shop/create", formData, {
+
+      const response = await instance.put(`/shop/update/${id}`, formData, {
         withCredentials: true,
       });
-      navigate("/"); 
-      setAddShop({
-        name: "",
-        image: "",
-      });
-      toast.success(response.data.message);
+      navigate("/")
+      dispatch(setShop(response.data.shop));
+      toast.success(response.data.message)
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.errors) {
-        const fieldsError = {};
-        const err = error.response.data.errors;
-        err.forEach((e) => {
-          fieldsError[e.path] = e.msg;
-        });
-        setErr(fieldsError);
-      } else if (
+      if (
         error.response &&
         error.response.data &&
         error.response.data.message
@@ -78,8 +72,9 @@ const CreatedShop = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    shopCreatedApi();
+    updateShopApi();
   };
+
   return (
     <div className="w-full py-3 px-4 min-h-screen ">
       <Link className="text-2xl  text-zinc-500" to="/">
@@ -90,27 +85,19 @@ const CreatedShop = () => {
           <div className="w-[11vh] rounded-full h-[11vh] shadow bg-amber-50 flex items-center justify-center ">
             <MdRestaurant className="text-5xl text-[rgb(240,107,41)] " />
           </div>
-          <h1 className="text-xl font-bold capitalize mt-2 ">add shop</h1>
+          <h1 className="text-xl font-bold capitalize mt-2 ">Edit shop</h1>
           <form className="w-full mt-2" onSubmit={submitHandler}>
             <div className="flex flex-col  ">
               <label className="font-semibold capitalize tracking-tight ">
-                name
+                shop name
               </label>
               <input
-                className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300  font-semibold mt-1"
+                className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 font-semibold mt-1"
                 type="text"
-                placeholder="enter your shop name"
-                value={addShop.name}
-                onChange={(e) =>
-                  setAddShop({ ...addShop, name: e.target.value })
-                }
-                required
+                placeholder="Enter Your Name"
+                value={input?.name}
+                onChange={(e) => setInput({ ...input, name: e.target.value })}
               />
-              {err.name && (
-                <p className="text-red-600 text-[8px] tracking-tight leading-none  font-semibold ">
-                  {err.name}
-                </p>
-              )}
             </div>
             <div className="flex flex-col mt-3  ">
               <label className="font-semibold capitalize tracking-tight ">
@@ -120,10 +107,11 @@ const CreatedShop = () => {
                 className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1"
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={handleChange}
                 required
               />
             </div>
+
             {imagePreview && (
               <div className="w-full h-[22vh] border mt-4 border-red-500 rounded ">
                 <img
@@ -133,6 +121,7 @@ const CreatedShop = () => {
                 />
               </div>
             )}
+
             <div className="flex gap-6 mt-3">
               <div className="flex flex-col  w-[48%]  ">
                 <label className="font-semibold capitalize tracking-tight ">
@@ -142,17 +131,10 @@ const CreatedShop = () => {
                   className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1"
                   type="text"
                   placeholder="enter your shop city"
-                  value={addShop.city}
-                  onChange={(e) =>
-                    setAddShop({ ...addShop, city: e.target.value })
-                  }
                   required
+                  value={input?.city}
+                  onChange={(e) => setInput({ ...input, city: e.target.value })}
                 />
-                {err.city && (
-                  <p className="text-red-600 text-[9px] tracking-tight leading-none  font-semibold ">
-                    {err.city}
-                  </p>
-                )}
               </div>
               <div className="flex flex-col  w-[47%]   ">
                 <label className="font-semibold capitalize tracking-tight ">
@@ -162,17 +144,12 @@ const CreatedShop = () => {
                   className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1"
                   type="text"
                   placeholder="enter your shop state"
-                  value={addShop.state}
-                  onChange={(e) =>
-                    setAddShop({ ...addShop, state: e.target.value })
-                  }
                   required
+                  value={input?.state}
+                  onChange={(e) =>
+                    setInput({ ...input, state: e.target.value })
+                  }
                 />
-                {err.state && (
-                  <p className="text-red-600 text-[8px] tracking-tight leading-none  font-semibold ">
-                    {err.state}
-                  </p>
-                )}
               </div>
             </div>
             <div className="flex flex-col mt-3 ">
@@ -183,17 +160,12 @@ const CreatedShop = () => {
                 className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300  font-semibold mt-1"
                 type="text"
                 placeholder="enter your shop address"
-                value={addShop.address}
-                onChange={(e) =>
-                  setAddShop({ ...addShop, address: e.target.value })
-                }
                 required
+                value={input?.address}
+                onChange={(e) =>
+                  setInput({ ...input, address: e.target.value })
+                }
               />
-              {err.address && (
-                <p className="text-red-600 text-[8px] tracking-tight leading-none  font-semibold ">
-                  {err.address}
-                </p>
-              )}
             </div>
             <button
               type="submit"
@@ -201,12 +173,12 @@ const CreatedShop = () => {
               className="bg-[rgb(240,107,41)] flex items-center justify-center capitalize w-full mt-5 py-2.5 rounded-lg text-white font-semibold "
             >
               {loading ? (
-                <div className="flex items-center gap-1.5">
-                  <h1>please wait...</h1>
-                  <div className="w-6 h-6 animate-spin border-b-3  rounded-full "></div>
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-6 h-6 border-t-3 border-b-3 animate-spin rounded-full  "></div>
+                  <p>please wait...</p>
                 </div>
               ) : (
-                "created shop"
+                "update shop"
               )}
             </button>
           </form>
@@ -216,4 +188,4 @@ const CreatedShop = () => {
   );
 };
 
-export default CreatedShop;
+export default EditShop;

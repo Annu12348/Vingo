@@ -6,6 +6,7 @@ import Login from "../pages/Login";
 import ForgotPassword from "../pages/ForgotPassword";
 import ProtectedRoutes from "../components/ProtectedRoutes";
 import CreatedShop from "../pages/CreatedShop";
+import EditShop from "../pages/EditShop";
 
 const Router = () => {
   return (
@@ -26,6 +27,14 @@ const Router = () => {
         element={
           <ProtectedRoutes>
             <CreatedShop />
+          </ProtectedRoutes>
+        }
+      />
+      <Route
+        path="/shop-edit/:id"
+        element={
+          <ProtectedRoutes>
+            <EditShop />
           </ProtectedRoutes>
         }
       />

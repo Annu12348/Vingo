@@ -72,7 +72,6 @@ const Login = () => {
       const response = await instance.post("/auth/googlelogin", payload, {
         withCredentials: true,
       });
-      console.log(response.data.user);
       dispatch(setUser(response.data.user));
       navigate("/");
     } catch (error) {
