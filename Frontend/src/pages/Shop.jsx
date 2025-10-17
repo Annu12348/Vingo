@@ -40,7 +40,7 @@ const Shop = () => {
 
   
   return (
-    <div className="w-full p-1 mt-21.5 min-h-[85.5vh] flex items-start justify-center ">
+    <div className="w-full px-5 pb-6 mt-21.5 min-h-[30vh] flex items-start justify-center ">
       {shop.length <= 0 && (
         <div className="w-[24%] shadow bg-zinc-100 p-3 flex-col flex items-center justify-center rounded ">
           <h1 className="text-8xl font-semibold  text-[rgb(240,107,41)]">
@@ -62,7 +62,7 @@ const Shop = () => {
         </div>
       )}
       {shop.length > 0 && (
-        <div className="w-full  ">
+        <div className="w-full   ">
           <div className=" flex items-center justify-center gap-3 text-3xl">
             <span className="text-[rgb(240,107,41)] leading-none">
               <MdRestaurant />{" "}
@@ -71,11 +71,11 @@ const Shop = () => {
               welcome to shops
             </h1>
           </div>
-          <div className="w-full mt-4 flex gap-4 flex-wrap items-center justify-center">
+          <div className="w-full  mt-4 flex gap-4 flex-wrap items-center justify-center">
             {shop.map((shop) => (
               <div
                 key={shop._id}
-                className="pb-3 hover:shadow-lg w-[28%] bg-zinc-100 rounded-lg"
+                className="pb-5  hover:shadow-lg w-[28%] bg-zinc-100  rounded-lg"
               >
                 <div className="w-full  relative h-[31vh] rounded-t-lg bg-amber-100 group overflow-hidden">
                   <img

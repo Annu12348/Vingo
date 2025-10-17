@@ -1,6 +1,7 @@
 import React from "react";
 import Navigation from "../components/Navigation";
 import Shop from "./Shop";
+import Item from "./Item";
 
 const Home = () => {
 
@@ -8,6 +9,7 @@ const Home = () => {
     <div className="w-full px-2   md:py-2 py-0.5  bg-white min-h-full">
       <Navigation />
       <Shop />
+      <Item />
     </div>
   );
 };

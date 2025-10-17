@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../utils/axios";
-import { setCity, setUser } from "../redux/reducer/AuthenticationSlice";
+import { setUser } from "../redux/reducer/AuthenticationSlice";
 import { FaLocationDot } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { CiShoppingCart } from "react-icons/ci";
@@ -85,7 +85,7 @@ const Navigation = () => {
               </span>
             )}
 
-            {user.role === "owner" && (
+            {user?.role === "owner" && (
               <Link
                 to="/shop-create "
                 className="text-[13px] hidden md:flex items-center gap-2 rounded capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5"
@@ -115,7 +115,7 @@ const Navigation = () => {
               <span className="text-[12px] absolute -top-3 -right-1.5">0</span>
             </Link>
             <Link className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
-              {user.FullName.slice(0, 1)}
+              {user?.FullName.slice(0, 1)}
             </Link>
             <button
               onClick={clickedHandlers}

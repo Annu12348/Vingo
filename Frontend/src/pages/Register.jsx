@@ -111,7 +111,8 @@ const Register = () => {
           vingo
         </h1>
         <p className="mt-4 leading-4 font-semibold text-sm text-zinc-600 tracking-tight">
-          Register for Vingo’s industrial-grade platform and streamline your food delivery experience.
+          Register for Vingo’s industrial-grade platform and streamline your
+          food delivery experience.
         </p>
         <form className="mt-3" onSubmit={submitHandler}>
           <div>
