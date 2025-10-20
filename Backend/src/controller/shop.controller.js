@@ -3,9 +3,9 @@ import { Imagekit, uploadImages } from "../services/storage.service.js";
 
 export const shopCreateController = async (req, res) => {
   try {
-    const { name, state, city, address } = req.body;
+    const { shopName, state, city, address } = req.body;
     const owner = req.id;
-    if (!name || !owner || !state || !city || !address) {
+    if (!shopName || !owner || !state || !city || !address) {
       return res.status(400).json({
         message: "All fields are required.",
       });
@@ -26,7 +26,7 @@ export const shopCreateController = async (req, res) => {
     const image = imagefile.url;
 
     const shop = await shopModel.create({
-      name,
+      shopName,
       city,
       state,
       address,
@@ -37,7 +37,7 @@ export const shopCreateController = async (req, res) => {
     res.status(201).json({
       message: "Shop created successfully",
       shop: {
-        name: shop.name,
+        shopName: shop.shopName,
         image: shop.image,
         owner: shop.owner,
         state: shop.state,
@@ -73,7 +73,7 @@ export const shopUpdatedController = async (req, res) => {
       });
     }
 
-    const { name, city, state, address } = req.body;
+    const { shopName, city, state, address } = req.body;
 
     const file = req.file;
     if (!file) {
@@ -99,14 +99,14 @@ export const shopUpdatedController = async (req, res) => {
 
     const shop = await shopModel.findOneAndUpdate(
       { owner: userId, _id: shopId },
-      { name, city, state, address, image, fileId },
+      { shopName, city, state, address, image, fileId },
       { new: true }
     );
 
     res.status(200).json({
       message: "Shop updated successfully",
       shop: {
-        name: shop.name,
+        shopName: shop.shopName,
         image: shop.image,
         owner: shop.owner,
         state: shop.state,
@@ -135,15 +135,7 @@ export const shopfetchedController = async (req, res) => {
 
     const { page = 1, limit = 10 } = req.query;
 
-    /*const shops = await shopModel
-      .find({ owner: userId })
-      .skip((page - 1) * limit)
-      .limit(Number(limit));
-    if (!shops || shops.length === 0) {
-      return res.status(404).json({
-        message: "No shops found",
-      });
-    }*/
+    
 
     const shop = await shopModel
       .find({ owner: userId })
@@ -159,16 +151,6 @@ export const shopfetchedController = async (req, res) => {
     res.status(200).json({
       message: "Shops fetched successfully",
       shop,
-      /*shops: {
-        name: shops.name,
-        image: shops.image,
-        owner: shops.owner,
-        state: shops.state,
-        city: shops.city,
-        address: shops.address,
-        id: shops._id,
-        fileId: shops.fileId,
-      },*/
     });
   } catch (error) {
     console.error(error);

@@ -36,11 +36,21 @@ const Shop = () => {
 
   useEffect(() => {
     shopFetchApi();
+    {/*let interval;
+    if (shop && shop.length > 0) {
+      interval = setInterval(() => {
+        shopFetchApi();
+      }, 5000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+    // eslint-disable-next-line*/}
   }, []);
 
   
   return (
-    <div className="w-full px-5 pb-6 mt-21.5 min-h-[30vh] flex items-start justify-center ">
+    <div className="w-full  px-5 pb-6 mt-21.5 min-h-[30vh] flex items-start justify-center ">
       {shop.length <= 0 && (
         <div className="w-[24%] shadow bg-zinc-100 p-3 flex-col flex items-center justify-center rounded ">
           <h1 className="text-8xl font-semibold  text-[rgb(240,107,41)]">
@@ -75,7 +85,7 @@ const Shop = () => {
             {shop.map((shop) => (
               <div
                 key={shop._id}
-                className="pb-5  hover:shadow-lg w-[28%] bg-zinc-100  rounded-lg"
+                className="pb-5  hover:shadow-lg w-[28%] bg-white  rounded-lg"
               >
                 <div className="w-full  relative h-[31vh] rounded-t-lg bg-amber-100 group overflow-hidden">
                   <img
@@ -91,7 +101,7 @@ const Shop = () => {
                   </Link>
                 </div>
                 <h1 className="text-md capitalize  mt-4 ml-2 leading-none  font-bold ">
-                  {shop.name}
+                  {shop.shopName}
                 </h1>
                 <h1 className="text-sm  ml-2 leading-none mt-3 font-semibold   text-zinc-600">
                   {shop.city}, {shop.state}

@@ -49,7 +49,7 @@ const Router = () => {
         }
       />
       <Route
-        path="/add-food-update/:itemId"
+        path="/food-update/:itemId"
         element={
           <ProtectedRoutes>
              <ItemUpdate />

@@ -25,8 +25,8 @@ export const itemCreateController = async (req, res) => {
       });
     }
 
-    const { name, price, category, foodType } = req.body;
-    if (!name || !price || !category || !foodType) {
+    const { foodName, price, category, foodType } = req.body;
+    if (!foodName || !price || !category || !foodType) {
       return res.status(400).json({
         message: "All fields are required",
       });
@@ -44,7 +44,7 @@ export const itemCreateController = async (req, res) => {
     );
     const image = imagefile.url;
     const item = await itemModel.create({
-      name,
+      foodName,
       price,
       category,
       foodType,
@@ -56,7 +56,7 @@ export const itemCreateController = async (req, res) => {
       message: "Item created successfully",
       item: {
         id: item._id,
-        name: item.name,
+        foodName: item.foodName,
         price: item.price,
         foodType: item.foodType,
         shop: item.shop,
@@ -111,8 +111,8 @@ export const itemUpdatedController = async (req, res) => {
       });
     }
 
-    const { name, price, category, foodType } = req.body;
-    if (!name || !price || !category || !foodType) {
+    const { foodName, price, category, foodType } = req.body;
+    if (!foodName || !price || !category || !foodType) {
       return res.status(400).json({
         message: "all fields are required",
       });
@@ -142,7 +142,15 @@ export const itemUpdatedController = async (req, res) => {
 
     const item = await itemModel.findOneAndUpdate(
       { _id: itemId },
-      { name, price, category, foodType, imageId: fileId, image, shop: shopId },
+      {
+        foodName,
+        price,
+        category,
+        foodType,
+        imageId: fileId,
+        image,
+        shop: shopId,
+      },
       { new: true }
     );
 
@@ -150,7 +158,7 @@ export const itemUpdatedController = async (req, res) => {
       message: "hello world",
       item: {
         id: item._id,
-        name: item.name,
+        foodName: item.name,
         price: item.price,
         foodType: item.foodType,
         shop: item.shop,
@@ -158,6 +166,54 @@ export const itemUpdatedController = async (req, res) => {
         image: item.image,
         imageId: item.imageId,
       },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+};
+
+export const itemFetchController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized: User ID not found",
+      });
+    }
+
+    const shop = await shopModel.findOne({ owner: userId });
+    if (!shop) {
+      return res.status(404).json({
+        message: "Shop not found"
+      });
+    }
+
+    const shopId = shop._id;
+    if(!shopId){
+      return res.status(404).json({
+        message: "Shop ID not found"
+      });
+    }
+
+    const { page=1, limit=10 } = req.query
+
+    const item = await itemModel
+    .find({shop: shopId})
+    .skip((page - 1) * limit)
+    .limit(Number(limit))
+
+    if (!item || item.length === 0) {
+      return res.status(404).json({
+        message: "No items found for this shop."
+      });
+    }
+
+    res.status(200).json({
+      message: "Items fetched successfully",
+      item,
     });
   } catch (error) {
     console.error(error);

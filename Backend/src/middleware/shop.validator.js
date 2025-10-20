@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { body, validationResult } from "express-validator";
 
 export const shopValidator = [
-  body("name")
+  body("shopName")
     .notEmpty()
     .withMessage("name is required")
     .isLength({ min: 3, max: 30 })

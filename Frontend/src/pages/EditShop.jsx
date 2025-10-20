@@ -14,15 +14,16 @@ const EditShop = () => {
   const [loading, setLoading] = useState(false);
   const { shop } = useSelector((store) => store.Shop);
   const currentShop = shop?.find((item) => item._id === id) || {};
-  const [imagePreview, setImagePreview] = useState(currentShop.image || "");
 
   const [input, setInput] = useState({
-    name: currentShop.name || "",
+    shopName: currentShop.shopName || "",
     image: currentShop.image || "",
     city: currentShop.city || "",
     state: currentShop.state || "",
     address: currentShop.address || "",
   });
+
+  const [imagePreview, setImagePreview] = useState(currentShop.image || "");
 
   const handleChange = (e) => {
     const file = e.target.files[0];
@@ -39,7 +40,7 @@ const EditShop = () => {
       setLoading(true);
 
       const formData = new FormData();
-      formData.append("name", input.name);
+      formData.append("shopName", input.shopName);
       formData.append("city", input.city);
       formData.append("state", input.state);
       formData.append("address", input.address);
@@ -95,8 +96,8 @@ const EditShop = () => {
                 className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 font-semibold mt-1"
                 type="text"
                 placeholder="Enter Your Name"
-                value={input?.name}
-                onChange={(e) => setInput({ ...input, name: e.target.value })}
+                value={input?.shopName}
+                onChange={(e) => setInput({ ...input, shopName: e.target.value })}
               />
             </div>
             <div className="flex flex-col mt-3  ">

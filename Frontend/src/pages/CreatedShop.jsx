@@ -13,7 +13,7 @@ const CreatedShop = () => {
   const navigate = useNavigate();
 
   const [addShop, setAddShop] = useState({
-    name: "",
+    shopName: "",
     image: "",
     city: city?.city || "",
     state: city?.state || "",
@@ -36,7 +36,7 @@ const CreatedShop = () => {
       setLoading(true);
       setErr({});
       const formData = new FormData();
-      formData.append("name", addShop.name);
+      formData.append("shopName", addShop.shopName);
       formData.append("city", addShop.city);
       formData.append("state", addShop.state);
       formData.append("address", addShop.address);
@@ -48,7 +48,7 @@ const CreatedShop = () => {
       });
       navigate("/"); 
       setAddShop({
-        name: "",
+        shopName: "",
         image: "",
       });
       toast.success(response.data.message);
@@ -100,15 +100,15 @@ const CreatedShop = () => {
                 className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300  font-semibold mt-1"
                 type="text"
                 placeholder="enter your shop name"
-                value={addShop.name}
+                value={addShop.shopName}
                 onChange={(e) =>
-                  setAddShop({ ...addShop, name: e.target.value })
+                  setAddShop({ ...addShop, shopName: e.target.value })
                 }
                 required
               />
-              {err.name && (
+              {err.shopName && (
                 <p className="text-red-600 text-[8px] tracking-tight leading-none  font-semibold ">
-                  {err.name}
+                  {err.shopName}
                 </p>
               )}
             </div>

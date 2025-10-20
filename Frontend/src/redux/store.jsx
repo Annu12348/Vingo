@@ -1,6 +1,6 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit'
-import AuthenticationReducer from "../redux/reducer/AuthenticationSlice"
-import storage from "redux-persist/lib/storage"
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import AuthenticationReducer from '../redux/reducer/AuthenticationSlice';
+import storage from 'redux-persist/lib/storage';
 import {
   persistReducer,
   persistStore,
@@ -10,18 +10,21 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from "redux-persist";
-import ShopReducer  from './reducer/ShopReducer';
+} from 'redux-persist';
+import ShopReducer from './reducer/ShopReducer';
+import ItemReducer from './reducer/ItemReducer';
 
 const persistConfig = {
-  key: "Vingo_root",
+  key: 'Vingo_root',
   version: 1,
   storage,
+  whitelist: ['Auth'], // Only Auth state is persisted
 };
 
 const rootReducer = combineReducers({
   Auth: AuthenticationReducer,
-  Shop: ShopReducer, 
+  Shop: ShopReducer,
+  Item: ItemReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -38,5 +41,3 @@ const store = configureStore({
 
 export const persistor = persistStore(store);
 export default store;
-
-

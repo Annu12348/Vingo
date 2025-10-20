@@ -1,33 +1,75 @@
 import React, { useState } from "react";
 import { GoArrowLeft } from "react-icons/go";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../utils/axios";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { setItem } from "../redux/reducer/ItemReducer";
 
 const ItemUpdate = () => {
+  const dispatch = useDispatch();
+  const { itemId } = useParams();
+  const { item } = useSelector((store) => store.Item);
+  const currentItem = item?.find((items) => items._id === itemId || {});
+  const navigate = useNavigate()
+  console.log(currentItem);
+
   const [foodAdd, setFoodAdd] = useState({
-    name: "",
-    price: "",
-    image: "",
-    category: "",
-    foodType: "",
+    foodName: currentItem.foodName || "",
+    price: currentItem.price || "",
+    image: currentItem.image || "",
+    category: currentItem.category || "",
+    foodType: currentItem.foodType || "",
   });
 
-  const [imagePreview, setImagePreview] = useState("")
+  const [imagePreview, setImagePreview] = useState(currentItem.image || "");
 
   const ChangeImage = (e) => {
     const file = e.target.files[0];
-    setFoodAdd({...foodAdd, image: file})
-    if(file){
-      setImagePreview(URL.createObjectURL(file))
+    setFoodAdd({ ...foodAdd, image: file });
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
     } else {
-      setImagePreview("")
+      setImagePreview("");
     }
-  }
+  };
 
-  console.log(imagePreview);
+  const shopFoodUpdateApi = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("foodName", foodAdd.foodName);
+      formData.append("price", foodAdd.price);
+      formData.append("category", foodAdd.category);
+      formData.append("foodType", foodAdd.foodType);
+
+      if (foodAdd.image) {
+        formData.append("image", foodAdd.image);
+      }
+
+      const response = await instance.put(`/item/update/${itemId}`, formData, {
+        withCredentials: true,
+      });
+      dispatch(setItem(response.data.item))
+      navigate("/")
+      toast.success(response.data.message)
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Internal server error");
+      }
+    }
+  };
 
   const submitHandler = (e) => {
     e.preventDefault();
+    shopFoodUpdateApi()
     console.log(foodAdd);
   };
   return (
@@ -56,9 +98,9 @@ const ItemUpdate = () => {
                 type="text"
                 placeholder="enter your food name"
                 required
-                value={foodAdd.name}
+                value={foodAdd.foodName}
                 onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, name: e.target.value })
+                  setFoodAdd({ ...foodAdd, foodName: e.target.value })
                 }
               />
             </div>
@@ -91,7 +133,11 @@ const ItemUpdate = () => {
             </div>
             {imagePreview && (
               <div className="w-full h-[28vh] border-1 mt-1 border-red-500 rounded  ">
-              <img className="w-full h-full object-cover" src={imagePreview} alt="image show" />
+                <img
+                  className="w-full h-full object-cover"
+                  src={imagePreview}
+                  alt="image show"
+                />
               </div>
             )}
             <div className="flex flex-col mt-4 w-full">

@@ -12,6 +12,7 @@ import { FaFileInvoiceDollar } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { persistor } from "../redux/store";
 import { setShop } from "../redux/reducer/ShopReducer";
+import { setItem } from "../redux/reducer/ItemReducer";
 
 const Navigation = () => {
   const { user } = useSelector((store) => store.Auth);
@@ -19,12 +20,14 @@ const Navigation = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { city } = useSelector((store) => store.Auth);
+  const { shop } = useSelector((store) => store.Shop);
 
   const logoutApi = async () => {
     try {
       await instance.delete("/auth/logout", { withCredentials: true });
       dispatch(setUser(null));
       dispatch(setShop([]));
+      dispatch(setItem([]));
       persistor.purge(); // पुराना data clear
       toast.success("Successfully logged out user");
       navigate("/login");
@@ -43,7 +46,7 @@ const Navigation = () => {
     console.log(values);
   };
   return (
-    <div className="w-full fixed   flex    items-center justify-center     ">
+    <div className="w-full fixed z-10   flex    items-center justify-center     ">
       <div className="md:w-[55%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
         <Link
           to="/"
@@ -85,27 +88,17 @@ const Navigation = () => {
               </span>
             )}
 
-            {user?.role === "owner" && (
+            {user?.role === "owner" && shop.length > 0 && (
               <Link
-                to="/shop-create "
+                to="/add-food"
                 className="text-[13px] hidden md:flex items-center gap-2 rounded capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5"
               >
                 <span className="text-xl">
                   <IoMdAdd />
                 </span>
-                add shop
+                add food item
               </Link>
             )}
-
-            <Link
-              to="/add-food"
-              className="text-[13px] hidden md:flex items-center gap-2 rounded capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5"
-            >
-              <span className="text-xl">
-                <IoMdAdd />
-              </span>
-              add food item
-            </Link>
 
             <Link className="text-[13px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
               <span className="text-xl">
