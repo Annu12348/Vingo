@@ -1,6 +1,7 @@
 import express from "express";
 import {
   itemCreateController,
+  itemDeletedController,
   itemFetchController,
   itemUpdatedController,
 } from "../controller/item.controller.js";
@@ -28,5 +29,10 @@ router.put(
 );
 
 router.get("/fetch", authenticationMiddleware, itemFetchController);
+router.delete(
+  "/delete/:itemId",
+  authenticationMiddleware,
+  itemDeletedController
+);
 
 export default router;

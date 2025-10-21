@@ -1,6 +1,7 @@
 import express from "express";
 import {
   shopCreateController,
+  shopDeleteController,
   shopfetchedController,
   shopUpdatedController,
 } from "../controller/shop.controller.js";
@@ -26,5 +27,10 @@ router.put(
   shopUpdatedController
 );
 router.get("/fetch", authenticationMiddleware, shopfetchedController);
+router.delete(
+  "/delete/:shopId",
+  authenticationMiddleware,
+  shopDeleteController
+);
 
 export default router;

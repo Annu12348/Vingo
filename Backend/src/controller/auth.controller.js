@@ -376,8 +376,7 @@ export const protectedRoutesController = async (req, res) => {
     }
 
     res.status(200).json({
-      message: "Protected route accessed",
-      userId: decoded.id,
+      message: "Access to the protected resource was successful.",
     });
   } catch (error) {
     console.error(error);

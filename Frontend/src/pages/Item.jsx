@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import instance from "../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setItem } from "../redux/reducer/ItemReducer";
@@ -8,6 +8,7 @@ import { MdDelete } from "react-icons/md";
 import { MdModeEdit } from "react-icons/md";
 
 const Item = () => {
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const { item } = useSelector((store) => store.Item);
 
@@ -32,21 +33,43 @@ const Item = () => {
     }
   };
 
+
+
+
+  const foodhandleDelete = async (itemId) => {
+    try {
+      const response = await instance.delete(`/item/delete/${itemId}`, {
+        withCredentials: true,
+      });
+      dispatch(setItem(response.data.item))
+      shopFoodFetchApi()
+      //navigate("/") 
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Internal server error");
+      }
+    }
+  };
+
+
+
+
+ 
+
   useEffect(() => {
     shopFoodFetchApi();
-    {/*let interval;
-    if (item && item.length > 0) {
-      interval = setInterval(() => {
-        shopFoodFetchApi();
-      }, 5000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    */};
   }, []);
-
+ 
   return (
-    <div className="bg-zinc-200 min-h-[10vh] flex-wrap p-1 flex items-center gap-6 justify-cente">
+    <div className="bg-zinc-200 min-h-[29.5vh] flex-wrap p-1 flex items-center gap-6 justify-cente">
       {(!item || item.length <= 0) && (
         <div className="w-[20%] p-3 bg-white rounded-lg flex flex-col items-center justify-center">
           <img
@@ -95,7 +118,7 @@ const Item = () => {
               <Link to={`/food-update/${items._id}`} className="text-2xl text-red-600">
                 <MdModeEdit />
               </Link>
-              <button className="text-2xl text-red-600" title="Delete (not implemented)">
+              <button onClick={() => foodhandleDelete(items._id)} className="text-2xl text-red-600" title="Delete (not implemented)">
                 <MdDelete />
               </button>
             </div>

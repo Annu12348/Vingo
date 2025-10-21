@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 
 const Home = () => {
   const { shop } = useSelector(store => store.Shop);
-  console.log(shop)
   return (
     <div className="w-full px-2    md:py-2 py-0.5  bg-zinc-100 min-h-full">
       <Navigation />

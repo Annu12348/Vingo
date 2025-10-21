@@ -98,7 +98,14 @@ export const itemUpdatedController = async (req, res) => {
       });
     }
 
-    const items = await itemModel.findOne({ _id: itemId });
+    const itemExists = await itemModel.findOne({ shop: shopId, _id: itemId });
+    if (!itemExists) {
+      return res.status(404).json({
+        message: "Item not found"
+      });
+    }
+
+    const items = await itemModel.findOne({shop: shopId,  _id: itemId });
     if (!items) {
       return res.status(400).json({
         message: "item not found",
@@ -187,33 +194,72 @@ export const itemFetchController = async (req, res) => {
     const shop = await shopModel.findOne({ owner: userId });
     if (!shop) {
       return res.status(404).json({
-        message: "Shop not found"
+        message: "Shop not found",
       });
     }
 
     const shopId = shop._id;
-    if(!shopId){
+    if (!shopId) {
       return res.status(404).json({
-        message: "Shop ID not found"
+        message: "Shop ID not found",
       });
     }
 
-    const { page=1, limit=10 } = req.query
+    const { page = 1, limit = 10 } = req.query;
 
     const item = await itemModel
-    .find({shop: shopId})
-    .skip((page - 1) * limit)
-    .limit(Number(limit))
+      .find({ shop: shopId })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
 
     if (!item || item.length === 0) {
       return res.status(404).json({
-        message: "No items found for this shop."
+        message: "No items found for this shop.",
       });
     }
 
     res.status(200).json({
       message: "Items fetched successfully",
       item,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+};
+
+export const itemDeletedController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { itemId } = req.params;
+
+    const shop = await shopModel.findOne({ owner: userId });
+    if (!shop || !shop._id) {
+      return res.status(404).json({
+        message: "Shop not found or shopId is missing.",
+      });
+    }
+    const shopId = shop._id;
+
+    const itemExists = await itemModel.findOne({ shop: shopId, _id: itemId });
+    if (!itemExists) {
+      return res.status(404).json({
+        message: "Item not found"
+      });
+    }
+
+    const item = await itemModel.findOneAndDelete({shop: shopId, _id: itemId});
+    if (!item) {
+      return res.status(404).json({
+        message: "Item not found or already deleted."
+      });
+    }
+
+    res.status(200).json({
+      message: "item deleted",
+      item
     });
   } catch (error) {
     console.error(error);

@@ -105,7 +105,7 @@ const Register = () => {
   };
 
   return (
-    <div className="w-full  min-h-full h-[89.2vh] flex justify-center md:p-6 p-3 items-center bg-zinc-200   ">
+    <div className="w-full  min-h-screen flex justify-center md:p-6 p-3 items-center bg-zinc-200   ">
       <div className="md:w-[30%] rounded p-5 bg-white ">
         <h1 className="text-3xl text-[rgb(240,107,41)] font-bold capitalize  tracking-tight leading-none ">
           vingo

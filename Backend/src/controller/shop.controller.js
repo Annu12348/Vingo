@@ -135,22 +135,56 @@ export const shopfetchedController = async (req, res) => {
 
     const { page = 1, limit = 10 } = req.query;
 
-    
-
     const shop = await shopModel
       .find({ owner: userId })
       .skip((page - 1) * limit)
       .limit(Number(limit));
 
-      if (!shop) {
-        return res.status(404).json({
-          message: "No shop found",
-        });
-      }
+    if (!shop) {
+      return res.status(404).json({
+        message: "No shop found",
+      });
+    }
 
     res.status(200).json({
       message: "Shops fetched successfully",
       shop,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+};
+
+export const shopDeleteController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { shopId } = req.params;
+
+    if (!shopId || !userId) {
+      return res.status(400).json({
+        message: "Owner and shopId are required",
+      });
+    }
+
+    const shops = await shopModel.findOne({ owner: userId, _id: shopId });
+    if (!shops) {
+      return res.status(404).json({
+        message: "Shop not found",
+      });
+    }
+    
+    const shop = await shopModel.findOneAndDelete({owner: userId, _id: shopId});
+    if (!shop) {
+      return res.status(500).json({
+        message: "Failed to delete shop"
+      });
+    }
+
+    res.status(200).json({
+      message: "Shop deleted successfully",
     });
   } catch (error) {
     console.error(error);

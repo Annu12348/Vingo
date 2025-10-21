@@ -2,14 +2,16 @@ import React, { useEffect } from "react";
 import instance from "../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { IoRestaurant } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdRestaurant } from "react-icons/md";
 import { FaPen } from "react-icons/fa";
 import { setShop } from "../redux/reducer/ShopReducer";
 import { toast } from "react-toastify";
+import { MdDelete } from "react-icons/md";
 
 const Shop = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((store) => store.Auth);
   const { shop } = useSelector((store) => store.Shop);
 
@@ -34,21 +36,31 @@ const Shop = () => {
     }
   };
 
+  const shophandleDelete = async (shopId) => {
+    try {
+      const response = await instance.delete(`/shop/delete/${shopId}`, {
+        withCredentials: true,
+      });
+      navigate("/")
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        toast.error(error.response.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Internal server error");
+      }
+    }
+  };
+
   useEffect(() => {
     shopFetchApi();
-    {/*let interval;
-    if (shop && shop.length > 0) {
-      interval = setInterval(() => {
-        shopFetchApi();
-      }, 5000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-    // eslint-disable-next-line*/}
-  }, []);
+  }, [shop]);
 
-  
   return (
     <div className="w-full  px-5 pb-6 mt-21.5 min-h-[30vh] flex items-start justify-center ">
       {shop.length <= 0 && (
@@ -95,10 +107,16 @@ const Shop = () => {
                   />
                   <Link
                     to={`/shop-edit/${shop._id}`}
-                    className="text-xl absolute top-[4%] right-[2%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-500 p-2 rounded-full "
+                    className="text-xl absolute top-[4%] right-[13%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
                   >
                     <FaPen />
                   </Link>
+                  <button
+                    onClick={() => shophandleDelete(shop._id)}
+                    className="text-xl  absolute top-[4%] right-[2%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
+                  >
+                    <MdDelete />
+                  </button>
                 </div>
                 <h1 className="text-md capitalize  mt-4 ml-2 leading-none  font-bold ">
                   {shop.shopName}
