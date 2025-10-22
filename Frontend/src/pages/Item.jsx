@@ -41,9 +41,7 @@ const Item = () => {
       const response = await instance.delete(`/item/delete/${itemId}`, {
         withCredentials: true,
       });
-      dispatch(setItem(response.data.item))
-      shopFoodFetchApi()
-      //navigate("/") 
+      dispatch(setItem(item.filter((i) => i._id !== itemId)));
     } catch (error) {
       if (
         error.response &&
@@ -69,7 +67,7 @@ const Item = () => {
   }, []);
  
   return (
-    <div className="bg-zinc-200 min-h-[29.5vh] flex-wrap p-1 flex items-center gap-6 justify-cente">
+    <div className="bg-zinc-200 min-h-[29.5vh] flex-wrap rounded-2xl p-3 flex items-center gap-6 justify-center">
       {(!item || item.length <= 0) && (
         <div className="w-[20%] p-3 bg-white rounded-lg flex flex-col items-center justify-center">
           <img

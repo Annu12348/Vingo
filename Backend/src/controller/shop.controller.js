@@ -158,6 +158,37 @@ export const shopfetchedController = async (req, res) => {
   }
 };
 
+export const shopByIdController = async (req, res) => {
+  try {
+    const userId = req.user.id
+    const { shopId } = req.params;
+
+    if (!userId || !shopId) {
+      return res.status(400).json({
+        message: "userId and shopId are required fields"
+      });
+    }
+
+    const shop = await shopModel.findOne({owner: userId, _id: shopId})
+    if (!shop) {
+      return res.status(404).json({
+        message: "Shop not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Shop fetched by ID",
+      shop,
+    })
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+}
+
 export const shopDeleteController = async (req, res) => {
   try {
     const userId = req.user.id;

@@ -46,7 +46,7 @@ const CreatedShop = () => {
       const response = await instance.post("/shop/create", formData, {
         withCredentials: true,
       });
-      navigate("/"); 
+      navigate("/");
       setAddShop({
         shopName: "",
         image: "",
@@ -81,15 +81,17 @@ const CreatedShop = () => {
     shopCreatedApi();
   };
   return (
-    <div className="w-full py-3 px-4 min-h-screen ">
+    <div className="w-full py-3 px-4 min-h-screen  ">
       <Link className="text-2xl  text-zinc-500" to="/">
         <GoArrowLeft />
       </Link>
-      <div className="w-full p-2 mt-5">
-        <div className="shadow w-[35%] p-3 rounded bg-zinc-100 flex items-center justify-center flex-col ">
-          <div className="w-[11vh] rounded-full h-[11vh] shadow bg-amber-50 flex items-center justify-center ">
-            <MdRestaurant className="text-5xl text-[rgb(240,107,41)] " />
-          </div>
+      <div className="w-full p-2 mt-5 flex items-center justify-center">
+        <div className="shadow md:w-[35%] p-3 rounded bg-zinc-100 flex items-center justify-center flex-col ">
+          <img
+            className="w-15 h-15 rounded-full object-cover "
+            src="https://imgs.search.brave.com/2OHB7N8AOSzt7IXX88RuaoICC_Hycx_bpIgBH0lZw00/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/Z3JhZGllbnQtc2hv/cC1sb2NhbC1sb2dv/LWRlc2lnbl8yMy0y/MTQ5NjEzMTYwLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA"
+            alt="images show"
+          />
           <h1 className="text-xl font-bold capitalize mt-2 ">add shop</h1>
           <form className="w-full mt-2" onSubmit={submitHandler}>
             <div className="flex flex-col  ">
@@ -133,7 +135,7 @@ const CreatedShop = () => {
                 />
               </div>
             )}
-            <div className="flex gap-6 mt-3">
+            <div className="flex md:gap-6 gap-4 mt-3">
               <div className="flex flex-col  w-[48%]  ">
                 <label className="font-semibold capitalize tracking-tight ">
                   city
@@ -159,7 +161,7 @@ const CreatedShop = () => {
                   state
                 </label>
                 <input
-                  className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1"
+                  className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1 "
                   type="text"
                   placeholder="enter your shop state"
                   value={addShop.state}

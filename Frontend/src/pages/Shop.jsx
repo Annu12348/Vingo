@@ -41,7 +41,8 @@ const Shop = () => {
       const response = await instance.delete(`/shop/delete/${shopId}`, {
         withCredentials: true,
       });
-      navigate("/")
+      dispatch(shop(shop.filter((i) => i._id !== shopId)));
+      navigate("/");
     } catch (error) {
       if (
         error.response &&
@@ -86,11 +87,13 @@ const Shop = () => {
       {shop.length > 0 && (
         <div className="w-full   ">
           <div className=" flex items-center justify-center gap-3 text-3xl">
-            <span className="text-[rgb(240,107,41)] leading-none">
-              <MdRestaurant />{" "}
-            </span>
+            <img
+              className="w-12 h-12 rounded-full object-cover "
+              src="https://imgs.search.brave.com/2OHB7N8AOSzt7IXX88RuaoICC_Hycx_bpIgBH0lZw00/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/Z3JhZGllbnQtc2hv/cC1sb2NhbC1sb2dv/LWRlc2lnbl8yMy0y/MTQ5NjEzMTYwLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA"
+              alt="images show"
+            />
             <h1 className="text-xl leading-none tracking-tight font-semibold capitaliz">
-              welcome to shops
+              Welcome to Shops
             </h1>
           </div>
           <div className="w-full  mt-4 flex gap-4 flex-wrap items-center justify-center">

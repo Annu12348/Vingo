@@ -51,9 +51,9 @@ const EditShop = () => {
       const response = await instance.put(`/shop/update/${id}`, formData, {
         withCredentials: true,
       });
-      navigate("/")
+      navigate("/");
       dispatch(setShop(response.data.shop));
-      toast.success(response.data.message)
+      toast.success(response.data.message);
     } catch (error) {
       if (
         error.response &&
@@ -77,15 +77,18 @@ const EditShop = () => {
   };
 
   return (
-    <div className="w-full py-3 px-4 min-h-screen ">
+    <div className="w-full py-3 px-4 min-h-screen  ">
       <Link className="text-2xl  text-zinc-500" to="/">
         <GoArrowLeft />
       </Link>
-      <div className="w-full p-2 mt-5">
-        <div className="shadow w-[35%] p-3 rounded bg-zinc-100 flex items-center justify-center flex-col ">
-          <div className="w-[11vh] rounded-full h-[11vh] shadow bg-amber-50 flex items-center justify-center ">
-            <MdRestaurant className="text-5xl text-[rgb(240,107,41)] " />
-          </div>
+      
+      <div className="w-full p-2 mt-5 flex items-center justify-center">
+        <div className="shadow md:w-[35%] w-[100%] p-3 rounded bg-zinc-100 flex items-center justify-center flex-col ">
+          <img
+            className="w-15 h-15 rounded-full object-cover "
+            src="https://imgs.search.brave.com/2OHB7N8AOSzt7IXX88RuaoICC_Hycx_bpIgBH0lZw00/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/Z3JhZGllbnQtc2hv/cC1sb2NhbC1sb2dv/LWRlc2lnbl8yMy0y/MTQ5NjEzMTYwLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA"
+            alt="images show"
+          />
           <h1 className="text-xl font-bold capitalize mt-2 ">Edit shop</h1>
           <form className="w-full mt-2" onSubmit={submitHandler}>
             <div className="flex flex-col  ">
@@ -97,7 +100,9 @@ const EditShop = () => {
                 type="text"
                 placeholder="Enter Your Name"
                 value={input?.shopName}
-                onChange={(e) => setInput({ ...input, shopName: e.target.value })}
+                onChange={(e) =>
+                  setInput({ ...input, shopName: e.target.value })
+                }
               />
             </div>
             <div className="flex flex-col mt-3  ">
