@@ -8,7 +8,7 @@ import { MdDelete } from "react-icons/md";
 import { MdModeEdit } from "react-icons/md";
 
 const Item = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { item } = useSelector((store) => store.Item);
 
@@ -33,9 +33,6 @@ const Item = () => {
     }
   };
 
-
-
-
   const foodhandleDelete = async (itemId) => {
     try {
       const response = await instance.delete(`/item/delete/${itemId}`, {
@@ -57,19 +54,14 @@ const Item = () => {
     }
   };
 
-
-
-
- 
-
   useEffect(() => {
     shopFoodFetchApi();
   }, []);
- 
+
   return (
-    <div className="bg-zinc-200 min-h-[29.5vh] flex-wrap rounded-2xl p-3 flex items-center gap-6 justify-center">
+    <div className="bg-zinc-200 min-h-[29.5vh] flex-wrap rounded-2xl p-3 flex items-center gap-2 justify-center">
       {(!item || item.length <= 0) && (
-        <div className="w-[20%] p-3 bg-white rounded-lg flex flex-col items-center justify-center">
+        <div className="md:w-[20%] w-full p-3 bg-white rounded-lg flex flex-col items-center justify-center">
           <img
             className="w-[12vh] h-[12vh] object-cover rounded-full"
             src="https://plus.unsplash.com/premium_photo-1668543548900-3b3ded85154c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&q=60&w=600"
@@ -90,9 +82,13 @@ const Item = () => {
           </Link>
         </div>
       )}
-      {item && item.length > 0 && (
-        item.map(items => (
-          <div key={items._id} className="hover:shadow-lg w-[30%] bg-white rounded-lg overflow-hidden flex gap-4 items-center">
+      {item &&
+        item.length > 0 &&
+        item.map((items) => (
+          <div
+            key={items._id}
+            className="hover:shadow-lg md:w-[30%] w-full relative bg-white rounded-lg overflow-hidden flex gap-2 items-center"
+          >
             <img
               className="w-[36%] object-cover h-[16vh]"
               src={items?.image}
@@ -112,31 +108,25 @@ const Item = () => {
                 {items.price}
               </h1>
             </div>
-            <div className="gap-2 flex ml-14 mb-18">
-              <Link to={`/food-update/${items._id}`} className="text-2xl text-red-600">
+            <div className="gap-2 flex absolute top-1 right-2 ">
+              <Link
+                to={`/food-update/${items._id}`}
+                className="text-2xl text-red-600"
+              >
                 <MdModeEdit />
               </Link>
-              <button onClick={() => foodhandleDelete(items._id)} className="text-2xl text-red-600" title="Delete (not implemented)">
+              <button
+                onClick={() => foodhandleDelete(items._id)}
+                className="text-2xl text-red-600"
+                title="Delete (not implemented)"
+              >
                 <MdDelete />
               </button>
             </div>
           </div>
-        ))
-      )}
+        ))}
     </div>
   );
 };
 
 export default Item;
-
-{/*import React from 'react'
-
-const Item = () => {
-  return (
-    <div>
-      item
-    </div>
-  )
-}
-
-export default Item */}

@@ -3,7 +3,6 @@ import instance from "../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { IoRestaurant } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
-import { MdRestaurant } from "react-icons/md";
 import { FaPen } from "react-icons/fa";
 import { setShop } from "../redux/reducer/ShopReducer";
 import { toast } from "react-toastify";
@@ -63,9 +62,9 @@ const Shop = () => {
   }, [shop]);
 
   return (
-    <div className="w-full  px-5 pb-6 mt-21.5 min-h-[30vh] flex items-start justify-center ">
+    <div className="w-full  md:px-5 px-3 pb-6 md:mt-16.5 mt-13 min-h-[30vh] flex items-start justify-center ">
       {shop.length <= 0 && (
-        <div className="w-[24%] shadow bg-zinc-100 p-3 flex-col flex items-center justify-center rounded ">
+        <div className="md:w-[24%] w-full shadow bg-zinc-100 p-3 flex-col flex items-center justify-center rounded ">
           <h1 className="text-8xl font-semibold  text-[rgb(240,107,41)]">
             <IoRestaurant />
           </h1>
@@ -100,7 +99,7 @@ const Shop = () => {
             {shop.map((shop) => (
               <div
                 key={shop._id}
-                className="pb-5  hover:shadow-lg w-[28%] bg-white  rounded-lg"
+                className="pb-5  hover:shadow-lg md:w-[28%] w-full bg-white  rounded-lg"
               >
                 <div className="w-full  relative h-[31vh] rounded-t-lg bg-amber-100 group overflow-hidden">
                   <img
@@ -110,13 +109,13 @@ const Shop = () => {
                   />
                   <Link
                     to={`/shop-edit/${shop._id}`}
-                    className="text-xl absolute top-[4%] right-[13%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
+                    className="text-xl absolute top-[4%] md:right-[13%] right-[16%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
                   >
                     <FaPen />
                   </Link>
                   <button
                     onClick={() => shophandleDelete(shop._id)}
-                    className="text-xl  absolute top-[4%] right-[2%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
+                    className="text-xl  absolute top-[4%] right-[3%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
                   >
                     <MdDelete />
                   </button>

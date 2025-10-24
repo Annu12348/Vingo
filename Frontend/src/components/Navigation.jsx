@@ -80,20 +80,15 @@ const Navigation = () => {
 
           <div className="flex items-center gap-4 justify-center">
             {user?.role === "user" && (
-              <div>
-                <Link className="text-[13px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
-                  <span className="text-xl">
-                    <FaFileInvoiceDollar />
-                  </span>
-                  my oders
-                  <span className="text-[12px] absolute -top-3 -right-1.5">
-                    0
-                  </span>
-                </Link>
-              </div>
+              <span className=" text-2xl md:block hidden relative text-[rgb(240,107,41)]">
+                <CiShoppingCart />
+                <span className="text-[12px] absolute -top-1.5 -right-1.5">
+                  0
+                </span>
+              </span>
             )}
 
-            {user?.role === "owner" && shop?.length > 0 && (
+            {user?.role === "owner" && shop.length > 0 && (
               <Link
                 to="/add-food"
                 className="text-[13px] hidden md:flex items-center gap-2 rounded capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5"
@@ -105,6 +100,13 @@ const Navigation = () => {
               </Link>
             )}
 
+            <Link className="text-[13px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
+              <span className="text-xl">
+                <FaFileInvoiceDollar />
+              </span>
+              my oders
+              <span className="text-[12px] absolute -top-3 -right-1.5">0</span>
+            </Link>
             <Link className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
               {user?.FullName.slice(0, 1)}
             </Link>

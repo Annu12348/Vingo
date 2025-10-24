@@ -1,28 +1,29 @@
 import React, { useState } from "react";
 import { GoArrowLeft } from "react-icons/go";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import instance from "../utils/axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { setItem } from "../redux/reducer/ItemReducer";
 
 const ItemUpdate = () => {
   const dispatch = useDispatch();
   const { itemId } = useParams();
-  const { item } = useSelector((store) => store.Item);
-  const currentItem = item?.find((items) => items._id === itemId || {});
-  const navigate = useNavigate()
-  console.log(currentItem);
 
   const [foodAdd, setFoodAdd] = useState({
-    foodName: currentItem.foodName || "",
-    price: currentItem.price || "",
-    image: currentItem.image || "",
-    category: currentItem.category || "",
-    foodType: currentItem.foodType || "",
+    foodName: "",
+    price: "",
+    image: "",
+    category: "",
+    foodType: "",
   });
 
-  const [imagePreview, setImagePreview] = useState(currentItem.image || "");
+  const [imagePreview, setImagePreview] = useState("");
+  const shopFoodFetchByIdApi = async () => {
+    try {} catch (error) {
+      toast.error("failed to fetch shop details")
+    }
+  }
 
   const ChangeImage = (e) => {
     const file = e.target.files[0];
@@ -77,8 +78,8 @@ const ItemUpdate = () => {
       <Link to="/" className="text-2xl text-zinc-400">
         <GoArrowLeft />
       </Link>
-      <div className="w-full min-h-[93vh] mt-6 flex items-center justify-cente ">
-        <div className="w-[38%] rounded-lg px-5 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
+      <div className="w-full min-h-[93vh] md:mt-2 flex items-center justify-center ">
+        <div className="md:w-[38%] w-full rounded-lg px-5 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
           <div className="w-[10vh] rounded-full h-[10vh] bg-zinc-300 overflow-hidden ">
             <img
               className="w-full h-full object-cover rounded-full"

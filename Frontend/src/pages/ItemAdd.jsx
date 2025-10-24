@@ -84,8 +84,8 @@ const ItemAdd = () => {
       <Link to="/" className="text-2xl text-zinc-400">
         <GoArrowLeft />
       </Link>
-      <div className="w-full min-h-[93vh]  flex items-center justify-cente ">
-        <div className="w-[38%] rounded-lg px-5 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
+      <div className="w-full min-h-[93vh] mt-5  flex items-center justify-center ">
+        <div className="md:w-[38%] rounded-lg px-5 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
           <div className="w-[10vh] rounded-full h-[10vh] bg-zinc-300 overflow-hidden ">
             <img
               className="w-full h-full object-cover rounded-full"

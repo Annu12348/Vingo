@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { MdRestaurant } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
 import { setShop } from "../redux/reducer/ShopReducer";
@@ -12,18 +11,40 @@ const EditShop = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { shop } = useSelector((store) => store.Shop);
-  const currentShop = shop?.find((item) => item._id === id) || {};
 
   const [input, setInput] = useState({
-    shopName: currentShop.shopName || "",
-    image: currentShop.image || "",
-    city: currentShop.city || "",
-    state: currentShop.state || "",
-    address: currentShop.address || "",
+    shopName: "",
+    image:  "",
+    city:  "",
+    state: "",
+    address: "",
   });
 
-  const [imagePreview, setImagePreview] = useState(currentShop.image || "");
+  const [imagePreview, setImagePreview] = useState("");
+
+  const shopFetchByIdApi = async () => {
+    try {
+      const response = await instance.get(`/shop/fetchBy-Id/${id}`, {
+        withCredentials: true,
+      });
+      const dataById = response.data.shop;
+      console.log(dataById)
+      setInput({
+        shopName: dataById.shopName,
+        city: dataById.city,
+        address: dataById.address,
+        state: dataById.state,
+        image: dataById.image
+      })
+      setImagePreview(dataById.image)
+    } catch (error) {
+      toast.error("failed to fetch shop details");
+    }
+  };
+
+  useEffect(() => {
+    shopFetchByIdApi()
+  }, [id])
 
   const handleChange = (e) => {
     const file = e.target.files[0];
@@ -34,6 +55,8 @@ const EditShop = () => {
       setImagePreview(null);
     }
   };
+
+  
 
   const updateShopApi = async () => {
     try {
@@ -51,9 +74,9 @@ const EditShop = () => {
       const response = await instance.put(`/shop/update/${id}`, formData, {
         withCredentials: true,
       });
-      navigate("/");
       dispatch(setShop(response.data.shop));
       toast.success(response.data.message);
+      navigate("/");
     } catch (error) {
       if (
         error.response &&
@@ -81,7 +104,7 @@ const EditShop = () => {
       <Link className="text-2xl  text-zinc-500" to="/">
         <GoArrowLeft />
       </Link>
-      
+
       <div className="w-full p-2 mt-5 flex items-center justify-center">
         <div className="shadow md:w-[35%] w-[100%] p-3 rounded bg-zinc-100 flex items-center justify-center flex-col ">
           <img
