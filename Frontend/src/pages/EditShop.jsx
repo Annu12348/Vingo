@@ -202,10 +202,7 @@ const EditShop = () => {
               className="bg-[rgb(240,107,41)] flex items-center justify-center capitalize w-full mt-5 py-2.5 rounded-lg text-white font-semibold "
             >
               {loading ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-6 h-6 border-t-3 border-b-3 animate-spin rounded-full  "></div>
-                  <p>please wait...</p>
-                </div>
+                <div className="w-5 h-5 border-white border-b-3 border-t-3 animate-spin rounded-full  "></div>
               ) : (
                 "update shop"
               )}

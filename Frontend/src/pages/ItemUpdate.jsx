@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoArrowLeft } from "react-icons/go";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../utils/axios";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -9,6 +9,8 @@ import { setItem } from "../redux/reducer/ItemReducer";
 const ItemUpdate = () => {
   const dispatch = useDispatch();
   const { itemId } = useParams();
+  const navigate = useNavigate();
+  const [ loading, setLoading ] = useState(false)
 
   const [foodAdd, setFoodAdd] = useState({
     foodName: "",
@@ -19,11 +21,6 @@ const ItemUpdate = () => {
   });
 
   const [imagePreview, setImagePreview] = useState("");
-  const shopFoodFetchByIdApi = async () => {
-    try {} catch (error) {
-      toast.error("failed to fetch shop details")
-    }
-  }
 
   const ChangeImage = (e) => {
     const file = e.target.files[0];
@@ -35,8 +32,33 @@ const ItemUpdate = () => {
     }
   };
 
+  const shopFoodFetchByIdApi = async () => {
+    try {
+      const response = await instance.get(`/item/fetchBy-Id/${itemId}`, {
+        withCredentials: true,
+      });
+      const dataById = response.data.item;
+      setFoodAdd({
+        foodName: dataById.foodName,
+        price: dataById.price,
+        image: dataById.image,
+        category: dataById.category,
+        foodType: dataById.foodType
+      })
+      setImagePreview(dataById.image)
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    shopFoodFetchByIdApi()
+  }, [itemId])
+
   const shopFoodUpdateApi = async () => {
     try {
+      setLoading(true)
+
       const formData = new FormData();
       formData.append("foodName", foodAdd.foodName);
       formData.append("price", foodAdd.price);
@@ -50,9 +72,9 @@ const ItemUpdate = () => {
       const response = await instance.put(`/item/update/${itemId}`, formData, {
         withCredentials: true,
       });
-      dispatch(setItem(response.data.item))
-      navigate("/")
-      toast.success(response.data.message)
+      dispatch(setItem(response.data.item));
+      navigate("/");
+      toast.success(response.data.message);
     } catch (error) {
       if (
         error.response &&
@@ -65,20 +87,21 @@ const ItemUpdate = () => {
       } else {
         toast.error("Internal server error");
       }
+    } finally {
+      setLoading(false)
     }
   };
 
   const submitHandler = (e) => {
     e.preventDefault();
-    shopFoodUpdateApi()
-    console.log(foodAdd);
+    shopFoodUpdateApi();
   };
   return (
     <div className="bg-white min-h-screen w-full p-2">
       <Link to="/" className="text-2xl text-zinc-400">
         <GoArrowLeft />
       </Link>
-      <div className="w-full min-h-[93vh] md:mt-2 flex items-center justify-center ">
+      <div className="w-full min-h-[93vh] md:mt-2 mt-3 flex items-center justify-center ">
         <div className="md:w-[38%] w-full rounded-lg px-5 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
           <div className="w-[10vh] rounded-full h-[10vh] bg-zinc-300 overflow-hidden ">
             <img
@@ -95,7 +118,7 @@ const ItemUpdate = () => {
                 food Name
               </label>
               <input
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none "
+                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none "
                 type="text"
                 placeholder="enter your food name"
                 required
@@ -110,7 +133,7 @@ const ItemUpdate = () => {
                 food price
               </label>
               <input
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none "
+                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none "
                 type="number"
                 placeholder="enter your food price"
                 required
@@ -125,7 +148,7 @@ const ItemUpdate = () => {
                 food image
               </label>
               <input
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-3 capitalize text-zinc-800 font-semibold tracking-tight leading-none"
+                className="text-md rounded mt-1 outline-none border-1  border-blue-500 px-2 py-3 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
                 type="file"
                 accept="image/*"
                 required
@@ -146,7 +169,7 @@ const ItemUpdate = () => {
                 food category
               </label>
               <select
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none"
+                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
                 required
                 value={foodAdd.category}
                 onChange={(e) =>
@@ -172,7 +195,7 @@ const ItemUpdate = () => {
                 foodType
               </label>
               <select
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none"
+                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
                 required
                 value={foodAdd.foodType}
                 onChange={(e) =>
@@ -187,9 +210,12 @@ const ItemUpdate = () => {
             </div>
             <button
               type="submit"
-              className="text-md capitalize font-semibold bg-blue-950 w-full p-3.5 mt-5 rounded leading-none tracking-tight text-white "
+              className="text-md capitalize font-semibold bg-blue-950 w-full p-3.5 mt-5 rounded leading-none tracking-tight text-white flex items-center justify-center "
+              disabled={loading}
             >
-              add shop food
+              {loading ? (
+                <div className="w-5 h-5 border-white border-b-3 border-t-3 animate-spin rounded-full  "></div>
+              ) : "add shop food"}
             </button>
           </form>
         </div>

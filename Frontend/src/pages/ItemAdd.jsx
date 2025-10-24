@@ -16,7 +16,6 @@ const ItemAdd = () => {
   const [errs, setErrs] = useState({});
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
-  console.log(errs);
 
   const ChangeImage = (e) => {
     const file = e.target.files[0];
@@ -198,13 +197,10 @@ const ItemAdd = () => {
             <button
               type="submit"
               disabled={loading}
-              className="text-md capitalize font-semibold bg-blue-950 w-full p-3.5 mt-5 rounded leading-none tracking-tight text-white "
+              className="text-md capitalize flex items-center justify-center font-semibold bg-blue-950 w-full p-3.5 mt-5 rounded leading-none tracking-tight text-white "
             >
               {loading ? (
-                <div className="flex items-center justify-center gap-2">
-                <div className="w-6 h-6 border-b-4 rounded-full animate-spin"></div>
-                <p>please wait...</p>
-                </div>
+                <div className="w-5 h-5 border-white border-b-3 border-t-3 animate-spin rounded-full  "></div>
               ) : "add shop food"}
             </button>
           </form>
