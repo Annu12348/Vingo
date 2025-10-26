@@ -28,7 +28,7 @@ const Navigation = () => {
       dispatch(setUser(null));
       dispatch(setShop([]));
       dispatch(setItem([]));
-      persistor.purge(); // पुराना data clear
+      persistor.purge();
       toast.success("Successfully logged out user");
       navigate("/login");
     } catch (error) {
@@ -89,15 +89,23 @@ const Navigation = () => {
             )}
 
             {user?.role === "owner" && shop.length > 0 && (
-              <Link
-                to="/add-food"
-                className="text-[13px] hidden md:flex items-center gap-2 rounded capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5"
-              >
-                <span className="text-xl">
+              <div>
+                <Link
+                  to="/add-food"
+                  className="text-[13px] hidden md:flex items-center gap-2 rounded capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5"
+                >
+                  <span className="text-xl">
+                    <IoMdAdd />
+                  </span>
+                  add food item
+                </Link>
+                <Link
+                  to="/add-food"
+                  className="text-md p-1 md:hidden  bg-zinc-300 rounded-full text-red-950 text-2xl  block"
+                >
                   <IoMdAdd />
-                </span>
-                add food item
-              </Link>
+                </Link>
+              </div>
             )}
 
             <Link className="text-[13px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">

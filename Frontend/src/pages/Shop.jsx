@@ -62,7 +62,7 @@ const Shop = () => {
   }, [shop]);
 
   return (
-    <div className="w-full  md:px-5 px-3 pb-6 md:mt-16.5 mt-13 min-h-[30vh] flex items-start justify-center ">
+    <div className="w-full  md:px-5 px-3 pb-6 md:mt-16.5 mt-15 min-h-[30vh] flex items-start justify-center ">
       {shop.length <= 0 && (
         <div className="md:w-[24%] w-full shadow bg-zinc-100 p-3 flex-col flex items-center justify-center rounded ">
           <h1 className="text-8xl font-semibold  text-[rgb(240,107,41)]">
