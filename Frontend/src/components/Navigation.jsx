@@ -43,7 +43,6 @@ const Navigation = () => {
 
   const clickHandler = () => {
     setValues((prev) => !prev);
-    console.log(values);
   };
   return (
     <div className="w-full fixed z-10   flex    items-center justify-center     ">
@@ -119,7 +118,7 @@ const Navigation = () => {
             </Link>
             <button
               onClick={clickedHandlers}
-              className="px-3 py-2.5 bg-red-500 md:block hidden rounded-lg text-white font-semibold tracking-tight leading-none"
+              className="px-3 py-2.5 bg-red-500 md:block cursor-pointer hidden rounded-lg text-white font-semibold tracking-tight leading-none"
             >
               Logout
             </button>

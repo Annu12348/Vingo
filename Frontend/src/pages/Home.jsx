@@ -6,12 +6,15 @@ import { useSelector } from "react-redux";
 
 const Home = () => {
   const { shop } = useSelector(store => store.Shop);
+  const { user } = useSelector(store => store.Auth);
   return (
-    <div className="w-full md:px-2    md:py-2 py-0.5  bg-zinc-100 min-h-full">
+    <div className="w-full md:px-2    md:py-2 py-0.5   min-h-full">
       <Navigation />
-      <Shop />
-      {shop.length > 0 && (
-        <Item />
+      {user.role === "owner" && (
+        <>
+          <Shop />
+          {shop.length > 0 && <Item />}
+        </>
       )}
     </div>
   );

@@ -13,6 +13,7 @@ const Shop = () => {
   const navigate = useNavigate();
   const { user } = useSelector((store) => store.Auth);
   const { shop } = useSelector((store) => store.Shop);
+  console.log(user);
 
   const shopFetchApi = async () => {
     try {
@@ -62,13 +63,16 @@ const Shop = () => {
   }, [shop]);
 
   return (
-    <div className="w-full  md:px-5 px-3 pb-6 md:mt-16.5 mt-15 min-h-[30vh] flex items-start justify-center ">
-      {shop.length <= 0 && (
+    <div className="w-full  md:px-5 px-3 pb-6 md:mt-15.5 mt-19 min-h-[30vh] flex items-start justify-center ">
+      {user.role === "owner" && shop.length <= 0 && (
         <div className="md:w-[24%] w-full shadow bg-zinc-100 p-3 flex-col flex items-center justify-center rounded ">
-          <h1 className="text-8xl font-semibold  text-[rgb(240,107,41)]">
-            <IoRestaurant />
-          </h1>
-          <h1 className="text-xl font-bold  mt-4 capitalize tracking-tight leading-none">
+          <div className="w-[13vh] rounded-full h-[13vh] bg-zinc-300 overflow-hidden ">
+            <img
+              className="w-full h-full object-cover rounded-full"
+              src="https://imgs.search.brave.com/2OHB7N8AOSzt7IXX88RuaoICC_Hycx_bpIgBH0lZw00/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/Z3JhZGllbnQtc2hv/cC1sb2NhbC1sb2dv/LWRlc2lnbl8yMy0y/MTQ5NjEzMTYwLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA"
+            />
+          </div>
+          <h1 className="text-xl font-bold  mt-3 capitalize tracking-tight leading-none">
             add your restaurant
           </h1>
           <p className="text-sm font-sans leading-5 mt-3.5 text-center  ">

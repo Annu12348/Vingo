@@ -130,3 +130,5 @@ const Item = () => {
 };
 
 export default Item;
+
+//12:00 to 12:30 tak = 20 Minat
