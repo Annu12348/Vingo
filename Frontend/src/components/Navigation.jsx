@@ -47,16 +47,16 @@ const Navigation = () => {
   };
   return (
     <div className="w-full fixed z-10   flex    items-center justify-center     ">
-      <div className="md:w-[55%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
+      <div className="md:w-[59%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
         <Link
           to="/"
           className="text-[rgb(240,107,41)] text-xl tracking-tight leading-none capitalize font-bold "
         >
           vingo
         </Link>
-        <div className="flex w-[100%]  items-center justify-end ">
+        <div className="flex w-[100%] items-center justify-end ">
           {user && user.role == "user" && (
-            <div className="shadow bg-zinc-100 rounded mr-13 p-1.5 flex items-center justify-between w-[70%]   md:w-[59.5%]">
+            <div className="shadow bg-zinc-100 rounded md:mr-13 p-1.5 flex items-center justify-between w-[100%]   md:w-[59.5%]">
               <div className="flex items-center  gap-1">
                 <span className="text-xl text-[rgb(240,107,41)] ">
                   <FaLocationDot />
@@ -108,12 +108,11 @@ const Navigation = () => {
               </div>
             )}
 
-            <Link className="text-[13px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
+            <Link className="text-[11px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
               <span className="text-xl">
                 <FaFileInvoiceDollar />
               </span>
               my oders
-              <span className="text-[12px] absolute -top-3 -right-1.5">0</span>
             </Link>
             <Link className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
               {user?.FullName.slice(0, 1)}
