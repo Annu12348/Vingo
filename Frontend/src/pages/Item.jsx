@@ -131,4 +131,7 @@ const Item = () => {
 
 export default Item;
 
-//12:00 to 12:30 tak = 20 Minat
+//12:00 to 1:28 tak =  1:28
+//6:50 to 8:17 = 1:27
+//10:00 to 12:00 = 2:00
+//total = 4Hourse 55Minat
