@@ -41,3 +41,8 @@ const store = configureStore({
 
 export const persistor = persistStore(store);
 export default store;
+
+//1:00 to 3:00 = 2
+//1:00 to 3:12 = 2:12
+//4:19 to 6:18 = 2:00
+//total = 6:12

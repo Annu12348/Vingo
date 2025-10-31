@@ -1,4 +1,6 @@
 import React from "react";
+import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
 
 const UserDetails = () => {
   const CardData = [
@@ -64,16 +66,43 @@ const UserDetails = () => {
         <h1 className="text-xl  font-semibold tracking-tight leading-none ">
           Inspiration for your first order
         </h1>
-        <div className="p-1 mt-2 flex gap-1.5 overflow-x-auto whitespace-nowrap scrollbar-hide">
-          {CardData.map((card, idx) => (
-            <div
-              key={idx}
-              className="w-[30vh] min-w-[29.5vh] bg-amber-200 h-[30vh] rounded-xl overflow-hidden relative inline-block mr-2"
-            >
-              <img className="w-full h-full object-cover" src={card.image} alt={card.foodName} />
-              <h1 className="text-[17px] text-white absolute bottom-0 text-center py-0.5 font-semibold w-full bg-[#8da98184]">{card.foodName}</h1>
-            </div>
-          ))}
+        <div
+          className="p-1 mt-2 flex gap-1.5 overflow-x-auto whitespace-nowrap"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          <style>
+            {`
+              .hide-scrollbar::-webkit-scrollbar {
+                display: none;
+              }
+            `}
+          </style>
+          <div className="flex hide-scrollbar  relative w-full">
+            <span className="text-2xl bg-[#00000097]   text-white h-fit fixed top-49 left-28 z-40 p-1 rounded-full ">
+              <IoIosArrowBack />
+            </span>
+            {CardData.map((card, index) => (
+              <div
+                key={index}
+                className="w-[30vh] min-w-[29.5vh] bg-amber-200 h-[30vh] rounded-xl overflow-hidden relative inline-block mr-2"
+              >
+                <img
+                  className="w-full h-full object-cover"
+                  src={card.image}
+                  alt={card.foodName}
+                />
+                <h1 className="text-[17px] text-white absolute bottom-0 text-center py-0.5 font-semibold w-full bg-[#8da98184]">
+                  {card.foodName}
+                </h1>
+              </div>
+            ))}
+            <span className="text-2xl bg-[#00000097]   text-white h-fit fixed top-49 right-28 z-40 p-1 rounded-full ">
+              <IoIosArrowBack />
+            </span>
+          </div>
         </div>
       </div>
     </div>
