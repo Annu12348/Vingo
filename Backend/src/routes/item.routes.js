@@ -42,4 +42,10 @@ router.get(
   itemFetchByIdController
 );
 
+router.get(
+  "/fetchByCity-City/:city",
+  authenticationMiddleware,
+  itemFetchByIdController
+);
+
 export default router;

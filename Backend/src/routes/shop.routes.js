@@ -3,6 +3,7 @@ import {
   shopByIdController,
   shopCreateController,
   shopDeleteController,
+  shopfetchCityController,
   shopfetchedController,
   shopUpdatedController,
 } from "../controller/shop.controller.js";
@@ -34,5 +35,10 @@ router.delete(
   shopDeleteController
 );
 router.get("/fetchBy-Id/:shopId", authenticationMiddleware, shopByIdController);
+router.get(
+  "/fetchCity-City/:city",
+  authenticationMiddleware,
+  shopfetchCityController
+);
 
 export default router;

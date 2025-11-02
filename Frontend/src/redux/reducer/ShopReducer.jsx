@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   shop: [],
   singleShop: null,
+  shopByCity: [],
 }
 
 export const ShopReducer = createSlice({
@@ -15,11 +16,15 @@ export const ShopReducer = createSlice({
 
     setSingleShop: (state, action) => {
       state.singleShop = action.payload
+    },
+
+    setShopByCity: (state, action) => {
+      state.shopByCity = action.payload
     }
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setShop, setSingleShop } = ShopReducer.actions;
+export const { setShop, setSingleShop, setShopByCity } = ShopReducer.actions;
 
 export default ShopReducer.reducer;

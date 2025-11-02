@@ -147,17 +147,14 @@ const Login = () => {
           </Link>
 
           <button
-            className={`bg-[rgb(240,107,41)] mt-3 hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none flex items-center justify-center `}
+            className={`bg-[rgb(240,107,41)] mt-3 cursor-pointer hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none flex items-center justify-center `}
             type="submit"
             disabled={loading}
           >
             {loading ? (
-              <div className="flex items-center gap-1.5">
-                <h1>please wait...</h1>
                 <div className="w-6 h-6 animate-spin border-b-2 border-t-2  rounded-full "></div>
-              </div>
             ) : (
-              "sign up"
+              "login"
             )}
           </button>
           {err && (

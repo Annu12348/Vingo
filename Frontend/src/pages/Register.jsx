@@ -245,10 +245,9 @@ const Register = () => {
             disabled={loading}
           >
             {loading ? (
-              <div className="flex items-center gap-1.5">
-                <h1>please wait...</h1>
-                <div className="w-6 h-6 animate-spin border-b-3  rounded-full "></div>
-              </div>
+              
+                <div className="w-6 h-6 animate-spin border-b-3 border-t-3  rounded-full "></div>
+              
             ) : (
               "sign up"
             )}

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import instance from "../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
-import { IoRestaurant } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
 import { setShop } from "../redux/reducer/ShopReducer";
@@ -13,7 +12,6 @@ const Shop = () => {
   const navigate = useNavigate();
   const { user } = useSelector((store) => store.Auth);
   const { shop } = useSelector((store) => store.Shop);
-  console.log(user);
 
   const shopFetchApi = async () => {
     try {

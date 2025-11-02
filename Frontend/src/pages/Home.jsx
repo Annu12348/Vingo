@@ -9,14 +9,16 @@ const Home = () => {
   const { shop } = useSelector(store => store.Shop);
   const { user } = useSelector(store => store.Auth);
   return (
-    <div className="w-full md:px-2    md:py-2 py-0.5   min-h-full">
+    <div className="w-full md:px-2 md:py-2 py-0.5 min-h-full">
       <Navigation />
-      <UserDetails /> 
+      {user.role === "user" && (
+        <UserDetails /> 
+      )}
       {user.role === "owner" && (
-        <>
+        <div>
           <Shop />
           {shop.length > 0 && <Item />}
-        </>
+        </div>
       )} 
     </div>
   );

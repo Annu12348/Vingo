@@ -310,3 +310,16 @@ export const itemDeletedController = async (req, res) => {
     });
   }
 };
+
+export const itemFetchedByCityController = async (req, res) => {
+  try {
+    res.status(200).json({
+      message: "hello world"
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+}

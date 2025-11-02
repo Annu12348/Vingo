@@ -160,34 +160,33 @@ export const shopfetchedController = async (req, res) => {
 
 export const shopByIdController = async (req, res) => {
   try {
-    const userId = req.user.id
+    const userId = req.user.id;
     const { shopId } = req.params;
 
     if (!userId || !shopId) {
       return res.status(400).json({
-        message: "userId and shopId are required fields"
+        message: "userId and shopId are required fields",
       });
     }
 
-    const shop = await shopModel.findOne({owner: userId, _id: shopId})
+    const shop = await shopModel.findOne({ owner: userId, _id: shopId });
     if (!shop) {
       return res.status(404).json({
-        message: "Shop not found"
+        message: "Shop not found",
       });
     }
 
     res.status(200).json({
       message: "Shop fetched by ID",
       shop,
-    })
-    
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       message: "Internal server error, please try again later",
     });
   }
-}
+};
 
 export const shopDeleteController = async (req, res) => {
   try {
@@ -206,17 +205,54 @@ export const shopDeleteController = async (req, res) => {
         message: "Shop not found",
       });
     }
-    
-    const shop = await shopModel.findOneAndDelete({owner: userId, _id: shopId});
+
+    const shop = await shopModel.findOneAndDelete({
+      owner: userId,
+      _id: shopId,
+    });
     if (!shop) {
       return res.status(500).json({
-        message: "Failed to delete shop"
+        message: "Failed to delete shop",
       });
     }
 
     res.status(200).json({
       message: "Shop deleted successfully",
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+};
+
+export const shopfetchCityController = async (req, res) => {
+  try {
+    //const userId = req.user.id;
+    const { city } = req.params;
+
+    if (!city) {
+      return res.status(400).json({
+        message: "User ID and city are required",
+      });
+    }
+
+    // City case-insensitive search
+    const shops = await shopModel.find({
+      city: { $regex: `^${city}$`, $options: 'i' }, // i = case-insensitive
+    });
+
+    if (!shops || shops.length === 0) {
+      return res.status(404).json({
+        message: "Shops not found"
+      });
+    }
+
+    res.status(200).json({
+      message: "Shop city fetched successfully",
+      shops,
+    })
   } catch (error) {
     console.error(error);
     res.status(500).json({
