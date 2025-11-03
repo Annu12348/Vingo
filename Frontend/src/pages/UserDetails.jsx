@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import UserShopCity from "./UserShopCity";
+import UserShopFoodCity from "./UserShopFoodCity";
 
 const UserDetails = () => {
   const scrollRef = useRef(null);
@@ -172,7 +173,7 @@ const UserDetails = () => {
           </style>
           <div
             ref={scrollRef}
-            className="p-1 mt-2 flex gap-1.5 overflow-x-auto whitespace-nowrap hide-scrollbar w-full"
+            className="p-1 mt-0.5 flex gap-1.5 overflow-x-auto whitespace-nowrap hide-scrollbar w-full"
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
@@ -185,7 +186,7 @@ const UserDetails = () => {
             {CardData.map((card, index) => (
               <div
                 key={index}
-                className="w-[30vh] min-w-[29.3vh] h-[30vh] rounded-xl overflow-hidden relative inline-block mr-2 group"
+                className="bg-amber-300 min-w-[35.7vh] h-[22vh] rounded-xl overflow-hidden relative inline-block mr-2 group"
               >
                 <img
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
@@ -201,6 +202,7 @@ const UserDetails = () => {
         </div>
       </div>
       <UserShopCity />
+      <UserShopFoodCity />
     </div>
   );
 };

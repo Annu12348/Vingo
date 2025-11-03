@@ -162,7 +162,7 @@ export const itemUpdatedController = async (req, res) => {
     );
 
     res.status(200).json({
-      message: "hello world",
+      message: "Item updated successfully",
       item: {
         id: item._id,
         foodName: item.name,
@@ -233,11 +233,11 @@ export const itemFetchController = async (req, res) => {
 export const itemFetchByIdController = async (req, res) => {
   try {
     const userId = req.user.id;
-    const {itemId} = req.params;
+    const { itemId } = req.params;
 
     if (!userId || !itemId) {
       return res.status(400).json({
-        message: "User ID and item ID are required fields."
+        message: "User ID and item ID are required fields.",
       });
     }
 
@@ -249,18 +249,18 @@ export const itemFetchByIdController = async (req, res) => {
     }
 
     const shopId = shop._id;
-    
-    const item = await itemModel.findOne({shop: shopId, _id: itemId})
+
+    const item = await itemModel.findOne({ shop: shopId, _id: itemId });
     if (!item) {
       return res.status(404).json({
-        message: "Item not found"
+        message: "Item not found",
       });
     }
 
     res.status(200).json({
       message: "Item fetched by id",
-      item
-    })
+      item,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -313,13 +313,41 @@ export const itemDeletedController = async (req, res) => {
 
 export const itemFetchedByCityController = async (req, res) => {
   try {
+    const { city } = req.params;
+    if (!city) {
+      return res.status(400).json({
+        message: "City parameter is required",
+      });
+    }
+
+    const shops = await shopModel.find({
+      city: { $regex: `^${city}$`, $options: "i" },
+    });
+
+    if (!shops || shops.length === 0) {
+      return res.status(404).json({
+        message: "No shops found in the specified city."
+      });
+    }
+
+    const shopIds = shops.map(shop => shop._id); 
+
+    const items = await itemModel.find({shop: {$in: shopIds}})
+
+    if (!items || items.length === 0) {
+      return res.status(404).json({
+        message: "No items found"
+      });
+    }
+
     res.status(200).json({
-      message: "hello world"
-    })
+      message: "Shop items fetched successfully",
+      items
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       message: "Internal server error, please try again later",
     });
   }
-}
+};

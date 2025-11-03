@@ -3,14 +3,17 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
 import { setShopByCity } from "../redux/reducer/ShopReducer";
+import { setitemByCity } from "../redux/reducer/ItemReducer";
 
-const UserShopCity = () => {
+const UserShopFoodCity = () => {
   const scrollRef = useRef(null);
   const { city } = useSelector((store) => store.Auth);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
   const { shopByCity } = useSelector((store) => store.Shop);
   const dispatch = useDispatch();
+  const { itemByCity } = useSelector(store => store.Item)
+  console.log(itemByCity)
 
   useEffect(() => {
     const scrollElement = scrollRef.current;
@@ -91,20 +94,21 @@ const UserShopCity = () => {
   };
 
   useEffect(() => {
-    const shopByCityApi = async () => {
+    const shopFoodByCityApi = async () => {
       try {
         if (!city?.city) return;
         const response = await instance.get(
-          `/shop/fetchCity-City/${city.city}`,
+          `/item/fetchByCity-City/${city.city}`,
           { withCredentials: true }
         );
-        dispatch(setShopByCity(response.data.shops))
+        console.log(response.data.items)
+        dispatch(setitemByCity(response.data.items))
       } catch (error) {
         console.error(error);
       }
     };
   
-    shopByCityApi();
+    shopFoodByCityApi();
   }, [city.city]);
 
   return (
@@ -143,7 +147,7 @@ const UserShopCity = () => {
           </style>
           <div
             ref={scrollRef}
-            className="p-1 mt-0.5 flex gap-1.5 overflow-x-auto whitespace-nowrap hide-scrollbar w-full"
+            className="p-1 mt-1  flex gap-0.5  overflow-x-auto whitespace-nowrap hide-scrollbar w-full"
             style={{
               scrollbarWidth: "none",
               msOverflowStyle: "none",
@@ -153,18 +157,18 @@ const UserShopCity = () => {
             }}
             tabIndex={-1}
           >
-            {shopByCity.map((city) => (
+            {itemByCity.map((city) => (
               <div
                 key={city._id}
-                className="min-w-[35.7vh] h-[22vh] rounded-xl overflow-hidden relative inline-block mr-2 group"
+                className="min-w-[36.1vh] h-[22vh] rounded-xl overflow-hidden relative inline-block mr-2 group"
               >
                 <img
                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   src={city.image}
-                  alt={city.shopName}
+                  alt={city.foodName}
                 />
                 <h1 className="text-[17px] text-white absolute bottom-0 text-center py-0.5 font-semibold w-full bg-[#8da98184]">
-                {city.shopName}
+                {city.foodName}
                 </h1>
               </div>
             ))}
@@ -175,4 +179,9 @@ const UserShopCity = () => {
   );
 };
 
-export default UserShopCity;
+export default UserShopFoodCity;
+//12.00 to 1:30 = 1:30hourse;
+//4:25 to 5:03 = 38Minat;
+//1:00 to 5:00 = 4hourse;
+//7:00 to 8:00 = 1hourse;
+//total = 7hourse

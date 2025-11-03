@@ -4,6 +4,7 @@ import {
   itemDeletedController,
   itemFetchByIdController,
   itemFetchController,
+  itemFetchedByCityController,
   itemUpdatedController,
 } from "../controller/item.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
@@ -45,7 +46,7 @@ router.get(
 router.get(
   "/fetchByCity-City/:city",
   authenticationMiddleware,
-  itemFetchByIdController
+  itemFetchedByCityController
 );
 
 export default router;

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import instance from "../utils/axios";
-import { setShop } from "../redux/reducer/ShopReducer";
+import { setShop, setSingleShop } from "../redux/reducer/ShopReducer";
 import { toast } from "react-toastify";
 
 const EditShop = () => {
@@ -28,7 +28,7 @@ const EditShop = () => {
         withCredentials: true,
       });
       const dataById = response.data.shop;
-      console.log(dataById)
+      dispatch(setSingleShop(dataById))
       setInput({
         shopName: dataById.shopName,
         city: dataById.city,
