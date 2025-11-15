@@ -13,6 +13,7 @@ import { IoMdAdd } from "react-icons/io";
 import { persistor } from "../redux/store";
 import { setShop } from "../redux/reducer/ShopReducer";
 import { setItem } from "../redux/reducer/ItemReducer";
+import { RiShoppingCartFill } from "react-icons/ri";
 
 const Navigation = () => {
   const { user } = useSelector((store) => store.Auth);
@@ -21,6 +22,7 @@ const Navigation = () => {
   const dispatch = useDispatch();
   const { city } = useSelector((store) => store.Auth);
   const { shop } = useSelector((store) => store.Shop);
+  const { cartItems } = useSelector(store => store.Item)
 
   const logoutApi = async () => {
     try {
@@ -45,8 +47,8 @@ const Navigation = () => {
     setValues((prev) => !prev);
   };
   return (
-    <div className="w-full fixed z-10   flex    items-center justify-center     ">
-      <div className="md:w-[59%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
+    <div className="w-full fixed z-10   flex   items-center justify-center     ">
+      <div className="md:w-[60%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
         <Link
           to="/"
           className="text-[rgb(240,107,41)] text-xl tracking-tight leading-none capitalize font-bold "
@@ -79,12 +81,12 @@ const Navigation = () => {
 
           <div className="flex items-center gap-4 justify-center">
             {user?.role === "user" && (
-              <span className=" text-2xl md:block hidden relative text-[rgb(240,107,41)]">
-                <CiShoppingCart />
+              <Link to='/cart' className=" text-2xl md:block hidden relative text-[rgb(240,107,41)]">
+                <RiShoppingCartFill />
                 <span className="text-[12px] absolute -top-1.5 -right-1.5">
-                  0
+                  {cartItems.length}
                 </span>
-              </span>
+              </Link>
             )}
 
             {user?.role === "owner" && shop.length > 0 && (

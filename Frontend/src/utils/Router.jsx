@@ -9,6 +9,7 @@ import CreatedShop from "../pages/CreatedShop";
 import EditShop from "../pages/EditShop";
 import ItemAdd from "../pages/ItemAdd";
 import ItemUpdate from "../pages/ItemUpdate";
+import CartItem from "../pages/CartItem";
 
 const Router = () => {
   return (
@@ -53,6 +54,15 @@ const Router = () => {
         element={
           <ProtectedRoutes>
              <ItemUpdate />
+          </ProtectedRoutes>
+        }
+      />
+
+      <Route
+        path="/cart"
+        element={
+          <ProtectedRoutes>
+             <CartItem />
           </ProtectedRoutes>
         }
       />

@@ -4,7 +4,8 @@ const initialState = {
   item: [],
   singleItem: null,
   itemByCity: [],
-}
+  cartItems: [],
+};
 
 export const ItemReducer = createSlice({
   name: "item",
@@ -19,12 +20,23 @@ export const ItemReducer = createSlice({
     },
 
     setitemByCity: (state, action) => {
-      state.itemByCity = action.payload
-    }
+      state.itemByCity = action.payload;
+    },
+
+    addToCart: (state, action) => {
+      const cartItem = action.payload;
+      const existingItem = state.cartItems.find((i) => i.id == cartItem.id);
+      if (existingItem) {
+        existingItem.quantity += cartItem.quantity;
+      } else {
+        state.cartItems.push(cartItem);
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setItem, setSingleItem, setitemByCity } = ItemReducer.actions;
+export const { setItem, setSingleItem, setitemByCity, addToCart } =
+  ItemReducer.actions;
 
 export default ItemReducer.reducer;

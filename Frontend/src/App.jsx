@@ -7,7 +7,7 @@ import LiveLocation from './components/LiveLocation';
 const App = () => {
   LiveLocation()
   return (
-    <div className='w-full min-h-screen bg-zinc-100 '>
+    <div className='w-full min-h-screen bg-zinc-200 '>
       <Router />
       <ToastContainer
         position='top-right'

@@ -6,44 +6,19 @@ import { setShopByCity } from "../redux/reducer/ShopReducer";
 
 const UserShopCity = () => {
   const scrollRef = useRef(null);
-  const { city } = useSelector((store) => store.Auth);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
-  const { shopByCity } = useSelector((store) => store.Shop);
+  const { city } = useSelector(store => store.Auth);
+  const { shopByCity } = useSelector(store => store.Shop)
   const dispatch = useDispatch();
 
   useEffect(() => {
     const scrollElement = scrollRef.current;
     if (!scrollElement) return;
 
-    const preventUserScroll = (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    };
-
-    scrollElement.addEventListener("wheel", preventUserScroll, {
-      passive: false,
-    });
-    scrollElement.addEventListener("touchmove", preventUserScroll, {
-      passive: false,
-    });
-    scrollElement.addEventListener("keydown", preventUserScroll, {
-      passive: false,
-    });
-
-    scrollElement.addEventListener("mousedown", preventUserScroll, {
-      passive: false,
-    });
-
     scrollElement.setAttribute("tabIndex", "-1");
 
-    return () => {
-      scrollElement.removeEventListener("wheel", preventUserScroll);
-      scrollElement.removeEventListener("touchmove", preventUserScroll);
-      scrollElement.removeEventListener("keydown", preventUserScroll);
-      scrollElement.removeEventListener("mousedown", preventUserScroll);
-    };
+    return () => {};
   }, []);
 
   const updateShowArrows = () => {
@@ -106,69 +81,67 @@ const UserShopCity = () => {
   
     shopByCityApi();
   }, [city.city]);
-
   return (
-    <div className="w-full  mt-4  ">
-      <div className="w-full h-full">
-        <h1 className="text-xl font-bold tracking-tight leading-none capitalize">
-          best shop in {city.city}
-        </h1>
-        <div className="relative w-full">
-          {showLeft && (
-            <button
-              onClick={scrollLeft}
-              className="text-2xl bg-[#00000097] text-white h-fit absolute top-1/2 -translate-y-1/2 left-2 z-40 p-1 rounded-full transition-opacity"
-              aria-label="Scroll Left"
-              type="button"
-            >
-              <IoIosArrowBack />
-            </button>
-          )}
-          {showRight && (
-            <button
-              onClick={scrollRight}
-              className="text-2xl bg-[#00000097] text-white h-fit absolute top-1/2 -translate-y-1/2 right-2 z-40 p-1 rounded-full transition-opacity"
-              aria-label="Scroll Right"
-              type="button"
-            >
-              <IoIosArrowForward />
-            </button>
-          )}
-          <style>
-            {`
+    <div className="w-full mt-5 ">
+      <h1 className="text-xl capitalize font-bold tracking-tight leading-none ">
+        best shop in {city?.city}
+      </h1>
+      <div className="w-full relative  ">
+        {showLeft && (
+          <button
+            onClick={scrollLeft}
+            className="text-2xl bg-[#00000097] text-white h-fit absolute top-1/2 -translate-y-1/2 left-2 z-40 p-1 rounded-full transition-opacity"
+            aria-label="Scroll Left"
+            type="button"
+          >
+            <IoIosArrowBack />
+          </button>
+        )}
+        {showRight && (
+          <button
+            onClick={scrollRight}
+            className="text-2xl bg-[#00000097] text-white h-fit absolute top-1/2 -translate-y-1/2 right-2 z-40 p-1 rounded-full transition-opacity"
+            aria-label="Scroll Right"
+            type="button"
+          >
+            <IoIosArrowForward />
+          </button>
+        )}
+        <style>
+          {`
               .hide-scrollbar::-webkit-scrollbar {
                 display: none;
               }
             `}
-          </style>
-          <div
-            ref={scrollRef}
-            className="p-1 mt-0.5 flex gap-1.5 overflow-x-auto whitespace-nowrap hide-scrollbar w-full"
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-              overscrollBehaviorX: "none",
-              touchAction: "none",
-              pointerEvents: "auto",
-            }}
-            tabIndex={-1}
-          >
-            {shopByCity.map((city) => (
-              <div
-                key={city._id}
-                className="min-w-[35.7vh] h-[22vh] rounded-xl overflow-hidden relative inline-block mr-2 group"
-              >
-                <img
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                  src={city.image}
-                  alt={city.shopName}
-                />
-                <h1 className="text-[17px] text-white absolute bottom-0 text-center py-0.5 font-semibold w-full bg-[#8da98184]">
-                {city.shopName}
-                </h1>
-              </div>
-            ))}
-          </div>
+        </style>
+        <div
+          ref={scrollRef}
+          className=" mt-1.5 flex gap-1.5  overflow-x-hidden whitespace-nowrap hide-scrollbar w-full"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            overscrollBehaviorX: "none",
+            touchAction: "pan-y",
+            pointerEvents: "auto",
+          }}
+          tabIndex={-1}
+        >
+          {shopByCity.map(shop => (
+            
+            <div
+              key={shop?._id}
+              className="bg-amber-200 min-w-[36.4vh] h-[24vh] rounded-xl overflow-hidden relative inline-block  group"
+            >
+            <img
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110 "
+            src={shop?.image}
+            alt={shop?.shopName}
+          />
+              <h1 className="text-[17px] text-white absolute bottom-0 text-center py-0.5 font-semibold w-full bg-[#8da98184]">
+                {shop?.shopName}
+              </h1>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -176,3 +149,4 @@ const UserShopCity = () => {
 };
 
 export default UserShopCity;
+//w-full h-full object-cover transition-transform duration-300 group-hover:scale-110

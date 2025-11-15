@@ -56,13 +56,14 @@ export const itemCreateController = async (req, res) => {
       message: "Item created successfully",
       item: {
         id: item._id,
-        foodName: item.foodName,
+        foodName: item.name,
         price: item.price,
         foodType: item.foodType,
         shop: item.shop,
         category: item.category,
         image: item.image,
         imageId: item.imageId,
+        rating: item.rating,
       },
     });
   } catch (error) {
@@ -172,6 +173,7 @@ export const itemUpdatedController = async (req, res) => {
         category: item.category,
         image: item.image,
         imageId: item.imageId,
+        rating: item.rating,
       },
     });
   } catch (error) {
