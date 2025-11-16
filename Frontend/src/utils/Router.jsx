@@ -10,6 +10,7 @@ import EditShop from "../pages/EditShop";
 import ItemAdd from "../pages/ItemAdd";
 import ItemUpdate from "../pages/ItemUpdate";
 import CartItem from "../pages/CartItem";
+import CheckOut from "../pages/CheckOut";
 
 const Router = () => {
   return (
@@ -45,7 +46,7 @@ const Router = () => {
         path="/add-food"
         element={
           <ProtectedRoutes>
-             <ItemAdd />
+            <ItemAdd />
           </ProtectedRoutes>
         }
       />
@@ -53,7 +54,7 @@ const Router = () => {
         path="/food-update/:itemId"
         element={
           <ProtectedRoutes>
-             <ItemUpdate />
+            <ItemUpdate />
           </ProtectedRoutes>
         }
       />
@@ -62,7 +63,16 @@ const Router = () => {
         path="/cart"
         element={
           <ProtectedRoutes>
-             <CartItem />
+            <CartItem />
+          </ProtectedRoutes>
+        }
+      />
+
+      <Route
+        path="/check-out"
+        element={
+          <ProtectedRoutes>
+            <CheckOut />
           </ProtectedRoutes>
         }
       />

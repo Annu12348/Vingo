@@ -5,6 +5,7 @@ const initialState = {
   singleItem: null,
   itemByCity: [],
   cartItems: [],
+  totalAmount: 0,
 };
 
 export const ItemReducer = createSlice({
@@ -31,12 +32,33 @@ export const ItemReducer = createSlice({
       } else {
         state.cartItems.push(cartItem);
       }
+      state.totalAmount=state.cartItems.reduce((sum, i) => sum+i.price*i.quantity, 0)
+    },
+
+    updateCartItem: (state, action) => {
+      const { id, quantity } = action.payload;
+      const cartItem = state.cartItems.find((i) => i.id == id);
+      if (cartItem) {
+        cartItem.quantity = quantity;
+      }
+      state.totalAmount=state.cartItems.reduce((sum, i) => sum+i.price*i.quantity, 0)
+    },
+
+    removeCartItem: (state, action) => {
+      state.cartItems = state.cartItems.filter((i) => i.id !== action.payload);
+      state.totalAmount=state.cartItems.reduce((sum, i) => sum+i.price*i.quantity, 0)
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setItem, setSingleItem, setitemByCity, addToCart } =
-  ItemReducer.actions;
+export const {
+  setItem,
+  setSingleItem,
+  setitemByCity,
+  addToCart,
+  removeCartItem,
+  updateCartItem,
+} = ItemReducer.actions;
 
 export default ItemReducer.reducer;

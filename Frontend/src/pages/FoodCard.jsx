@@ -54,10 +54,7 @@ const FoodCard = ({ item }) => {
           src={item?.image}
           alt={item?.foodName}
         />
-        <h1
-          className="absolute top-2 right-2 p-1.5 rounded-full bg-white flex items-center justify-center 
-                  transition-opacity duration-300 ease-in-out group-hover:opacity-0"
-        >
+        <h1 className="absolute top-2 right-2 p-1.5 rounded-full bg-white flex items-center justify-center transition-opacity duration-300 ease-in-out group-hover:opacity-0">
           {item.foodType === "Veg" && (
             <span className="text-[#2E7D32] text-2xl" title="Vegetarian">
               <FaLeaf />
@@ -89,10 +86,12 @@ const FoodCard = ({ item }) => {
         <div className="flex items-center justify-center border-2 rounded-full">
           <button
             onClick={decrement}
-            className="text-xl font-semibold pl-2 cursor-pointer bg-white py-1.5 px-1 rounded-l-full "
+            className="text-xl font-semibold pl-2  cursor-pointer bg-white py-1.5 px-1 rounded-l-full "
             disabled={quantity <= 0}
           >
-            <GrFormSubtract />
+            <span className="hover:bg-zinc-200 block">
+              <GrFormSubtract />
+            </span>
           </button>
           <span className="text-xl font-semibold bg-white py-0.5 px-1.5 ">
             {quantity || 0}
@@ -101,7 +100,9 @@ const FoodCard = ({ item }) => {
             onClick={increment}
             className="text-xl font-semibold cursor-pointer bg-white py-1.5 px-1 pr-2"
           >
-            <GrAdd />
+            <span className="hover:bg-zinc-200 block">
+              <GrAdd />
+            </span>
           </button>
           <button
             className={`text-2xl ${
