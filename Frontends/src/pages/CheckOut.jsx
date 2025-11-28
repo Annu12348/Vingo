@@ -7,10 +7,14 @@ import { MdMyLocation } from "react-icons/md";
 import { RiSecurePaymentFill } from "react-icons/ri";
 import { FaMobile } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
+import { useSelector } from "react-redux";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 const CheckOut = () => {
+  const { location } = useSelector((store) => store.Map);
+  const { address } = useSelector((store) => store.Map);
   return (
-    <div className="min-h-screen w-full py-[1px] ">
+    <div className="min-h-screen w-full bg-fuchsia-500 py-1 ">
       <Link to="/cart" className="text-2xl text-zinc-600 mt-2 ml-3 block ">
         <FaArrowLeftLong />
       </Link>
@@ -28,9 +32,10 @@ const CheckOut = () => {
                 delivery location
               </label>
               <input
-                className="border-1 w-full mt-1 py-1.5 px-2 capitalize outline-none rounded-md text-zinc-500 font-semibold tracking-tight leading-none"
+                className="border w-full mt-1 py-1.5 px-2 capitalize outline-none rounded-md text-zinc-500 font-semibold tracking-tight leading-none"
                 type="text"
                 placeholder="enter your delivery address"
+                value={address}
               />
             </div>
             <span className=" bg-red-500 cursor-pointer p-2.5 rounded-lg text-white font-semibold">
@@ -40,9 +45,25 @@ const CheckOut = () => {
               <MdMyLocation />
             </span>
           </div>
+
           <div className="w-full h-[26vh] border mt-5 rounded-lg border-zinc-400 flex items-center justify-center ">
-          <h1>ismein map ka images hoga jo baad mein set karna hai</h1>
+            <MapContainer
+              className={"w-full h-full"}
+              center={[location.lat, location.lon]}
+              zoom={13}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[location.lat, location.lon]}>
+                <Popup>
+                  A pretty CSS3 popup. <br /> Easily customizable.
+                </Popup>
+              </Marker>
+            </MapContainer>
           </div>
+
           <div className="w-full flex items-center justify-between mt-2.5  ">
             <div className="p-2 flex gap-3 items-center mt-3  border border-red-700  w-[49%] rounded ">
               <span className="text-xl bg-zinc-400 block w-fit p-1.5 rounded-full ">
@@ -81,25 +102,35 @@ const CheckOut = () => {
             </h1>
             <div className="py-2 px-3 border mt-2.5 rounded border-zinc-400">
               <div className="flex items-center justify-between">
-                <h1 className="text-zinc-500 font-semibold capitalize tracking-tight ">corn pizza X 1</h1>
+                <h1 className="text-zinc-500 font-semibold capitalize tracking-tight ">
+                  corn pizza X 1
+                </h1>
                 <h1 className="font-semibold text-zinc-600">₹199.00</h1>
               </div>
               <div className="flex items-center justify-between mt-3.5">
-                <h1 className=" font-semibold capitalize tracking-tight ">subtotal</h1>
+                <h1 className=" font-semibold capitalize tracking-tight ">
+                  subtotal
+                </h1>
                 <h1 className="font-semibold">₹199.00</h1>
               </div>
               <div className="flex items-center justify-between mt-1.5">
-                <h1 className=" font-semibold  text-zinc-500 capitalize tracking-tight ">delivery</h1>
+                <h1 className=" font-semibold  text-zinc-500 capitalize tracking-tight ">
+                  delivery
+                </h1>
                 <h1 className="font-semibold text-zinc-500">₹40.00</h1>
               </div>
               <div className="flex items-center justify-between mt-1.5">
-                <h1 className=" font-semibold  text-red-500 capitalize tracking-tight ">total</h1>
+                <h1 className=" font-semibold  text-red-500 capitalize tracking-tight ">
+                  total
+                </h1>
                 <h1 className="font-semibold text-red-500">₹239.00</h1>
               </div>
             </div>
           </div>
 
-          <button className="mt-5 bg-red-500 py-3 w-full rounded text-white capitalize font-semibold  ">place order</button>
+          <button className="mt-5 bg-red-500 py-3 w-full rounded text-white capitalize font-semibold  ">
+            place order
+          </button>
         </div>
       </div>
     </div>

@@ -1,6 +1,3 @@
-//user, paymentMethod, deliveryAddress=>text,latitude,longitude, totalAmount, shopOder
-//shopOderSchema=shop, owner, subtotal, shopOrderItems
-//item,price,quantityj
 import mongoose from "mongoose"
 
 const shopItemOrderSchema = new mongoose.Schema({

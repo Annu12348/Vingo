@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCity } from "../redux/reducer/AuthenticationSlice";
+import { setAddress, setLocation } from "../redux/reducer/MapReducer";
 
 const LiveLocation = () => {
   const dispatch = useDispatch();
@@ -13,11 +14,12 @@ const LiveLocation = () => {
     navigator.geolocation.getCurrentPosition(async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
-
+      dispatch(setLocation({lat: latitude, lon:longitude}))
       const response = await axios.get(
         `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apiKey}`
       );
       dispatch(setCity(response.data.results[0]))
+      dispatch(setAddress(response.data.results[0].address_line2))
     });
   }, [user]);
   return <div></div>;

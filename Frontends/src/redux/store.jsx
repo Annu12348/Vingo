@@ -13,6 +13,7 @@ import {
 } from 'redux-persist';
 import ShopReducer from './reducer/ShopReducer';
 import ItemReducer from './reducer/ItemReducer';
+import  MapReducer  from './reducer/MapReducer';
 
 const persistConfig = {
   key: 'Vingo_root',
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
   Auth: AuthenticationReducer,
   Shop: ShopReducer,
   Item: ItemReducer,
+  Map: MapReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
