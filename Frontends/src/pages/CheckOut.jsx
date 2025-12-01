@@ -13,6 +13,9 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 const CheckOut = () => {
   const { location } = useSelector((store) => store.Map);
   const { address } = useSelector((store) => store.Map);
+  const onDragend = (e) => {
+    console.log(e)
+  }
   return (
     <div className="min-h-screen w-full bg-fuchsia-500 py-1 ">
       <Link to="/cart" className="text-2xl text-zinc-600 mt-2 ml-3 block ">
@@ -56,7 +59,7 @@ const CheckOut = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              <Marker position={[location.lat, location.lon]}>
+              <Marker position={[location.lat, location.lon]} draggable eventHandlers={{dragend:onDragend}}>
                 <Popup>
                   A pretty CSS3 popup. <br /> Easily customizable.
                 </Popup>
