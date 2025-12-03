@@ -74,7 +74,6 @@ const UserShopCity = () => {
           `/item/fetchByCity-City/${city.city}`,
           { withCredentials: true }
         );
-        console.log(response.data.items);
         dispatch(setitemByCity(response.data.items));
       } catch (error) {
         console.error(error);

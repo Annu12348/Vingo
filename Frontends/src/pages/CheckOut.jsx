@@ -7,17 +7,48 @@ import { MdMyLocation } from "react-icons/md";
 import { RiSecurePaymentFill } from "react-icons/ri";
 import { FaMobile } from "react-icons/fa";
 import { MdPayment } from "react-icons/md";
-import { useSelector } from "react-redux";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { useDispatch, useSelector } from "react-redux";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
+import { setAddress, setLocation } from "../redux/reducer/MapReducer";
+import axios from "axios";
 
+const RecenterMap = ({ location }) => {
+  if (location.lat && location.lon) {
+    const map = useMap();
+    map.setView([location.lat, location.lon], 13, { animate: true });
+  }
+  return null;
+};
+ 
 const CheckOut = () => {
   const { location } = useSelector((store) => store.Map);
   const { address } = useSelector((store) => store.Map);
+  console.log(location, address)
+  const dispatch = useDispatch();
+
+  
+
   const onDragend = (e) => {
-    console.log(e)
+    const { lat, lng } = e.target._latlng;
+    dispatch(setLocation({ lat: lat, lon: lng }));
+    getAddressByLatLng(lat, lng)
+  };
+
+  const getAddressByLatLng = async (lat, lng) => {
+    try {
+      const apiKey = import.meta.env.VITE_GEOAPIFY_APIKEY;
+      const response = await axios.get(
+        `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&format=json&apiKey=${apiKey}`
+      );
+    dispatch(setAddress(response.data.results[0].address_line2))
+    } catch (error) {
+      console.error(error)
+    }
   }
+
+  
   return (
-    <div className="min-h-screen w-full bg-fuchsia-500 py-1 ">
+    <div className="min-h-screen w-full  py-1 ">
       <Link to="/cart" className="text-2xl text-zinc-600 mt-2 ml-3 block ">
         <FaArrowLeftLong />
       </Link>
@@ -49,7 +80,7 @@ const CheckOut = () => {
             </span>
           </div>
 
-          <div className="w-full h-[26vh] border mt-5 rounded-lg border-zinc-400 flex items-center justify-center ">
+          <div className="w-full h-[26vh] overflow-hidden border mt-5 rounded-lg border-zinc-400 flex items-center justify-center ">
             <MapContainer
               className={"w-full h-full"}
               center={[location.lat, location.lon]}
@@ -59,11 +90,12 @@ const CheckOut = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              <Marker position={[location.lat, location.lon]} draggable eventHandlers={{dragend:onDragend}}>
-                <Popup>
-                  A pretty CSS3 popup. <br /> Easily customizable.
-                </Popup>
-              </Marker>
+              <RecenterMap location={location} />
+              <Marker
+                position={[location.lat, location.lon]}
+                draggable
+                eventHandlers={{ dragend: onDragend }}
+              ></Marker>
             </MapContainer>
           </div>
 

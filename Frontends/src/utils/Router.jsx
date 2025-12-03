@@ -11,6 +11,7 @@ import ItemAdd from "../pages/ItemAdd";
 import ItemUpdate from "../pages/ItemUpdate";
 import CartItem from "../pages/CartItem";
 import CheckOut from "../pages/CheckOut";
+import ProtectedItemRoutes from "../components/ProtectedItemRoutes";
 
 const Router = () => {
   return (
@@ -72,7 +73,9 @@ const Router = () => {
         path="/check-out"
         element={
           <ProtectedRoutes>
-            <CheckOut />
+            <ProtectedItemRoutes>
+              <CheckOut />
+            </ProtectedItemRoutes>
           </ProtectedRoutes>
         }
       />
