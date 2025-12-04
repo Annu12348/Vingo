@@ -33,7 +33,7 @@ const CartItem = () => {
                   total amount
                 </h1>
                 <h1 className="text-xl font-semibold capitalize tracking-tight leading-none text-red-600">
-                  {totalAmount}
+                ₹{totalAmount}
                 </h1>
               </div>
               <div className="w-full flex items-center justify-end ">
