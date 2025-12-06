@@ -12,6 +12,8 @@ import ItemUpdate from "../pages/ItemUpdate";
 import CartItem from "../pages/CartItem";
 import CheckOut from "../pages/CheckOut";
 import ProtectedItemRoutes from "../components/ProtectedItemRoutes";
+import PlaceOrder from "../pages/placeOrder";
+import MyOrder from "../pages/MyOrder";
 
 const Router = () => {
   return (
@@ -76,6 +78,26 @@ const Router = () => {
             <ProtectedItemRoutes>
               <CheckOut />
             </ProtectedItemRoutes>
+          </ProtectedRoutes>
+        }
+      />
+
+      <Route
+        path="/place-order"
+        element={
+          <ProtectedRoutes>
+            <ProtectedItemRoutes>
+              <PlaceOrder />
+            </ProtectedItemRoutes>
+          </ProtectedRoutes>
+        }
+      />
+
+      <Route
+        path="/my-order"
+        element={
+          <ProtectedRoutes>
+            <MyOrder />
           </ProtectedRoutes>
         }
       />

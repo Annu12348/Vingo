@@ -95,7 +95,7 @@ const CreatedShop = () => {
           <form className="w-full mt-2" onSubmit={submitHandler}>
             <div className="flex flex-col  ">
               <label className="font-semibold capitalize tracking-tight ">
-                name
+                Shop Name
               </label>
               <input
                 className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300  font-semibold mt-1"

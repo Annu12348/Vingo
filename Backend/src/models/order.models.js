@@ -3,13 +3,17 @@ import mongoose from "mongoose"
 const shopItemOrderSchema = new mongoose.Schema({
     item: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Item"
+        ref: "Item",
+        required: true
     },
     price: {
         type: Number
     },
-    quantity: {
+    quantity: { 
         type: Number
+    },
+    name: {
+        type: String
     }
 }, {timestamps: true})
 
@@ -22,10 +26,10 @@ const shopOrderSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
-    subTotal: {
+    subtotal: {
         type: Number
     },
-    shopItem: [shopItemOrderSchema]
+    shopOrderItem: [shopItemOrderSchema]
 }, {timestamps: true})
 
 const orderSehema = new mongoose.Schema({
@@ -35,7 +39,7 @@ const orderSehema = new mongoose.Schema({
     },
     paymentMethod: {
         type: String,
-        enum: ["case payment", "online payment"]
+        enum: ["cod", "online"]
     },
     deliveryAddress: {
         text: String,
@@ -45,7 +49,7 @@ const orderSehema = new mongoose.Schema({
     totalAmount: {
         type: Number,
     },
-    shopOder: [shopOrderSchema]
+    shopOders: [shopOrderSchema]
 }, {timestamps: true})
 
 const orderModel = mongoose.model("order", orderSehema);

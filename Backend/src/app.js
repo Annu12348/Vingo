@@ -3,6 +3,7 @@ const app = express();
 import authRoutes from "./routes/auth.routes.js";
 import shopRoutes from "./routes/shop.routes.js";
 import itemRoutes from "./routes/item.routes.js";
+import orderRoutes from "./routes/order.routes.js"
 import cookiParser from "cookie-parser";
 import cors from "cors";
 
@@ -18,5 +19,6 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/shop", shopRoutes);
 app.use("/item", itemRoutes);
+app.use("/order", orderRoutes);
 
 export default app;

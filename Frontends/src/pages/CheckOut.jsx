@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { CiSearch } from "react-icons/ci";
@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { setAddress, setLocation } from "../redux/reducer/MapReducer";
 import axios from "axios";
+import instance from "../utils/axios";
 
 const RecenterMap = ({ location }) => {
   if (location.lat && location.lon) {
@@ -31,6 +32,7 @@ const CheckOut = () => {
   const { totalAmount } = useSelector((store) => store.Item);
   const deliveryFees = totalAmount>500?0:40
   const totalAmountWithDeliveryFees = totalAmount+deliveryFees
+  const navigate = useNavigate()
 
   const onDragend = (e) => {
     const { lat, lng } = e.target._latlng;
@@ -76,13 +78,34 @@ const CheckOut = () => {
     }
   };
 
+  const handlerPlaceOrder = async () => {
+    try {
+      const response = await instance.post('/order/place-order', {
+        totalAmount,
+        paymentMethod: payMent,
+        cartItems,
+        deliveryAddress: {
+          text: addressInput,
+          latitude: location.lat,
+          longitude: location.lon
+        }
+      }, {
+        withCredentials: true
+      })
+      console.log(response.data.newOrder)
+      navigate("/place-order")
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     setAddressInput(address);
   }, [address]);
 
   return (
     <div className="min-h-full w-full  py-1 ">
-      <Link to="/cart" className="text-2xl text-zinc-600 mt-2 ml-3 block ">
+      <Link to="/cart" className="text-2xl text-zinc-300 mt-2 ml-3 block ">
         <FaArrowLeftLong />
       </Link>
 
@@ -149,11 +172,11 @@ const CheckOut = () => {
                 className={`p-2 flex gap-3 items-center  mt-1.5 border ${
                   payMent === "cod"
                     ? "border-red-700"
-                    : "bg-zinc-200 border-none"
+                    : "bg-zinc-100 border-none"
                 } w-full  md:w-[49%] rounded `}
                 onClick={() => setPayMent("cod")}
               >
-                <span className="text-xl bg-zinc-400 block w-fit p-1.5 rounded-full ">
+                <span className="text-xl bg-zinc-200 block w-fit p-1.5 rounded-full ">
                   <RiSecurePaymentFill />
                 </span>
                 <div>
@@ -167,14 +190,14 @@ const CheckOut = () => {
               </div>
               <div
                 onClick={() => setPayMent("online")}
-                className={`p-2 flex gap-3  items-center shadow ${
-                  payMent === "online" ? "border-red-700 border" : "bg-zinc-200"
+                className={`p-2 flex gap-3  items-center md:mt-1.5 mt-3 shadow ${
+                  payMent === "online" ? "border-red-700 border" : "bg-zinc-100"
                 } mt-1.5 w-full md:w-[50%] rounded `}
               >
-                <span className="text-xl bg-zinc-400 block text-blue-900 w-fit p-1.5 rounded-full ">
+                <span className="text-xl bg-zinc-200 block text-blue-900 w-fit p-1.5 rounded-full ">
                   <FaMobile />
                 </span>
-                <span className="text-xl bg-zinc-400 block w-fit text-blue-900 p-1.5 rounded-full ">
+                <span className="text-xl bg-zinc-200 block w-fit text-blue-900 p-1.5 rounded-full ">
                   <MdPayment />
                 </span>
                 <div>
@@ -237,7 +260,7 @@ const CheckOut = () => {
             </div>
           </div>
 
-          <button className="mt-5 bg-red-500 py-3 w-full rounded text-white capitalize font-semibold  ">
+          <button className="mt-5 cursor-pointer flex items-center justify-center bg-red-500 py-3 w-full rounded text-white capitalize font-semibold  " onClick={handlerPlaceOrder}>
             {payMent=="cod" ? "place order" : "pay & place order"}
           </button>
         </div>
