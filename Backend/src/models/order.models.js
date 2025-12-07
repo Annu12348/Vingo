@@ -49,8 +49,8 @@ const orderSehema = new mongoose.Schema({
     totalAmount: {
         type: Number,
     },
-    shopOders: [shopOrderSchema]
+    shopOrders: [shopOrderSchema]
 }, {timestamps: true})
 
-const orderModel = mongoose.model("order", orderSehema);
+const orderModel = mongoose.model("Order", orderSehema);
 export default orderModel;

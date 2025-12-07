@@ -41,7 +41,7 @@ export const placeOrderController = async (req, res) => {
       groupItemByShop[shopId].push(items);
     });
 
-    const shopOders = await Promise.all(
+    const shopOrders = await Promise.all(
       Object.keys(groupItemByShop).map(async (shopId) => {
         const shop = await shopModel.findById(shopId).populate("owner");
 
@@ -75,7 +75,7 @@ export const placeOrderController = async (req, res) => {
       deliveryAddress,
       totalAmount,
       cartItems,
-      shopOders,
+      shopOrders,
       paymentMethod,
     });
 
@@ -92,12 +92,18 @@ export const placeOrderController = async (req, res) => {
 
 export const getUserOrderController = async (req, res) => {
   try {
+    if (req.user.role !== "user") {
+      return res.status(403).json({
+        message: "Access denied: user only"
+      })
+    }
+
     const orders = await orderModel
       .find({ user: req.user._id })
       .sort({ createdAt: -1 })
-      .populate("shopOders.shop", "shopName")
-      .populate("shopOders.owner", "email contact FullName")
-      .populate("shopOders.shopOrderItem.item", "name image price");
+      .populate("shopOrders.shop", "shopName image")
+      .populate("shopOrders.owner", "email contact fullname role")
+      .populate("shopOrders.shopOrderItem.item", "foodName image price");
 
     res.status(200).json({
       message: "user order successfully fetched data",
@@ -109,45 +115,58 @@ export const getUserOrderController = async (req, res) => {
     });
   }
 };
+/*
+export const getOwnerOrderController = async (req, res) => {
+  try {
+    if (req.user.role !== "owner") {
+      return res.status(403).json({
+        message: "Access denied: Shop Owners only"
+      })
+    }
 
+    const orders = await orderModel
+      .find({ "shopOrders.owner": req.user._id })
+      .sort({ createdAt: -1 })
+      .populate("shopOrders.shop", "shopName image")
+      .populate("user")
+      .populate("shopOrders.shopOrderItem.item", "name image price");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    res.status(200).json({
+      message: "owner order successfully fetched data",
+      orders,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `get user order ${error}`,
+    });
+  }
+};
+*/
 
 
 
 export const getOwnerOrderController = async (req, res) => {
-    try {  
-        const orders = await orderModel
-        .find({ "shopOrders.owner": req.user._id })
-        .sort({ createdAt: -1 })
-        .populate("shopOrders.shop", "shopName")
-        .populate("user")
-        .populate("shopOrders.shopOrderItem.item", "name image price");
-  
-      res.status(200).json({
-        message: "owner order successfully fetched data",
-        orders,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: `get user order ${error}`,
+  try {
+    if (req.user.role !== "owner") {
+      return res.status(403).json({
+        message: "Access denied: Shop Owners only"
       });
     }
-  };
-  
+
+    const orders = await orderModel
+      .find({ "shopOrders.owner": req.user._id.toString() })
+      .sort({ createdAt: -1 })
+      .populate("shopOrders.shop", "shopName image")
+      .populate("user")
+      .populate("shopOrders.shopOrderItem.item", "name image price");
+
+    res.status(200).json({
+      message: "owner order successfully fetched data",
+      orders,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `get user order ${error}`,
+    });
+  }
+};

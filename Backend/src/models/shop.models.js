@@ -12,7 +12,7 @@ const shopSchema = new mongoose.Schema(
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       required: true,
     },
     city: {
@@ -37,5 +37,5 @@ const shopSchema = new mongoose.Schema(
   }
 );
 
-const shopModel = mongoose.model("shop", shopSchema);
+const shopModel = mongoose.model("Shop", shopSchema);
 export default shopModel;

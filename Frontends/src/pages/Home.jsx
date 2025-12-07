@@ -13,7 +13,7 @@ const Home = () => {
   return (
     <div className="w-full md:px-2 md:py-2 py-0.5 min-h-full">
       <Navigation />
-      <div className="w-full min-h-[40vh] px-25 mt-20 ">
+      <div className="w-full min-h-[40vh]  px-25 mt-20 ">
         {user?.role === "user" && (
           <div className="w-full">
             <UserDetails />

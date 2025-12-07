@@ -82,11 +82,11 @@ const UserShopCity = () => {
     shopByCityApi();
   }, [city.city]);
   return (
-    <div className="w-full mt-5 ">
+    <div className="w-full mt-5  ">
       <h1 className="text-xl capitalize font-bold tracking-tight leading-none ">
         best shop in {city?.city}
       </h1>
-      <div className="w-full relative  ">
+      <div className="w-full relative   ">
         {showLeft && (
           <button
             onClick={scrollLeft}
