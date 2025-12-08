@@ -1,56 +1,70 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-const shopItemOrderSchema = new mongoose.Schema({
+const shopItemOrderSchema = new mongoose.Schema(
+  {
     item: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Item",
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Item",
+      required: true,
     },
     price: {
-        type: Number
+      type: Number,
     },
-    quantity: { 
-        type: Number
+    quantity: {
+      type: Number,
     },
     name: {
-        type: String
-    }
-}, {timestamps: true})
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
 
-const shopOrderSchema = new mongoose.Schema({
+const shopOrderSchema = new mongoose.Schema(
+  {
     shop: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Shop",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Shop",
     },
     owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     subtotal: {
-        type: Number
+      type: Number,
     },
-    shopOrderItem: [shopItemOrderSchema]
-}, {timestamps: true})
+    shopOrderItem: [shopItemOrderSchema],
+  },
+  { timestamps: true }
+);
 
-const orderSehema = new mongoose.Schema({
+const orderSehema = new mongoose.Schema(
+  {
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     paymentMethod: {
-        type: String,
-        enum: ["cod", "online"]
+      type: String,
+      enum: ["cod", "online"],
     },
     deliveryAddress: {
-        text: String,
-        latitude: Number,
-        longitude: Number,
+      text: String,
+      latitude: Number,
+      longitude: Number,
     },
     totalAmount: {
-        type: Number,
+      type: Number,
     },
-    shopOrders: [shopOrderSchema]
-}, {timestamps: true})
+    status: {
+      type: String,
+      enum: ["pending", "preparing", "delivered", "out of delivery"],
+      default: "pending",
+    },
+    shopOrders: [shopOrderSchema],
+  },
+  { timestamps: true }
+);
 
 const orderModel = mongoose.model("Order", orderSehema);
 export default orderModel;

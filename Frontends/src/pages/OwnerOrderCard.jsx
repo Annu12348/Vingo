@@ -1,9 +1,9 @@
 import React from 'react'
 
-const OwnerOrderCard = () => {
+const OwnerOrderCard = ({}) => {
   return (
     <div>
-      OwnerOrderCard
+      Owner
     </div>
   )
 }

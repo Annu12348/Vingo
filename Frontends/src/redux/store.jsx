@@ -14,6 +14,7 @@ import {
 import ShopReducer from './reducer/ShopReducer';
 import ItemReducer from './reducer/ItemReducer';
 import  MapReducer  from './reducer/MapReducer';
+import  OrderReducer  from './reducer/OrderReducer';
 
 const persistConfig = {
   key: 'Vingo_root',
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   Shop: ShopReducer,
   Item: ItemReducer,
   Map: MapReducer,
+  Order: OrderReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
