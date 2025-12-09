@@ -3,13 +3,15 @@ import OwnerOrderCard from "./OwnerOrderCard";
 import UserOrderCard from "./UserOrderCard";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
-import { setUserOrders } from "../redux/reducer/OrderReducer";
+import { setOwnerOrders, setUserOrders } from "../redux/reducer/OrderReducer";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
 const MyOrder = () => {
   const { user } = useSelector((store) => store.Auth);
   const { userOrders } = useSelector((store) => store.Order);
+  const { ownerOrders } = useSelector((store) => store.Order);
+  console.log(ownerOrders)
   const dispatch = useDispatch();
 
   const getUserOrderApi = async () => {
@@ -28,18 +30,19 @@ const MyOrder = () => {
       const response = await instance.get("/order/owner-order-fetch", {
         withCredentials: true,
       });
-
-      console.log(response.data.orders); // ✅ store owner orders
-    } catch (error) {}
+      dispatch(setOwnerOrders(response.data.filteredOrders));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
-    if (user.role === "user") {
+    if (user?.role === "user") {
       getUserOrderApi();
-    } else if (user.role === "owner") {
+    } else if (user?.role === "owner") {
       getOwnerOrderApi();
     }
-  }, [user.role]);
+  }, [user?.role]);
 
   return (
     <div className="w-full min-h-screen p-2">
@@ -52,13 +55,15 @@ const MyOrder = () => {
         </h1>
       </div>
       <div className=" w-full  flex flex-col gap-2 items-center  justify-center  ">
-        
-          {user.role == "user" &&
-            userOrders.map((order) => (
+        {user.role == "user"
+          ? userOrders?.map((order) => (
               <UserOrderCard data={order} key={order._id} />
             ))
-          }
-        
+          : user.role == "owner"
+          ? ownerOrders?.map((ownerOrder, idx) => (
+              <OwnerOrderCard data={ownerOrder} key={ownerOrder._id} />
+            ))
+          : null}
       </div>
     </div>
   );

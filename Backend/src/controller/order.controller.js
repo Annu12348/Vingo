@@ -94,8 +94,8 @@ export const getUserOrderController = async (req, res) => {
   try {
     if (req.user.role !== "user") {
       return res.status(403).json({
-        message: "Access denied: user only"
-      })
+        message: "Access denied: user only",
+      });
     }
 
     const orders = await orderModel
@@ -115,41 +115,12 @@ export const getUserOrderController = async (req, res) => {
     });
   }
 };
-/*
-export const getOwnerOrderController = async (req, res) => {
-  try {
-    if (req.user.role !== "owner") {
-      return res.status(403).json({
-        message: "Access denied: Shop Owners only"
-      })
-    }
-
-    const orders = await orderModel
-      .find({ "shopOrders.owner": req.user._id })
-      .sort({ createdAt: -1 })
-      .populate("shopOrders.shop", "shopName image")
-      .populate("user")
-      .populate("shopOrders.shopOrderItem.item", "name image price");
-
-    res.status(200).json({
-      message: "owner order successfully fetched data",
-      orders,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: `get user order ${error}`,
-    });
-  }
-};
-*/
-
-
 
 export const getOwnerOrderController = async (req, res) => {
   try {
     if (req.user.role !== "owner") {
       return res.status(403).json({
-        message: "Access denied: Shop Owners only"
+        message: "Access denied: Shop Owners only",
       });
     }
 
@@ -160,9 +131,21 @@ export const getOwnerOrderController = async (req, res) => {
       .populate("user")
       .populate("shopOrders.shopOrderItem.item", "name image price");
 
+      const filteredOrders = orders.map((order) => ({
+        _id: order._id,
+        paymentMethod: order.paymentMethod,
+        user: order.user,
+        createdAt: order.createdAt,
+        shopOrders: order.shopOrders.filter(
+          shopOrder => shopOrder.owner && shopOrder.owner._id.toString() === req.user._id.toString()
+        ),
+        deliveryAddress: order.deliveryAddress
+      }));
+
+
     res.status(200).json({
       message: "owner order successfully fetched data",
-      orders,
+      filteredOrders,
     });
   } catch (error) {
     res.status(500).json({
