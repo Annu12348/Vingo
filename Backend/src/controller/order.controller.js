@@ -139,7 +139,8 @@ export const getOwnerOrderController = async (req, res) => {
         shopOrders: order.shopOrders.filter(
           shopOrder => shopOrder.owner && shopOrder.owner._id.toString() === req.user._id.toString()
         ),
-        deliveryAddress: order.deliveryAddress
+        deliveryAddress: order.deliveryAddress,
+        status: order.status
       }));
 
 
