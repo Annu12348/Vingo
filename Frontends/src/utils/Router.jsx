@@ -12,7 +12,7 @@ import ItemUpdate from "../pages/ItemUpdate";
 import CartItem from "../pages/CartItem";
 import CheckOut from "../pages/CheckOut";
 import ProtectedItemRoutes from "../components/ProtectedItemRoutes";
-import PlaceOrder from "../pages/placeOrder";
+import PlaceOrder from "../pages/PlaceOrder";
 import MyOrder from "../pages/MyOrder";
 
 const Router = () => {
