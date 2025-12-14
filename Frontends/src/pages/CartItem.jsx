@@ -8,7 +8,7 @@ const CartItem = () => {
   const { cartItems } = useSelector((store) => store.Item);
   const { totalAmount } = useSelector((store) => store.Item);
   return (
-    <div className="w-full min-h-screen bg-amber-50  flex items-start justify-center ">
+    <div className="w-full min-h-screen  flex items-start justify-center ">
       <div className="md:w-[50%] w-full md:mt-6  p-2">
         <div className="text-2xl text-zinc-700 flex gap-4 ">
           <Link to="/">

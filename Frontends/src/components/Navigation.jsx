@@ -55,9 +55,9 @@ const Navigation = () => {
         >
           vingo
         </Link>
-        <div className="flex w-[100%] items-center justify-end ">
+        <div className="flex w-full items-center justify-end ">
           {user && user.role == "user" && (
-            <div className="shadow bg-zinc-100 rounded md:mr-13 p-1.5 flex items-center justify-between w-[100%]   md:w-[59.5%]">
+            <div className="shadow bg-zinc-100 rounded md:mr-13 p-1.5 flex items-center justify-between w-full   md:w-[59.5%]">
               <div className="flex items-center  gap-1">
                 <span className="text-xl text-[rgb(240,107,41)] ">
                   <FaLocationDot />
@@ -102,7 +102,7 @@ const Navigation = () => {
                 </Link>
                 <Link
                   to="/add-food"
-                  className="text-md p-1 md:hidden  bg-zinc-300 rounded-full text-red-950 text-2xl  block"
+                  className="text-md p-1 md:hidden   bg-zinc-300 rounded-full text-red-950 text-2xl  block"
                 >
                   <IoMdAdd />
                 </Link>

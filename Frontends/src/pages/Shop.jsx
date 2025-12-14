@@ -61,9 +61,9 @@ const Shop = () => {
   }, [shop]);
 
   return (
-    <div className="w-full  md:px-5 px-3 pb-6 md:mt-15.5 mt-19 min-h-[30vh] flex items-start justify-center ">
+    <div className="w-full  md:px-5 px-2    pb-6   min-h-[30vh] flex items-start justify-center ">
       {user.role === "owner" && shop.length <= 0 && (
-        <div className="md:w-[24%] w-full shadow bg-zinc-100 p-3 flex-col flex items-center justify-center rounded ">
+        <div className="md:w-[35%]   shadow bg-zinc-100 p-3 flex-col flex items-center justify-center rounded ">
           <div className="w-[13vh] rounded-full h-[13vh] bg-zinc-300 overflow-hidden ">
             <img
               className="w-full h-full object-cover rounded-full"
@@ -86,8 +86,8 @@ const Shop = () => {
         </div>
       )}
       {shop.length > 0 && (
-        <div className="w-full   ">
-          <div className=" flex items-center justify-center gap-3 text-3xl">
+        <div className="w-full  ">
+          <div className=" flex items-center justify-center gap-3 text-3xl md:-mt-4 mt-2.5">
             <img
               className="w-12 h-12 rounded-full object-cover "
               src="https://imgs.search.brave.com/2OHB7N8AOSzt7IXX88RuaoICC_Hycx_bpIgBH0lZw00/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/Z3JhZGllbnQtc2hv/cC1sb2NhbC1sb2dv/LWRlc2lnbl8yMy0y/MTQ5NjEzMTYwLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA"
@@ -101,7 +101,7 @@ const Shop = () => {
             {shop.map((shop) => (
               <div
                 key={shop._id}
-                className="pb-5  hover:shadow-lg md:w-[28%] w-full bg-white  rounded-lg"
+                className="pb-5  hover:shadow-lg md:w-[49%] w-full bg-white  rounded-lg"
               >
                 <div className="w-full  relative h-[31vh] rounded-t-lg bg-amber-100 group overflow-hidden">
                   <img
@@ -111,13 +111,13 @@ const Shop = () => {
                   />
                   <Link
                     to={`/shop-edit/${shop._id}`}
-                    className="text-xl absolute top-[4%] md:right-[13%] right-[16%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
+                    className="text-xl absolute top-[2%] md:right-[8%] right-[16%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
                   >
                     <FaPen />
                   </Link>
                   <button
                     onClick={() => shophandleDelete(shop._id)}
-                    className="text-xl  absolute top-[4%] right-[3%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
+                    className="text-xl  absolute top-[2%] right-[1%] text-[rgb(240,107,41)] bg-white hover:bg-zinc-200 p-2 rounded-full "
                   >
                     <MdDelete />
                   </button>

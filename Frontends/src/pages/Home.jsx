@@ -10,19 +10,24 @@ import UserShopFoodCity from "./UserShopFoodCity";
 const Home = () => {
   const { shop } = useSelector((store) => store.Shop);
   const { user } = useSelector((store) => store.Auth);
+  const { shopByCity } = useSelector((store) => store.Shop);
+  const { itemByCity } = useSelector((store) => store.Item);
+  console.log(shopByCity);
+  console.log(itemByCity);
+
   return (
-    <div className="w-full md:px-2 md:py-2 py-0.5 min-h-full">
+    <div className="w-full md:px-2  md:py-2 py-0.5 min-h-full">
       <Navigation />
-      <div className="w-full min-h-[40vh]  px-25 mt-20 ">
+      <div className="w-full min-h-[40vh]   md:px-25 md:mt-20 mt-12 ">
         {user?.role === "user" && (
-          <div className="w-full">
+          <div className="w-full ">
             <UserDetails />
-            <UserShopCity />
+            <UserShopCity /> 
             <UserShopFoodCity />
           </div>
         )}
         {user?.role === "owner" && (
-          <div>
+          <div className="w-full ">
             <Shop />
             {shop.length > 0 && <Item />}
           </div>

@@ -79,12 +79,12 @@ const ItemAdd = () => {
     shopFoodCreatedApi();
   };
   return (
-    <div className="bg-white min-h-screen w-full p-2">
-      <Link to="/" className="text-2xl text-zinc-400">
+    <div className=" bg-white min-h-screen w-full md:px-3 px-2 py-3   ">
+      <Link to="/" className="text-2xl text-zinc-400 block mb-5   ">
         <GoArrowLeft />
       </Link>
-      <div className="w-full min-h-[93vh] mt-5  flex items-center justify-center ">
-        <div className="md:w-[38%] rounded-lg px-5 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
+      <div className="w-full min-h-[93vh] md:mt-5 -mt-3  flex items-center justify-center ">
+        <div className="md:w-[38%] w-full rounded-lg md:px-5 px-2 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
           <div className="w-[10vh] rounded-full h-[10vh] bg-zinc-300 overflow-hidden ">
             <img
               className="w-full h-full object-cover rounded-full"

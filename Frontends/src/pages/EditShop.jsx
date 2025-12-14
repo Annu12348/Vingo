@@ -100,13 +100,13 @@ const EditShop = () => {
   };
 
   return (
-    <div className="w-full py-3 px-4 min-h-screen  ">
+    <div className="w-full py-3 md:px-4 px-2 min-h-screen  ">
       <Link className="text-2xl  text-zinc-500" to="/">
         <GoArrowLeft />
       </Link>
 
-      <div className="w-full p-2 mt-5 flex items-center justify-center">
-        <div className="shadow md:w-[35%] w-[100%] p-3 rounded bg-zinc-100 flex items-center justify-center flex-col ">
+      <div className="w-full md:p-2 md:mt-5 mt-3 flex items-center justify-center">
+        <div className="shadow md:w-[35%] w-full md:p-3 p-2 rounded bg-zinc-100 flex items-center justify-center flex-col ">
           <img
             className="w-15 h-15 rounded-full object-cover "
             src="https://imgs.search.brave.com/2OHB7N8AOSzt7IXX88RuaoICC_Hycx_bpIgBH0lZw00/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/Z3JhZGllbnQtc2hv/cC1sb2NhbC1sb2dv/LWRlc2lnbl8yMy0y/MTQ5NjEzMTYwLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA"

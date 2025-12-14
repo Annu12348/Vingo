@@ -59,9 +59,9 @@ const Item = () => {
   }, []);
 
   return (
-    <div className="bg-zinc-200 min-h-[29.5vh] flex-wrap rounded-2xl p-3 flex items-center gap-2 justify-center">
+    <div className=" min-h-[29.5vh]  flex-wrap rounded-2xl md:p-3 p-2.5 flex items-center gap-2 justify-center">
       {(!item || item.length <= 0) && (
-        <div className="md:w-[20%] w-full p-3 bg-white rounded-lg flex flex-col items-center justify-center">
+        <div className="md:w-[29%] w-full p-3 bg-white rounded-lg flex flex-col items-center justify-center">
           <img
             className="w-[12vh] h-[12vh] object-cover rounded-full"
             src="https://plus.unsplash.com/premium_photo-1668543548900-3b3ded85154c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&q=60&w=600"
@@ -87,7 +87,7 @@ const Item = () => {
         item.map((items) => (
           <div
             key={items._id}
-            className="hover:shadow-lg md:w-[30%] w-full relative bg-white rounded-lg overflow-hidden flex gap-2 items-center"
+            className="hover:shadow-lg  md:w-[30%] w-full relative bg-white rounded-lg overflow-hidden flex gap-2 items-center"
           >
             <img
               className="w-[36%] object-cover h-[16vh]"

@@ -118,7 +118,7 @@ const CreatedShop = () => {
                 shop image
               </label>
               <input
-                className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1"
+                className="text-zinc-500 cursor-pointer border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1"
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
@@ -199,7 +199,7 @@ const CreatedShop = () => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-[rgb(240,107,41)] flex items-center justify-center capitalize w-full mt-5 py-2.5 rounded-lg text-white font-semibold "
+              className="bg-[rgb(240,107,41)] flex cursor-pointer items-center justify-center capitalize w-full mt-5 py-2.5 rounded-lg text-white font-semibold "
             >
               {loading ? (
                 <div className="w-5 h-5 border-white border-b-3 border-t-3 animate-spin rounded-full  "></div>

@@ -98,12 +98,12 @@ const ItemUpdate = () => {
     shopFoodUpdateApi();
   };
   return (
-    <div className="bg-white min-h-screen w-full p-2">
+    <div className="bg-white min-h-screen w-full px-2 py-2 ">
       <Link to="/" className="text-2xl text-zinc-400">
         <GoArrowLeft />
       </Link>
-      <div className="w-full min-h-[93vh] md:mt-2 mt-3 flex items-center justify-center ">
-        <div className="md:w-[38%] w-full rounded-lg px-5 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
+      <div className="w-full min-h-[93vh] md:mt-2  mt-3 flex items-center justify-center ">
+        <div className="md:w-[38%] w-full rounded-lg md:px-5 px-2 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
           <div className="w-[10vh] rounded-full h-[10vh] bg-zinc-300 overflow-hidden ">
             <img
               className="w-full h-full object-cover rounded-full"

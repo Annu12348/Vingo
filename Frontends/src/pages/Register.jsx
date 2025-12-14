@@ -240,7 +240,7 @@ const Register = () => {
             </p>
           )}
           <button
-            className={`bg-[rgb(240,107,41)] mt-3 hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none flex items-center justify-center `}
+            className={`bg-[rgb(240,107,41)] mt-3 cursor-pointer hover:bg-[rgb(222,140,99)] w-full rounded p-3 text-white font-semibold capitalize tracking-tight leading-none flex items-center justify-center `}
             type="submit"
             disabled={loading}
           >
