@@ -3,6 +3,7 @@ import {
   getOwnerOrderController,
   getUserOrderController,
   placeOrderController,
+  statusChangesController,
 } from "../controller/order.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
 const router = express.Router();
@@ -17,6 +18,12 @@ router.get(
   "/owner-order-fetch",
   authenticationMiddleware,
   getOwnerOrderController
+);
+
+router.get(
+  "/owner-order-fetch/:orderId/:shopId",
+  //authenticationMiddleware,
+  statusChangesController
 );
 
 export default router;

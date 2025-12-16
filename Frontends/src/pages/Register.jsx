@@ -245,9 +245,7 @@ const Register = () => {
             disabled={loading}
           >
             {loading ? (
-              
-                <div className="w-6 h-6 animate-spin border-b-3 border-t-3  rounded-full "></div>
-              
+              <div className="w-6 h-6 animate-spin border-b-3 border-t-3  rounded-full "></div>
             ) : (
               "sign up"
             )}
@@ -255,7 +253,7 @@ const Register = () => {
         </form>
         <button
           onClick={handleGoogleAuth}
-          className="text-black hover:bg-zinc-200 capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-3 border-zinc-300 gap-2  border-1"
+          className="text-black hover:bg-zinc-200 capitalize font-semibold flex items-center w-full justify-center py-2 rounded-lg mt-3 border-zinc-300 gap-2  border"
         >
           <span className="text-xl mt-0.5">
             <FcGoogle />

@@ -154,3 +154,37 @@ export const getOwnerOrderController = async (req, res) => {
     });
   }
 };
+
+export const statusChangesController = async (req, res) => {
+  try {
+    const { orderId, shopId } = req.params;
+    const { status } = req.body
+
+    const order = await orderModel.findById(orderId);
+    if(!order) {
+      return res.status(404).json({
+        message: "order not found"
+      })
+    }
+
+    const shopOrder = order.shopOrders.find(ord => ord.shop == shopId);
+    if(!shopOrder) {
+      return res.status(404).json({
+        message: "shop order not found"
+      })
+    }
+
+    shopOrder.status = status;
+    await shopOrder.save()
+    await shopOrder.populate("shpopOrderItem.item", "image, name, price")
+
+    res.status(200).json({
+      message: "successfully status changes",
+      shopOrder,
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: `order status changes erroe : ${error}`,
+    })
+  }
+}
