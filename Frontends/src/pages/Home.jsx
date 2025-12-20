@@ -10,10 +10,6 @@ import UserShopFoodCity from "./UserShopFoodCity";
 const Home = () => {
   const { shop } = useSelector((store) => store.Shop);
   const { user } = useSelector((store) => store.Auth);
-  const { shopByCity } = useSelector((store) => store.Shop);
-  const { itemByCity } = useSelector((store) => store.Item);
-  console.log(shopByCity);
-  console.log(itemByCity);
 
   return (
     <div className="w-full md:px-2  md:py-2 py-0.5 min-h-full">

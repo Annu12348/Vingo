@@ -176,7 +176,7 @@ export const statusChangesController = async (req, res) => {
 
     shopOrder.status = status;
     await shopOrder.save()
-    await shopOrder.populate("shpopOrderItem.item", "image, name, price")
+    await order.save()
 
     res.status(200).json({
       message: "successfully status changes",

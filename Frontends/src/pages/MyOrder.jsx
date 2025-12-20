@@ -37,11 +37,13 @@ const MyOrder = () => {
   };
 
   useEffect(() => {
-    if (user?.role === "user") {
+    if (!user?.role) return;
+    if (user.role === "user") {
       getUserOrderApi();
-    } else if (user?.role === "owner") {
+    } else if (user.role === "owner") {
       getOwnerOrderApi();
     }
+    // eslint-disable-next-line
   }, [user?.role]);
 
   return (
@@ -61,7 +63,7 @@ const MyOrder = () => {
             ))
           : user.role == "owner"
           ? ownerOrders?.map((ownerOrder, idx) => (
-              <OwnerOrderCard data={ownerOrder} key={ownerOrder._id} />
+              <OwnerOrderCard data={ownerOrder} key={idx} />
             ))
           : null}
       </div>

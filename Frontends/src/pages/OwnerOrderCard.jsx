@@ -1,7 +1,22 @@
 import React from "react";
 import { MdOutlineLocalPhone } from "react-icons/md";
+import instance from "../utils/axios";
 
 const OwnerOrderCard = ({ data }) => {
+  console.log(data)
+  const handlerUpdateStatus = async (orderId, shopId, status) => {
+    try {
+      const response = await instance.post(
+        `/owner-order-fetch/${orderId}/${shopId}`,
+        { status },
+        { withCredentials: true }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="md:w-[55%] w-full bg-white rounded py-2 px-3 shadow pb-5">
       <div className="w-full mt-1">
@@ -60,7 +75,8 @@ const OwnerOrderCard = ({ data }) => {
         </h1>
 
         <select
-          value={data.status}
+        value={data.status}
+          onChange={(e) => handlerUpdateStatus(data._id, data.shopOrders[0].shop._id, e.target.value)}
           className="border-2 rounded px-2 capitalize font-semibold py-1 focus:border-red-900 outline-none border-zinc-500"
         >
           <option value="pending">pending</option>
@@ -71,9 +87,11 @@ const OwnerOrderCard = ({ data }) => {
       </div>
 
       <div className="flex items-center justify-end mt-2">
-      {data.shopOrders.map((total) => (
-        <h1 className="text-md font-bold capitalize tracking-tight">total : {total.subtotal}</h1>
-      ))}
+        {data.shopOrders.map((total) => (
+          <h1 className="text-md font-bold capitalize tracking-tight">
+            total : {total.subtotal}
+          </h1>
+        ))}
       </div>
     </div>
   );

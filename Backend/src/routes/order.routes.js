@@ -20,9 +20,9 @@ router.get(
   getOwnerOrderController
 );
 
-router.get(
+router.post(
   "/owner-order-fetch/:orderId/:shopId",
-  //authenticationMiddleware,
+  authenticationMiddleware,
   statusChangesController
 );
 
