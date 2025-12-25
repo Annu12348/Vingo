@@ -34,6 +34,12 @@ const shopOrderSchema = new mongoose.Schema(
       type: Number,
     },
     shopOrderItem: [shopItemOrderSchema],
+
+    status: {
+      type: String,
+      enum: ["pending", "accepted", "preparing", "delivered", "cancelled"],
+      default: "preparing",
+    },
   },
   { timestamps: true }
 );
@@ -56,11 +62,7 @@ const orderSehema = new mongoose.Schema(
     totalAmount: {
       type: Number,
     },
-    status: {
-      type: String,
-      enum: ["pending", "preparing", "delivered", "out of delivery"],
-      default: "pending",
-    },
+
     shopOrders: [shopOrderSchema],
   },
   { timestamps: true }

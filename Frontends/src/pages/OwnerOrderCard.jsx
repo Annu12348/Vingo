@@ -1,19 +1,35 @@
 import React from "react";
 import { MdOutlineLocalPhone } from "react-icons/md";
 import instance from "../utils/axios";
+import { useDispatch, useSelector } from "react-redux";
+import { ownerUpdateOrderStatus, userUpdateOrderStatus } from "../redux/reducer/OrderReducer";
 
 const OwnerOrderCard = ({ data }) => {
-  console.log(data)
+  const dispatch = useDispatch();
+  const { ownerOrders } = useSelector((store) => store.Order);
+
+  console.log("CARD DATA STATUS:", data.shopOrders[0].status, "owner ka data direct console status ", ownerOrders);
+
+
   const handlerUpdateStatus = async (orderId, shopId, status) => {
     try {
+      if (!orderId || !shopId) {
+        console.error("Missing IDs", { orderId, shopId });
+        return;
+      }
+    
+      console.log("status ka data hai upade part", orderId, shopId, status);
+
+
       const response = await instance.post(
-        `/owner-order-fetch/${orderId}/${shopId}`,
+        `/order/owner-order-fetch/${orderId}/${shopId}`,
         { status },
         { withCredentials: true }
       );
       console.log(response.data);
+      dispatch(ownerUpdateOrderStatus({orderId, shopId, status}))
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
   };
 
@@ -49,7 +65,7 @@ const OwnerOrderCard = ({ data }) => {
           shop.shopOrderItem.map((item) => (
             <div
               key={item._id}
-              className="w-[24%] border border-zinc-300 shadow rounded p-1"
+              className="md:w-[24%] w-[48.8%] border border-zinc-300 shadow rounded p-1"
             >
               <img
                 className=" w-full h-[14vh] object-cover rounded "
@@ -71,24 +87,26 @@ const OwnerOrderCard = ({ data }) => {
 
       <div className="mt-2 flex items-center justify-between ">
         <h1 className="text-md capitalize font-semibold ">
-          status : <span className="text-[#de4f4fdd]">{data.status}</span>
+          status : <span className="text-[#de4f4fdd]">{data.shopOrders?.[0].status}</span>
         </h1>
 
         <select
-        value={data.status}
-          onChange={(e) => handlerUpdateStatus(data._id, data.shopOrders[0].shop._id, e.target.value)}
+        
+          onChange={(e) => handlerUpdateStatus(data._id, data.shopOrders?.[0]?.shop?._id, e.target.value)}
           className="border-2 rounded px-2 capitalize font-semibold py-1 focus:border-red-900 outline-none border-zinc-500"
         >
+          <option value="">change status</option>
           <option value="pending">pending</option>
+          <option value="accepted">accepted</option>
           <option value="preparing">preparing</option>
           <option value="delivered">delivered</option>
-          <option value="out of delivery">out of delivery</option>
+          <option value="cancelled">cancelled</option>
         </select>
       </div>
 
       <div className="flex items-center justify-end mt-2">
-        {data.shopOrders.map((total) => (
-          <h1 className="text-md font-bold capitalize tracking-tight">
+        {data.shopOrders.map((total, index) => (
+          <h1 key={index} className="text-md font-bold capitalize tracking-tight">
             total : {total.subtotal}
           </h1>
         ))}

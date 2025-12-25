@@ -1,6 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 const UserOrderCard = ({ data }) => {
+  const { userOrders } = useSelector((store) => store.Order);
+  console.log(userOrders)
   const formDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-GB", {
@@ -24,7 +27,7 @@ const UserOrderCard = ({ data }) => {
           Date : <span>{formDate(data.createdAt)}</span>
         </h1>
         <h1 className="text-md capitalize font-semibold text-blue-600">
-          {data.status}
+          {data.shopOrders?.[0].status}
         </h1>
       </div>
       <hr className="text-xl text-zinc-300 my-1 mt-2" />
@@ -40,7 +43,7 @@ const UserOrderCard = ({ data }) => {
               {shopOrder.shopOrderItem.map((orderItem) => (
                 <div
                   key={orderItem._id}
-                  className="p-1 border  w-[24%] rounded "
+                  className="p-1 border  md:w-[24%] w-[48.8%] rounded "
                 >
                   <img
                     className=" w-full h-[14vh] object-cover rounded "
@@ -62,7 +65,7 @@ const UserOrderCard = ({ data }) => {
                 subTotal : ₹{shopOrder.subtotal}
               </h1>
               <h1 className="text-md capitalize  font-semibold text-blue-600">
-                {data.status}
+                {data.shopOrders?.[0]?.status}
               </h1>
             </div>
           </div>

@@ -131,18 +131,19 @@ export const getOwnerOrderController = async (req, res) => {
       .populate("user")
       .populate("shopOrders.shopOrderItem.item", "name image price");
 
-      const filteredOrders = orders.map((order) => ({
-        _id: order._id,
-        paymentMethod: order.paymentMethod,
-        user: order.user,
-        createdAt: order.createdAt,
-        shopOrders: order.shopOrders.filter(
-          shopOrder => shopOrder.owner && shopOrder.owner._id.toString() === req.user._id.toString()
-        ),
-        deliveryAddress: order.deliveryAddress,
-        status: order.status
-      }));
-
+    const filteredOrders = orders.map((order) => ({
+      _id: order._id,
+      paymentMethod: order.paymentMethod,
+      user: order.user,
+      createdAt: order.createdAt,
+      shopOrders: order.shopOrders.filter(
+        (shopOrder) =>
+          shopOrder.owner &&
+          shopOrder.owner._id.toString() === req.user._id.toString()
+      ),
+      deliveryAddress: order.deliveryAddress,
+      status: order.status,
+    }));
 
     res.status(200).json({
       message: "owner order successfully fetched data",
@@ -158,33 +159,57 @@ export const getOwnerOrderController = async (req, res) => {
 export const statusChangesController = async (req, res) => {
   try {
     const { orderId, shopId } = req.params;
-    const { status } = req.body
+    const { status } = req.body;
+    const userId = req.user.id;
 
-    const order = await orderModel.findById(orderId);
-    if(!order) {
-      return res.status(404).json({
-        message: "order not found"
-      })
+    const allowStatus = [
+      "pending",
+      "accepted",
+      "preparing",
+      "delivered",
+      "cancelled",
+    ];
+
+    if (!orderId || !shopId || !userId) {
+      return res.status(400).json({
+        message: "orderId, userId and shopId are required fields.",
+      });
     }
 
-    const shopOrder = order.shopOrders.find(ord => ord.shop == shopId);
-    if(!shopOrder) {
+    if (!status || !allowStatus.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status",
+      });
+    }
+
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
       return res.status(404).json({
-        message: "shop order not found"
-      })
+        message: "order not founds.",
+      });
+    }
+
+    const shopOrder = await order.shopOrders.find(
+      (orders) =>
+        orders.shop.toString() === shopId && orders.owner.toString() === userId
+    );
+
+    if (!shopOrder) {
+      return res.status(403).json({
+        message: "You are not authorized to update this shop order",
+      });
     }
 
     shopOrder.status = status;
     await shopOrder.save()
-    await order.save()
+    await order.save();
 
-    res.status(200).json({
-      message: "successfully status changes",
-      shopOrder,
-    })
+    res.status(200).json(shopOrder.status);
   } catch (error) {
     res.status(500).json({
-      message: `order status changes erroe : ${error}`,
-    })
+      message: `Updated Status Error: ${error.message}`,
+    });
   }
-}
+};
+//1 hourse completed
