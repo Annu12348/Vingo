@@ -202,7 +202,7 @@ export const statusChangesController = async (req, res) => {
     }
 
     shopOrder.status = status;
-    await shopOrder.save()
+    order.markModified(shopOrder)
     await order.save();
 
     res.status(200).json(shopOrder.status);

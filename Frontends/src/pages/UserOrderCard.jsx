@@ -2,6 +2,15 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 const UserOrderCard = ({ data }) => {
+  console.log(data.shopOrders);
+  
+  // Corrected code: Retrieve status for each shopOrder and remove unnecessary console log
+  // If you want the array of statuses, use:
+  const statuses = data.shopOrders.map(or => or.status);
+  console.log(statuses)
+
+  // Or, if you need the first status:
+  // const status = data.shopOrders.length > 0 ? data.shopOrders[0].status : null;
   const { userOrders } = useSelector((store) => store.Order);
   console.log(userOrders)
   const formDate = (dateString) => {
@@ -64,9 +73,11 @@ const UserOrderCard = ({ data }) => {
               <h1 className="text-md  capitalize font-semibold tracking-tight leading-none">
                 subTotal : ₹{shopOrder.subtotal}
               </h1>
+              
               <h1 className="text-md capitalize  font-semibold text-blue-600">
-                {data.shopOrders?.[0]?.status}
+              {shopOrder.status}
               </h1>
+            
             </div>
           </div>
         ))}
