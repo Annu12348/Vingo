@@ -38,7 +38,13 @@ const shopOrderSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["pending", "accepted", "preparing", "delivered", "cancelled"],
-      default: "preparing",
+      default: "pending",
+    },
+
+    assignment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "DeliveryAssignment",
+      default: null,
     },
   },
   { timestamps: true }
@@ -65,6 +71,7 @@ const orderSehema = new mongoose.Schema(
 
     shopOrders: [shopOrderSchema],
   },
+
   { timestamps: true }
 );
 

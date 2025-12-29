@@ -33,30 +33,43 @@ const userSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       default: "",
-    },    
+    },
     role: {
       type: String,
-      enum: ['owner', 'deliveryBoy', 'user'],
+      enum: ["owner", "deliveryBoy", "user"],
       required: true,
-      trim: true
+      trim: true,
     },
     resetOtp: {
       type: String,
-      default: ""
+      default: "",
     },
     otpVerify: {
       type: Boolean,
-      default: false
+      default: false,
     },
     otpExpires: {
       type: Date,
-      default: null
-    }
+      default: null,
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number],
+        default: [0, 0],
+      },
+    },
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.index({ location: "2dsphere" });
 
 const userModel = mongoose.model("User", userSchema);
 export default userModel;

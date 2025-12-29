@@ -53,8 +53,6 @@ export const RegisterApi = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.error(error);
-    console.error(error);
     res.status(500).json({
       message: "internal server error, please try again later",
     });
@@ -99,7 +97,6 @@ export const loginUser = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       message: "internal server error, please try again later",
     });
@@ -114,7 +111,6 @@ export const logoutUser = async (req, res) => {
       message: "Logout successfully",
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
     });
@@ -158,7 +154,6 @@ export const updatedController = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
     });
@@ -187,7 +182,6 @@ export const resetController = async (req, res) => {
       message: "OTP sent successfully",
     });
   } catch (error) {
-    debuglog(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
       user,
@@ -225,7 +219,6 @@ export const verifyController = async (req, res) => {
       message: "OTP verified successfully",
     });
   } catch (error) {
-    debuglog(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
     });
@@ -258,7 +251,6 @@ export const resetPasswordController = async (req, res) => {
       message: "reset password",
     });
   } catch (error) {
-    debuglog(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
     });
@@ -308,7 +300,6 @@ export const googleAuthController = async (req, res) => {
       token,
     });
   } catch (error) {
-    debuglog(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
       error: error.message || error,
@@ -379,10 +370,45 @@ export const protectedRoutesController = async (req, res) => {
       message: "Access to the protected resource was successful.",
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       message: "Internal server error: please try again later.",
       error: error.message || error,
     });
   }
 };
+
+export const updateUserLocationController = async (req, res) => {
+  try {
+    const { lat, lon } = req.body;
+    const userId = req.user.id;
+
+    const userLocation = await userModel.findByIdAndUpdate(
+      userId,
+      {
+        location: {
+          type: "Point",
+          coordinates: [lat, lon]
+        }
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found"
+      })
+    }
+
+    res.status(200).json({
+      message: "location successfully updated",
+      data: userLocation
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error: please try again later.",
+      error: error.message || error,
+    });
+  }
+}
+
+//2hourse done

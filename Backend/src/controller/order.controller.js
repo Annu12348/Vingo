@@ -202,10 +202,28 @@ export const statusChangesController = async (req, res) => {
     }
 
     shopOrder.status = status;
-    order.markModified(shopOrder)
+
+    //status calclutation
+    let orderStatus = "pending";
+
+    if (order.shopOrders.every((o) => o.status === "delivered")) {
+      orderStatus = "delivered";
+    } else if (order.shopOrders.some((o) => o.status === "cancelled")) {
+      orderStatus = "cancelled";
+    } else if (order.shopOrders.some((o) => o.status === "preparing")) {
+      orderStatus = "preparing";
+    } else if (order.shopOrders.some((o) => o.status === "accepted")) {
+      orderStatus = "accepted";
+    }
+
+    order.status = orderStatus;
+    order.markModified("shopOrders");
     await order.save();
 
-    res.status(200).json(shopOrder.status);
+    res.status(200).json({
+      shopStatus: shopOrder.status,
+      orderStatus: order.status
+    });
   } catch (error) {
     res.status(500).json({
       message: `Updated Status Error: ${error.message}`,
