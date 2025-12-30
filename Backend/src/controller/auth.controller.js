@@ -387,21 +387,20 @@ export const updateUserLocationController = async (req, res) => {
       {
         location: {
           type: "Point",
-          coordinates: [lat, lon]
+          coordinates: [lon, lat]
         }
       },
       { new: true }
     );
 
-    if (!user) {
+    if (!userLocation) {
       return res.status(404).json({
-        message: "user not found"
+        message: "userLocation not found"
       })
     }
 
     res.status(200).json({
       message: "location successfully updated",
-      data: userLocation
     })
   } catch (error) {
     res.status(500).json({
@@ -411,4 +410,4 @@ export const updateUserLocationController = async (req, res) => {
   }
 }
 
-//2hourse done
+//9hourse done

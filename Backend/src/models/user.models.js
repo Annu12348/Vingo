@@ -73,3 +73,12 @@ userSchema.index({ location: "2dsphere" });
 
 const userModel = mongoose.model("User", userSchema);
 export default userModel;
+//location (Geo Location – Advanced 🔥)
+//Geo Index (Very Important)
+//userSchema.index({ location: "2dsphere" });
+//MongoDB ko batata hai:
+//location field geo-spatial queries ke liye use hogi
+//Use cases:
+//nearby delivery boys
+//nearest users
+//distance based search

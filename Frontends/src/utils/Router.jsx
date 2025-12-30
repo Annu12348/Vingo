@@ -14,6 +14,7 @@ import CheckOut from "../pages/CheckOut";
 import ProtectedItemRoutes from "../components/ProtectedItemRoutes";
 import PlaceOrder from "../pages/PlaceOrder";
 import MyOrder from "../pages/MyOrder";
+import Profile from "../pages/Profile";
 
 const Router = () => {
   return (
@@ -38,6 +39,14 @@ const Router = () => {
         }
       />
 
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoutes>
+            <Profile />
+          </ProtectedRoutes>
+        }
+      />
 
       <Route
         path="/shop-edit/:id"

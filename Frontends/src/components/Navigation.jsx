@@ -115,7 +115,7 @@ const Navigation = () => {
               </span>
               my oders
             </Link>
-            <Link className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
+            <Link to='/profile' className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
               {user?.FullName.slice(0, 1)}
             </Link>
             <button

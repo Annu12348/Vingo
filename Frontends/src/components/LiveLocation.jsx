@@ -18,6 +18,7 @@ const LiveLocation = () => {
       const response = await axios.get(
         `https://api.geoapify.com/v1/geocode/reverse?lat=${latitude}&lon=${longitude}&format=json&apiKey=${apiKey}`
       );
+      console.log(response.data)
       dispatch(setCity(response.data.results[0]))
       dispatch(setAddress(response.data.results[0].address_line2))
     });

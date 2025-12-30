@@ -9,9 +9,11 @@ import {
   googleAuthController,
   googleAuthLoginController,
   updatedController,
-  protectedRoutesController
+  protectedRoutesController,
+  updateUserLocationController,
 } from "../controller/auth.controller.js";
 import { registerValidator } from "../middleware/validator.middleware.js";
+import { authenticationMiddleware } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 router.post("/register", registerValidator, RegisterApi);
@@ -24,5 +26,12 @@ router.post("/newpassword", resetPasswordController);
 router.post("/google", googleAuthController);
 router.post("/googlelogin", googleAuthLoginController);
 router.get("/me", protectedRoutesController);
+
+router.put(
+  "/update-location",
+  authenticationMiddleware,
+  updateUserLocationController,
+  updateUserLocationController
+);
 
 export default router;
