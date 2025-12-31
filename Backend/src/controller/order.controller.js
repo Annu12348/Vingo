@@ -1,5 +1,7 @@
+import DeliveryAssignmentModel from "../models/deliveryAssignment.model.js";
 import orderModel from "../models/order.models.js";
 import shopModel from "../models/shop.models.js";
+import userModel from "../models/user.models.js";
 
 export const placeOrderController = async (req, res) => {
   try {
@@ -218,11 +220,53 @@ export const statusChangesController = async (req, res) => {
 
     order.status = orderStatus;
     order.markModified("shopOrders");
+
+    if (status == "out of delivery" || shopOrder.assignment) {
+      const { latitude, longitude } = order.deliveryAddress;
+
+      if (status == "out of delivery" || !shopOrder.assignment) {
+        const { latitude, longitude } = order.deliveryAddress;
+  
+        const nearByDeliveryBoy = await userModel.find({
+          role: "delivery",
+          location: {
+            $near: {
+              $geometry: {
+                type: "Point",
+                coordinates: [Number(longitude), Number(latitude)],
+              },
+              $distance: 5000
+            },
+          },
+        });
+  
+        const nearByIds = nearByDeliveryBoy.map(deliveryBoy => deliveryBoy._id);
+        const busyByIds = await DeliveryAssignmentModel.find({
+          assignedTo: {$in: nearByIds},
+          status: {$nin: ["broadcasted", "completed"]}
+        }).distinct("assignedTo")
+
+        const busyByIdSet = set(busyByIds.map(deliveryBoy => String(deliveryBoy)))
+        const availableBoy = nearByDeliveryBoy.filter(deliveryBoy => !busyByIdSet.has(String(deliveryBoy._id)))
+        const condidates = availableBoy.map(deliveryBoy => deliveryBoy._id)
+      }
+
+      if (condidates.length == 0){
+        await order.save();
+        return res.json({
+          message: "order status updated but there is no available delivery boys"
+        })
+      }
+
+      const deliveryAssignment = await DeliveryAssignmentModel.create({
+        
+      })
+    }
     await order.save();
 
     res.status(200).json({
       shopStatus: shopOrder.status,
-      orderStatus: order.status
+      orderStatus: order.status,
     });
   } catch (error) {
     res.status(500).json({

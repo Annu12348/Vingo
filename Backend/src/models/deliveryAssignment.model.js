@@ -38,8 +38,8 @@ const deliveryAssignmentSchema = new mongoose.Schema(
   }
 );
 
-const DeliveryAssignment = mongoose.model(
+const DeliveryAssignmentModel = mongoose.model(
   "DeliveryAssignment",
   deliveryAssignmentSchema
 );
-export default DeliveryAssignment;
+export default DeliveryAssignmentModel;
