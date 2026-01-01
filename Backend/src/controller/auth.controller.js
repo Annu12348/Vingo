@@ -49,6 +49,7 @@ export const RegisterApi = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        location: user.location
       },
       token,
     });
@@ -93,6 +94,7 @@ export const loginUser = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        location: user.location
       },
       token,
     });
@@ -151,6 +153,7 @@ export const updatedController = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        location: user.location
       },
     });
   } catch (error) {
@@ -296,6 +299,7 @@ export const googleAuthController = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        location: user.location
       },
       token,
     });
@@ -337,6 +341,7 @@ export const googleAuthLoginController = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        location: user.location
       },
       token,
     });

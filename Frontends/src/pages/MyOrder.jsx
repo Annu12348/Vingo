@@ -11,7 +11,6 @@ const MyOrder = () => {
   const { user } = useSelector((store) => store.Auth);
   const { userOrders } = useSelector((store) => store.Order);
   const { ownerOrders } = useSelector((store) => store.Order);
-  console.log(ownerOrders)
   const dispatch = useDispatch();
 
   const getUserOrderApi = async () => {

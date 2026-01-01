@@ -162,23 +162,22 @@ export const statusChangesController = async (req, res) => {
   try {
     const { orderId, shopId } = req.params;
     const { status } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.id; // Ensure string and fallback for id
 
-    const allowStatus = [
+    const allowedStatus = [
       "pending",
-      "accepted",
       "preparing",
       "delivered",
-      "cancelled",
+      "out of delivery",
     ];
 
     if (!orderId || !shopId || !userId) {
       return res.status(400).json({
-        message: "orderId, userId and shopId are required fields.",
+        message: "orderId, userId, and shopId are required fields.",
       });
     }
 
-    if (!status || !allowStatus.includes(status)) {
+    if (!status || !allowedStatus.includes(status)) {
       return res.status(400).json({
         message: "Invalid status",
       });
@@ -188,85 +187,105 @@ export const statusChangesController = async (req, res) => {
 
     if (!order) {
       return res.status(404).json({
-        message: "order not founds.",
+        message: "order not found.",
       });
     }
 
-    const shopOrder = await order.shopOrders.find(
-      (orders) =>
-        orders.shop.toString() === shopId && orders.owner.toString() === userId
+    const shopOrder = order.shopOrders.find(
+      (o) =>
+        o.shop.toString() === shopId &&
+        o.owner &&
+        o.owner.toString() === userId
     );
 
     if (!shopOrder) {
       return res.status(403).json({
-        message: "You are not authorized to update this shop order",
+        message: "You are not authorized to update this shop order.",
       });
     }
 
     shopOrder.status = status;
-
-    //status calclutation
-    let orderStatus = "pending";
-
-    if (order.shopOrders.every((o) => o.status === "delivered")) {
-      orderStatus = "delivered";
-    } else if (order.shopOrders.some((o) => o.status === "cancelled")) {
-      orderStatus = "cancelled";
-    } else if (order.shopOrders.some((o) => o.status === "preparing")) {
-      orderStatus = "preparing";
-    } else if (order.shopOrders.some((o) => o.status === "accepted")) {
-      orderStatus = "accepted";
-    }
-
-    order.status = orderStatus;
     order.markModified("shopOrders");
 
-    if (status == "out of delivery" || shopOrder.assignment) {
-      const { latitude, longitude } = order.deliveryAddress;
+    let deliveryBoyPayload = [];
+    let condidates = [];
+    let availableBoy = [];
 
-      if (status == "out of delivery" || !shopOrder.assignment) {
-        const { latitude, longitude } = order.deliveryAddress;
-  
+    if (status === "out of delivery" && !shopOrder.assignment) {
+      const { latitude, longitude } = order.deliveryAddress || {};
+      if (
+        typeof latitude !== "undefined" &&
+        typeof longitude !== "undefined"
+      ) {
         const nearByDeliveryBoy = await userModel.find({
-          role: "delivery",
+          role: "deliveryBoy",
           location: {
             $near: {
               $geometry: {
                 type: "Point",
                 coordinates: [Number(longitude), Number(latitude)],
               },
-              $distance: 5000
+              $maxDistance: 5000,
             },
           },
         });
-  
-        const nearByIds = nearByDeliveryBoy.map(deliveryBoy => deliveryBoy._id);
+
+        const nearByIds = nearByDeliveryBoy.map((d) => d._id);
         const busyByIds = await DeliveryAssignmentModel.find({
-          assignedTo: {$in: nearByIds},
-          status: {$nin: ["broadcasted", "completed"]}
-        }).distinct("assignedTo")
+          assignedTo: { $in: nearByIds },
+          status: { $nin: ["broadcasted", "completed"] },
+        }).distinct("assignedTo");
 
-        const busyByIdSet = set(busyByIds.map(deliveryBoy => String(deliveryBoy)))
-        const availableBoy = nearByDeliveryBoy.filter(deliveryBoy => !busyByIdSet.has(String(deliveryBoy._id)))
-        const condidates = availableBoy.map(deliveryBoy => deliveryBoy._id)
+        const busyByIdSet = new Set(
+          busyByIds.map((deliveryBoy) => String(deliveryBoy))
+        );
+        availableBoy = nearByDeliveryBoy.filter(
+          (deliveryBoy) => !busyByIdSet.has(String(deliveryBoy._id))
+        );
+        condidates = availableBoy.map((deliveryBoy) => deliveryBoy._id);
+
+        if (condidates.length === 0) {
+          await order.save();
+          return res.json({
+            message:
+              "order status updated but there is no available delivery boys",
+          });
+        }
+
+        const deliveryAssignment = await DeliveryAssignmentModel.create({
+          order: order._id,
+          shop: shopOrder.shop,
+          shopOrderId: shopOrder._id,
+          broadcastedTo: condidates,
+          status: "broadcasted",
+        });
+
+        shopOrder.assignedDeliveryBoy = deliveryAssignment.assignedTo;
+        shopOrder.assignment = deliveryAssignment._id;
+
+        deliveryBoyPayload = availableBoy.map((b) => ({
+          id: b._id,
+          fullName: b.fullname,
+          longitude: b.location.coordinates[0],
+          latitude: b.location.coordinates[1],
+          mobile: b.mobile,
+        }));
       }
-
-      if (condidates.length == 0){
-        await order.save();
-        return res.json({
-          message: "order status updated but there is no available delivery boys"
-        })
-      }
-
-      const deliveryAssignment = await DeliveryAssignmentModel.create({
-        
-      })
     }
+
     await order.save();
 
+    const updatedShopOrder = order.shopOrders.find(
+      (o) => o.shop.toString() === shopId && o.owner.toString() === userId
+    );
+    await order.populate("shopOrders.shop", "name");
+    await order.populate("shopOrders.assignedDeliveryBoy", "name");
+
     res.status(200).json({
-      shopStatus: shopOrder.status,
-      orderStatus: order.status,
+      shopOrder: updatedShopOrder,
+      assignedDeliveryBoy: updatedShopOrder?.assignedDeliveryBoy,
+      availableBoy: deliveryBoyPayload,
+      assignment: updatedShopOrder?.assignment?._id ?? null,
     });
   } catch (error) {
     res.status(500).json({

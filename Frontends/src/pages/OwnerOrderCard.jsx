@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { MdOutlineLocalPhone } from "react-icons/md";
 import instance from "../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,9 +7,7 @@ import { ownerUpdateOrderStatus, userUpdateOrderStatus } from "../redux/reducer/
 const OwnerOrderCard = ({ data }) => {
   const dispatch = useDispatch();
   const { ownerOrders } = useSelector((store) => store.Order);
-
-  console.log("CARD DATA STATUS:", data.shopOrders[0].status, "owner ka data direct console status ", ownerOrders);
-
+  const [availableBoys, setAvailableBoys] = useState([]);
 
   const handlerUpdateStatus = async (orderId, shopId, status) => {
     try {
@@ -17,9 +15,6 @@ const OwnerOrderCard = ({ data }) => {
         console.error("Missing IDs", { orderId, shopId });
         return;
       }
-    
-      console.log("status ka data hai upade part", orderId, shopId, status);
-
 
       const response = await instance.post(
         `/order/owner-order-fetch/${orderId}/${shopId}`,
@@ -27,7 +22,9 @@ const OwnerOrderCard = ({ data }) => {
         { withCredentials: true }
       );
       console.log(response.data);
-      dispatch(ownerUpdateOrderStatus({orderId, shopId, status}))
+      dispatch(ownerUpdateOrderStatus({ orderId, shopId, status }));
+      setAvailableBoys(response.data.availableBoy || []);
+      console.log(response.data);
     } catch (error) {
       console.error(error.message);
     }
@@ -97,10 +94,9 @@ const OwnerOrderCard = ({ data }) => {
         >
           <option value="">change status</option>
           <option value="pending">pending</option>
-          <option value="accepted">accepted</option>
           <option value="preparing">preparing</option>
           <option value="delivered">delivered</option>
-          <option value="cancelled">cancelled</option>
+          <option value="out of delivery">out of delivery</option>
         </select>
       </div>
 

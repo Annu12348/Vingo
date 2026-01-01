@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    role: {
+    role: { 
       type: String,
       enum: ["owner", "deliveryBoy", "user"],
       required: true,
@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema(
       },
       coordinates: {
         type: [Number],
-        default: [0, 0],
+        default: undefined,
       },
     },
   },
