@@ -162,22 +162,17 @@ export const statusChangesController = async (req, res) => {
   try {
     const { orderId, shopId } = req.params;
     const { status } = req.body;
-    const userId = req.user.id; // Ensure string and fallback for id
+    const userId = req.user.id;
 
-    const allowedStatus = [
-      "pending",
-      "preparing",
-      "delivered",
-      "out of delivery",
-    ];
+    const allowStatus = ["pending", "preparing", "delivered", "out of delivery"]
 
     if (!orderId || !shopId || !userId) {
       return res.status(400).json({
-        message: "orderId, userId, and shopId are required fields.",
+        message: "orderId, userId and shopId are required fields.",
       });
     }
 
-    if (!status || !allowedStatus.includes(status)) {
+    if (!status || !allowStatus.includes(status)) {
       return res.status(400).json({
         message: "Invalid status",
       });
@@ -187,107 +182,98 @@ export const statusChangesController = async (req, res) => {
 
     if (!order) {
       return res.status(404).json({
-        message: "order not found.",
+        message: "order not founds.",
       });
     }
 
-    const shopOrder = order.shopOrders.find(
-      (o) =>
-        o.shop.toString() === shopId &&
-        o.owner &&
-        o.owner.toString() === userId
+    const shopOrder = await order.shopOrders.find(
+      (orders) =>
+        orders.shop.toString() === shopId && orders.owner.toString() === userId
     );
 
     if (!shopOrder) {
       return res.status(403).json({
-        message: "You are not authorized to update this shop order.",
+        message: "You are not authorized to update this shop order",
       });
     }
 
     shopOrder.status = status;
-    order.markModified("shopOrders");
+    order.markModified(shopOrder);
 
-    let deliveryBoyPayload = [];
-    let condidates = [];
-    let availableBoy = [];
+    let deliveryBoyPayload=[]
 
-    if (status === "out of delivery" && !shopOrder.assignment) {
-      const { latitude, longitude } = order.deliveryAddress || {};
-      if (
-        typeof latitude !== "undefined" &&
-        typeof longitude !== "undefined"
-      ) {
-        const nearByDeliveryBoy = await userModel.find({
-          role: "deliveryBoy",
-          location: {
-            $near: {
-              $geometry: {
-                type: "Point",
-                coordinates: [Number(longitude), Number(latitude)],
-              },
-              $maxDistance: 5000,
+    if (status == "out of delivery" || !shopOrder.assignment) {
+      const { longitude, latitude } = order.deliveryAddress;
+
+      const nearByDeliveryBoys = await userModel.find({
+        role: "deliveryBoy",
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [Number(longitude), Number(latitude)],
             },
+            $maxDistance: 5000,
           },
-        });
+        },
+      })
 
-        const nearByIds = nearByDeliveryBoy.map((d) => d._id);
-        const busyByIds = await DeliveryAssignmentModel.find({
-          assignedTo: { $in: nearByIds },
-          status: { $nin: ["broadcasted", "completed"] },
-        }).distinct("assignedTo");
-
-        const busyByIdSet = new Set(
-          busyByIds.map((deliveryBoy) => String(deliveryBoy))
-        );
-        availableBoy = nearByDeliveryBoy.filter(
-          (deliveryBoy) => !busyByIdSet.has(String(deliveryBoy._id))
-        );
-        condidates = availableBoy.map((deliveryBoy) => deliveryBoy._id);
-
-        if (condidates.length === 0) {
-          await order.save();
-          return res.json({
-            message:
-              "order status updated but there is no available delivery boys",
-          });
+      const nearByIds = nearByDeliveryBoys.map(b => b._id)
+      const busyByIds = await DeliveryAssignmentModel.find({
+        assignedTo: {
+          $in: nearByIds
+        },
+        status: {
+          $nin : ["brodcasted", "completed"]
         }
+      }).distinct("assignedTo")
 
-        const deliveryAssignment = await DeliveryAssignmentModel.create({
-          order: order._id,
-          shop: shopOrder.shop,
-          shopOrderId: shopOrder._id,
-          broadcastedTo: condidates,
-          status: "broadcasted",
-        });
+      const busyIdSet = new Set(busyByIds.map(id => String(id)))
 
-        shopOrder.assignedDeliveryBoy = deliveryAssignment.assignedTo;
-        shopOrder.assignment = deliveryAssignment._id;
+      const availableBoys = nearByDeliveryBoys.filter(b => !busyIdSet.has(String(b._id)));
+      const candidates = availableBoys.map(b=>b._id)
 
-        deliveryBoyPayload = availableBoy.map((b) => ({
-          id: b._id,
-          fullName: b.fullname,
-          longitude: b.location.coordinates[0],
-          latitude: b.location.coordinates[1],
-          mobile: b.mobile,
-        }));
+      if (candidates.length == 0) {
+        await order.save();
+        return res.json({
+          message: "order status updated but there is no available delivery boy"
+        })
       }
+
+      const deliveryAssignment = await DeliveryAssignmentModel.create({
+        order: order._id,
+        shop: shopOrder.shop,
+        shopOrderId: shopOrder._id,
+        brodcastedTo: candidates,
+        status: "brodcasted"
+      })
+
+      shopOrder.assignedDeliveryBoy=deliveryAssignment.assignedTo
+      shopOrder.assignment=deliveryAssignment._id
+      deliveryBoyPayload=availableBoys.map(b=>({
+        id: b._id,
+        fullName: b.fullname,
+        longitude: b.location.coordinates?.[0],
+        latitude: b.location.coordinates?.[1],
+        mobile: b.mobile
+      }))
     }
 
-    await order.save();
+    const updatedShopOrder = order.shopOrders.find(o=>o.shop==shopId)
+    await order.populate("shopOrders.shop", "name")
+    await order.populate("shopOrders.assignedDeliveryBoy", "fullName email mobile")
 
-    const updatedShopOrder = order.shopOrders.find(
-      (o) => o.shop.toString() === shopId && o.owner.toString() === userId
-    );
-    await order.populate("shopOrders.shop", "name");
-    await order.populate("shopOrders.assignedDeliveryBoy", "name");
+
+    await order.save();
 
     res.status(200).json({
       shopOrder: updatedShopOrder,
       assignedDeliveryBoy: updatedShopOrder?.assignedDeliveryBoy,
-      availableBoy: deliveryBoyPayload,
-      assignment: updatedShopOrder?.assignment?._id ?? null,
+      availableBoys: deliveryBoyPayload,
+      assignment: updatedShopOrder?.assignment._id,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       message: `Updated Status Error: ${error.message}`,
     });
