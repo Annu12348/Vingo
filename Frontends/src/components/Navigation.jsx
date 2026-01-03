@@ -26,13 +26,14 @@ const Navigation = () => {
 
   const logoutApi = async () => {
     try {
-      await instance.delete("/auth/logout", { withCredentials: true });
+      const result = await instance.delete("/auth/logout", { withCredentials: true });
       dispatch(setUser(null));
       dispatch(setShop([]));
       dispatch(setItem([]));
       persistor.purge();
       toast.success("Successfully logged out user");
       navigate("/login");
+      console.log(result.data.data)
     } catch (error) {
       console.error(error);
       toast.error("Failed to log out. Please try again.");

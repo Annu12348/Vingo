@@ -5,9 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { ownerUpdateOrderStatus, userUpdateOrderStatus } from "../redux/reducer/OrderReducer";
 
 const OwnerOrderCard = ({ data }) => {
+  console.log(data)
   const dispatch = useDispatch();
   const { ownerOrders } = useSelector((store) => store.Order);
   const [availableBoys, setAvailableBoys] = useState([]);
+  console.log(availableBoys)
 
   const handlerUpdateStatus = async (orderId, shopId, status) => {
     try {
@@ -23,7 +25,7 @@ const OwnerOrderCard = ({ data }) => {
       );
       console.log(response.data);
       dispatch(ownerUpdateOrderStatus({ orderId, shopId, status }));
-      setAvailableBoys(response.data.availableBoy || []);
+      setAvailableBoys(response.data.availableBoys || []);
       console.log(response.data);
     } catch (error) {
       console.error(error.message);
@@ -90,7 +92,7 @@ const OwnerOrderCard = ({ data }) => {
         <select
         
           onChange={(e) => handlerUpdateStatus(data._id, data.shopOrders?.[0]?.shop?._id, e.target.value)}
-          className="border-2 rounded px-2 capitalize font-semibold py-1 focus:border-red-900 outline-none border-zinc-500"
+          className="border-2 rounded px-2 cursor-pointer capitalize font-semibold py-1 focus:border-red-900 outline-none border-zinc-500"
         >
           <option value="">change status</option>
           <option value="pending">pending</option>
@@ -99,6 +101,22 @@ const OwnerOrderCard = ({ data }) => {
           <option value="out of delivery">out of delivery</option>
         </select>
       </div>
+
+      {data.shopOrders?.[0]?.status === "out of delivery" && (
+        <div className="border my-3  rounded px-2 py-0.5 border-zinc-400 hover:border-red-500">
+          <p className="text-md leading-none mt-1 font-semibold capitalize">available delivery boys</p>
+          {availableBoys?.length > 0 ? (
+            availableBoys.map(b => (
+              <h1 key={b._id} className="text-sm font-semibold text-zinc-600 mt-1.5 mb-0.5 capitalize ">{b.fullName} - {b.contact}</h1>
+            ))
+          ) : (
+            <span className="mb-3 mt-4 font-semibold text-zinc-500 leading-none text-center block">
+              No delivery boys available
+            </span>
+          )}
+        </div>
+      )}
+      
 
       <div className="flex items-center justify-end mt-2">
         {data.shopOrders.map((total, index) => (

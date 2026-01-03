@@ -30,9 +30,13 @@ export const RegisterApi = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign({ id: user._id }, config.JWT_SECRET_KEY, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      config.JWT_SECRET_KEY,
+      {
+        expiresIn: "7d",
+      }
+    );
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
@@ -49,7 +53,9 @@ export const RegisterApi = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        location: user.location
+        location: user.location,
+        isOnline: user.isOnline,
+        lastSeen: user.lastSeen,
       },
       token,
     });
@@ -80,8 +86,25 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: user._id }, config.JWT_SECRET_KEY);
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      config.JWT_SECRET_KEY
+    );
     res.cookie("token", token);
+    {
+      /*
+      res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "strict"
+});
+
+*/
+    }
+
+    user.isOnline = true;
+    user.lastSeen = new Date();
+    await user.save();
 
     res.status(200).json({
       message: "successfully user login",
@@ -94,7 +117,9 @@ export const loginUser = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        location: user.location
+        location: user.location,
+        isOnline: user.isOnline,
+        lastSeen: user.lastSeen,
       },
       token,
     });
@@ -107,12 +132,33 @@ export const loginUser = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   try {
+    const userId = req.user.id;
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "userId is required",
+      });
+    }
+
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { isOnline: false, lastSeen: new Date() },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found",
+      });
+    }
     res.clearCookie("token");
 
     res.status(200).json({
       message: "Logout successfully",
+      data: user,
     });
   } catch (error) {
+    console.error(error.message);
     res.status(500).json({
       message: "Internal server error: please try again later.",
     });
@@ -153,7 +199,9 @@ export const updatedController = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        location: user.location
+        location: user.location,
+        isOnline: user.isOnline,
+        lastSeen: user.lastSeen,
       },
     });
   } catch (error) {
@@ -299,7 +347,9 @@ export const googleAuthController = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        location: user.location
+        location: user.location,
+        isOnline: user.isOnline,
+        lastSeen: user.lastSeen,
       },
       token,
     });
@@ -341,7 +391,9 @@ export const googleAuthLoginController = async (req, res) => {
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        location: user.location
+        location: user.location,
+        isOnline: user.isOnline,
+        lastSeen: user.lastSeen,
       },
       token,
     });
@@ -392,28 +444,26 @@ export const updateUserLocationController = async (req, res) => {
       {
         location: {
           type: "Point",
-          coordinates: [lon, lat]
-        }
+          coordinates: [lon, lat],
+        },
       },
       { new: true }
     );
 
     if (!userLocation) {
       return res.status(404).json({
-        message: "userLocation not found"
-      })
+        message: "userLocation not found",
+      });
     }
 
     res.status(200).json({
       message: "location successfully updated",
-      data: userLocation
-    })
+      data: userLocation,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Internal server error: please try again later.",
       error: error.message || error,
     });
   }
-}
-
-//9hourse done
+};

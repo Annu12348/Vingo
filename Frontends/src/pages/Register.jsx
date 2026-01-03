@@ -33,7 +33,7 @@ const Register = () => {
       });
       dispatch(setUser(response.data.user));
       toast.success(response.data.message || "successfully register");
-      navigate("/");
+      navigate("/login");
       setVal({
         fullname: "",
         email: "",

@@ -19,7 +19,7 @@ const router = express.Router();
 router.post("/register", registerValidator, RegisterApi);
 router.post("/login", loginUser);
 router.put("/update/:id", updatedController);
-router.delete("/logout", logoutUser);
+router.delete("/logout", authenticationMiddleware, logoutUser);
 router.post("/reset", resetController);
 router.post("/verify", verifyController);
 router.post("/newpassword", resetPasswordController);

@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import UserDetails from "./UserDetails";
 import UserShopCity from "./UserShopCity";
 import UserShopFoodCity from "./UserShopFoodCity";
+import DeliveryBoy from "./DeliveryBoy";
 
 const Home = () => {
   const { shop } = useSelector((store) => store.Shop);
@@ -18,7 +19,7 @@ const Home = () => {
         {user?.role === "user" && (
           <div className="w-full ">
             <UserDetails />
-            <UserShopCity /> 
+            <UserShopCity />
             <UserShopFoodCity />
           </div>
         )}
@@ -28,6 +29,7 @@ const Home = () => {
             {shop.length > 0 && <Item />}
           </div>
         )}
+        {user?.role === "deliveryBoy" && <DeliveryBoy />}
       </div>
     </div>
   );

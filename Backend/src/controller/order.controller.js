@@ -185,6 +185,7 @@ export const statusChangesController = async (req, res) => {
         message: "order not founds.",
       });
     }
+    
 
     const shopOrder = await order.shopOrders.find(
       (orders) =>
@@ -207,6 +208,7 @@ export const statusChangesController = async (req, res) => {
 
       const nearByDeliveryBoys = await userModel.find({
         role: "deliveryBoy",
+        isOnline: true,
         location: {
           $near: {
             $geometry: {
@@ -217,6 +219,8 @@ export const statusChangesController = async (req, res) => {
           },
         },
       })
+
+      
 
       const nearByIds = nearByDeliveryBoys.map(b => b._id)
       const busyByIds = await DeliveryAssignmentModel.find({
@@ -229,6 +233,7 @@ export const statusChangesController = async (req, res) => {
       }).distinct("assignedTo")
 
       const busyIdSet = new Set(busyByIds.map(id => String(id)))
+      
 
       const availableBoys = nearByDeliveryBoys.filter(b => !busyIdSet.has(String(b._id)));
       const candidates = availableBoys.map(b=>b._id)
@@ -255,7 +260,7 @@ export const statusChangesController = async (req, res) => {
         fullName: b.fullname,
         longitude: b.location.coordinates?.[0],
         latitude: b.location.coordinates?.[1],
-        mobile: b.mobile
+        contact: b.contact
       }))
     }
 
