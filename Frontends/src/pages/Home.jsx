@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import UserDetails from "./UserDetails";
 import UserShopCity from "./UserShopCity";
 import UserShopFoodCity from "./UserShopFoodCity";
-import DeliveryBoy from "./DeliveryBoy";
+import DeliveryBoy from "../deliveryBoy/DeliveryBoy";
 
 const Home = () => {
   const { shop } = useSelector((store) => store.Shop);

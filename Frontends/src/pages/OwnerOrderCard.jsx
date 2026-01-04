@@ -5,11 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { ownerUpdateOrderStatus, userUpdateOrderStatus } from "../redux/reducer/OrderReducer";
 
 const OwnerOrderCard = ({ data }) => {
-  console.log(data)
   const dispatch = useDispatch();
   const { ownerOrders } = useSelector((store) => store.Order);
   const [availableBoys, setAvailableBoys] = useState([]);
-  console.log(availableBoys)
 
   const handlerUpdateStatus = async (orderId, shopId, status) => {
     try {
