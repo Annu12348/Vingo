@@ -131,7 +131,8 @@ export const getOwnerOrderController = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate("shopOrders.shop", "shopName image")
       .populate("user")
-      .populate("shopOrders.shopOrderItem.item", "name image price");
+      .populate("shopOrders.shopOrderItem.item", "name image price")
+      .populate("shopOrders.assignedDeliveryBoy", "fullname contact")
 
     const filteredOrders = orders.map((order) => ({
       _id: order._id,
@@ -164,7 +165,12 @@ export const statusChangesController = async (req, res) => {
     const { status } = req.body;
     const userId = req.user.id;
 
-    const allowStatus = ["pending", "preparing", "delivered", "out of delivery"]
+    const allowStatus = [
+      "pending",
+      "preparing",
+      "delivered",
+      "out of delivery",
+    ];
 
     if (!orderId || !shopId || !userId) {
       return res.status(400).json({
@@ -185,7 +191,6 @@ export const statusChangesController = async (req, res) => {
         message: "order not founds.",
       });
     }
-    
 
     const shopOrder = await order.shopOrders.find(
       (orders) =>
@@ -201,7 +206,7 @@ export const statusChangesController = async (req, res) => {
     shopOrder.status = status;
     order.markModified(shopOrder);
 
-    let deliveryBoyPayload=[]
+    let deliveryBoyPayload = [];
 
     if (status == "out of delivery" || !shopOrder.assignment) {
       const { longitude, latitude } = order.deliveryAddress;
@@ -218,31 +223,31 @@ export const statusChangesController = async (req, res) => {
             $maxDistance: 5000,
           },
         },
-      })
+      });
 
-      
-
-      const nearByIds = nearByDeliveryBoys.map(b => b._id)
+      const nearByIds = nearByDeliveryBoys.map((b) => b._id);
       const busyByIds = await DeliveryAssignmentModel.find({
         assignedTo: {
-          $in: nearByIds
+          $in: nearByIds,
         },
         status: {
-          $nin : ["brodcasted", "completed"]
-        }
-      }).distinct("assignedTo")
+          $nin: ["brodcasted", "completed"],
+        },
+      }).distinct("assignedTo");
 
-      const busyIdSet = new Set(busyByIds.map(id => String(id)))
-      
+      const busyIdSet = new Set(busyByIds.map((id) => String(id)));
 
-      const availableBoys = nearByDeliveryBoys.filter(b => !busyIdSet.has(String(b._id)));
-      const candidates = availableBoys.map(b=>b._id)
+      const availableBoys = nearByDeliveryBoys.filter(
+        (b) => !busyIdSet.has(String(b._id))
+      );
+      const candidates = availableBoys.map((b) => b._id);
 
       if (candidates.length == 0) {
         await order.save();
         return res.json({
-          message: "order status updated but there is no available delivery boy"
-        })
+          message:
+            "order status updated but there is no available delivery boy",
+        });
       }
 
       const deliveryAssignment = await DeliveryAssignmentModel.create({
@@ -250,24 +255,26 @@ export const statusChangesController = async (req, res) => {
         shop: shopOrder.shop,
         shopOrderId: shopOrder._id,
         brodcastedTo: candidates,
-        status: "brodcasted"
-      })
+        status: "brodcasted",
+      });
 
-      shopOrder.assignedDeliveryBoy=deliveryAssignment.assignedTo
-      shopOrder.assignment=deliveryAssignment._id
-      deliveryBoyPayload=availableBoys.map(b=>({
+      shopOrder.assignedDeliveryBoy = deliveryAssignment.assignedTo;
+      shopOrder.assignment = deliveryAssignment._id;
+      deliveryBoyPayload = availableBoys.map((b) => ({
         id: b._id,
         fullName: b.fullname,
         longitude: b.location.coordinates?.[0],
         latitude: b.location.coordinates?.[1],
-        contact: b.contact
-      }))
+        contact: b.contact,
+      }));
     }
 
-    const updatedShopOrder = order.shopOrders.find(o=>o.shop==shopId)
-    await order.populate("shopOrders.shop", "name")
-    await order.populate("shopOrders.assignedDeliveryBoy", "fullName email mobile")
-
+    const updatedShopOrder = order.shopOrders.find((o) => o.shop == shopId);
+    await order.populate("shopOrders.shop", "name");
+    await order.populate(
+      "shopOrders.assignedDeliveryBoy",
+      "fullname email contact"
+    );
 
     await order.save();
 
@@ -284,4 +291,3 @@ export const statusChangesController = async (req, res) => {
     });
   }
 };
-//1 hourse completed

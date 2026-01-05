@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { MdOutlineLocalPhone } from "react-icons/md";
 import instance from "../utils/axios";
 import { useDispatch, useSelector } from "react-redux";
-import { ownerUpdateOrderStatus, userUpdateOrderStatus } from "../redux/reducer/OrderReducer";
+import {
+  ownerUpdateOrderStatus,
+  userUpdateOrderStatus,
+} from "../redux/reducer/OrderReducer";
 
 const OwnerOrderCard = ({ data }) => {
   const dispatch = useDispatch();
@@ -24,7 +27,6 @@ const OwnerOrderCard = ({ data }) => {
       console.log(response.data);
       dispatch(ownerUpdateOrderStatus({ orderId, shopId, status }));
       setAvailableBoys(response.data.availableBoys || []);
-      console.log(response.data);
     } catch (error) {
       console.error(error.message);
     }
@@ -84,12 +86,20 @@ const OwnerOrderCard = ({ data }) => {
 
       <div className="mt-2 flex items-center justify-between ">
         <h1 className="text-md capitalize font-semibold ">
-          status : <span className="text-[#de4f4fdd]">{data.shopOrders?.[0].status}</span>
+          status :{" "}
+          <span className="text-[#de4f4fdd]">
+            {data.shopOrders?.[0].status}
+          </span>
         </h1>
 
         <select
-        
-          onChange={(e) => handlerUpdateStatus(data._id, data.shopOrders?.[0]?.shop?._id, e.target.value)}
+          onChange={(e) =>
+            handlerUpdateStatus(
+              data._id,
+              data.shopOrders?.[0]?.shop?._id,
+              e.target.value
+            )
+          }
           className="border-2 rounded px-2 cursor-pointer capitalize font-semibold py-1 focus:border-red-900 outline-none border-zinc-500"
         >
           <option value="">change status</option>
@@ -100,25 +110,45 @@ const OwnerOrderCard = ({ data }) => {
         </select>
       </div>
 
-      {data.shopOrders?.[0]?.status === "out of delivery" && (
+      {data.shopOrders?.[0]?.status === "out of delivery" && ( //assignedDeliveryBoy
         <div className="border my-3  rounded px-2 py-0.5 border-zinc-400 hover:border-red-500">
-          <p className="text-md leading-none mt-1 font-semibold capitalize">available delivery boys</p>
-          {availableBoys?.length > 0 ? (
-            availableBoys.map(b => (
-              <h1 key={b._id} className="text-sm font-semibold text-zinc-600 mt-1.5 mb-0.5 capitalize ">{b.fullName} - {b.contact}</h1>
-            ))
+          {data.shopOrders?.[0]?.assignedDeliveryBoy ? (
+            <p className="text-md leading-none mt-1 font-bold capitalize">
+              Assigned Delivery Boy :
+            </p>
           ) : (
-            <span className="mb-3 mt-4 font-semibold text-zinc-500 leading-none text-center block">
+            <p className="text-md leading-none mt-1 font-bold capitalize">
+              available Delivery Boy :
+            </p>
+          )}
+          {availableBoys?.length > 0 ? (
+            availableBoys.map((b) => (
+              <h1
+                key={b._id}
+                className="text-sm font-semibold text-zinc-600 mt-1.5 mb-0.5 capitalize "
+              >
+                {b.fullName} - {b.contact}
+              </h1>
+            ))
+          ) : data.shopOrders?.[0]?.assignedDeliveryBoy ? (
+            <p className="mt-1 mb-1.5 text-zinc-500 capitalize font-semibold">
+              {data.shopOrders?.[0]?.assignedDeliveryBoy?.fullname} --{" "}
+              {data.shopOrders?.[0]?.assignedDeliveryBoy?.contact}
+            </p>
+          ) : (
+            <span className="mb-3 mt-4 font-semibold text-zinc-300 leading-none  block">
               No delivery boys available
             </span>
           )}
         </div>
       )}
-      
 
       <div className="flex items-center justify-end mt-2">
         {data.shopOrders.map((total, index) => (
-          <h1 key={index} className="text-md font-bold capitalize tracking-tight">
+          <h1
+            key={index}
+            className="text-md font-bold capitalize tracking-tight"
+          >
             total : {total.subtotal}
           </h1>
         ))}

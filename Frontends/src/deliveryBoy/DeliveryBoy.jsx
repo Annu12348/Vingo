@@ -1,21 +1,20 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
-import { setAssignment } from "../redux/reducer/AssignmentReducer";
+import { setDeliveryAssignment } from "../redux/reducer/AssignmentReducer";
+import { toast } from "react-toastify";
 
 const DeliveryBoy = () => {
   const { user } = useSelector((store) => store.Auth);
   const dispatch = useDispatch();
-  const { assignment } = useSelector((store) => store.Assignment);
-  console.log(assignment);
+  const { deliveryAssignment } = useSelector((store) => store.Assignment);
 
   const getdeliveryAssignment = async () => {
     try {
       const result = await instance.get("/deliveryBoy/assiments", {
         withCredentials: true,
       });
-      console.log(result.data.data);
-      dispatch(setAssignment(result.data.data));
+      dispatch(setDeliveryAssignment(result.data.data));
     } catch (error) {
       console.error(error);
     }
@@ -23,10 +22,14 @@ const DeliveryBoy = () => {
 
   const getdeliveryByIdAssignment = async (assignmentId) => {
     try {
-      const result = await instance.get(`/deliveryBoy/${assignmentId}`, {
-        withCredentials: true,
-      });
-      console.log(result);
+      const result = await instance.post(
+        `/deliveryBoy/${assignmentId}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      toast.success(result.data.message);
     } catch (error) {
       console.error(error);
     }
@@ -53,8 +56,8 @@ const DeliveryBoy = () => {
         <h1 className="text-xl capitalize font-bold mb-3 tracking-tight">
           available delivery Boy
         </h1>
-        {assignment && assignment.length > 0 ? (
-          assignment.map((item, idx) => (
+        {deliveryAssignment && deliveryAssignment.length > 0 ? (
+          deliveryAssignment.map((item, idx) => (
             <div className="border-3 border-zinc-400 hover:border-red-400 px-2 rounded  mt-2 flex items-center justify-between">
               <div key={item.assimentId || idx} className="">
                 <h1 className="text-md font-bold tracking-tight">
@@ -68,10 +71,10 @@ const DeliveryBoy = () => {
                 </p>
               </div>
               <button
-                onClick={() => getdeliveryByIdAssignment(item.assimentId)}
+                onClick={() => getdeliveryByIdAssignment(item.assignmentId)}
                 className="bg-amber-300 text-white px-6 capitalize font-semibold rounded cursor-pointer py-2"
               >
-                accept
+                Accept
               </button>
             </div>
           ))

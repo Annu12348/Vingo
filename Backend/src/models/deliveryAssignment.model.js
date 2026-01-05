@@ -26,11 +26,13 @@ const deliveryAssignmentSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
+
     status: {
       type: String,
       enum: ["brodcasted", "assigned", "completed"],
       default: "brodcasted",
     },
+
     acceptedAt: Date,
   },
   {
@@ -43,3 +45,17 @@ const DeliveryAssignmentModel = mongoose.model(
   deliveryAssignmentSchema
 );
 export default DeliveryAssignmentModel;
+
+{
+  /*enum: [
+        "brodcasted", // multiple delivery boys ko offer gaya
+        "assigned", // ek delivery boy ne accept kiya
+        "picked", // order pickup ho gaya
+        "on_the_way", // delivery boy raste me hai
+        "delivered", // order delivered
+        "completed", // payment + flow complete
+        "cancelled", // order cancel ho gaya
+        "rejected", // delivery boy ne reject kiya
+        "expired",
+      ],*/
+}

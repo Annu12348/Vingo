@@ -1,22 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  assignment: [],
+  deliveryAssignment: [],
+  
 };
 
 export const AssignmentReducer = createSlice({
   name: "assignment",
   initialState,
   reducers: {
-    setAssignment: (state, action) => {
-      state.assignment = action.payload;
+    setDeliveryAssignment: (state, action) => {
+      state.deliveryAssignment = action.payload;
     },
+
+    
   },
 });
 
 // Action creators are generated for each case reducer function
 export const {
-  setAssignment
+  setDeliveryAssignment
 } = AssignmentReducer.actions;
 
 export default AssignmentReducer.reducer;
