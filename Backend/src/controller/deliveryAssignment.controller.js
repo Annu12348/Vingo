@@ -119,3 +119,18 @@ export const getDeliveryAssignmentByIdController = async (req, res) => {
     });
   }
 };
+
+export const getCurrentDeliveryAssignmentController = async (req, res) => {
+  try {
+    const assignment = await DeliveryAssignmentModel.find()
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: `Error accepting assignment: ${error.message}`,
+    });
+  }
+};
+
+//assignment ko find assignedTo, status ke based per with populate karna hai (assignedTo, shop, order ke ander user ko)
+//order se shopOrders ko nikalkar find karo assined and shopOrder ke matches based
+//_id: order ke id, order ke user, shoporders, deliveryAddress order ke, deliveryBoylocation, customerlocation, 
