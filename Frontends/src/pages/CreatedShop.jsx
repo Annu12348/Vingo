@@ -78,6 +78,8 @@ const CreatedShop = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     shopCreatedApi();
+
+    
   };
   return (
     <div className="w-full py-3 px-4 min-h-screen  ">
