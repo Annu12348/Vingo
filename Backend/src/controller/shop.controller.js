@@ -103,6 +103,7 @@ export const shopUpdatedController = async (req, res) => {
       { new: true }
     );
 
+    
     res.status(200).json({
       message: "Shop updated successfully",
       shop: {
