@@ -122,7 +122,87 @@ export const getDeliveryAssignmentByIdController = async (req, res) => {
 
 export const getCurrentDeliveryAssignmentController = async (req, res) => {
   try {
-    const assignment = await DeliveryAssignmentModel.find()
+    const assignmentId = req.user.id;
+
+    if (!assignmentId) {
+      return res.status(401).json({
+        message: "assignmentId are required"
+      })
+    }
+
+    const assignment = await DeliveryAssignmentModel.findOne({
+      assignedTo: assignmentId,
+      status: "assigned"
+    })
+      .populate({
+        path: "order",
+        populate: {
+          path: "shopOrders",
+        }
+      })
+      .populate("shop", "shopName")
+      .populate("assignedTo", "fullName email contact location");
+
+    if (!assignment) {
+      return res.status(404).json({
+        message: "assignment not found"
+      })
+    }
+
+    if (!assignment.order) {
+      return res.status(404).json({
+        message: "order not found"
+      })
+    }
+
+    // Ensure shopOrders is available and is an array
+    const shopOrders = assignment.order.shopOrders || [];
+    const shopOrder = shopOrders.find(
+      so => String(so._id) === String(assignment.shopOrderId)
+    );
+
+    if (!shopOrder) {
+      return res.status(400).json({
+        message: "shopOrder not found"
+      })
+    }
+
+    let deliveryBoyLocation = {
+      lat: null,
+      lon: null,
+    };
+
+    if (
+      assignment.assignedTo &&
+      assignment.assignedTo.location &&
+      Array.isArray(assignment.assignedTo.location.coordinates) &&
+      assignment.assignedTo.location.coordinates.length === 2
+    ) {
+      deliveryBoyLocation.lat = assignment.assignedTo.location.coordinates[1];
+      deliveryBoyLocation.lon = assignment.assignedTo.location.coordinates[0];
+    }
+
+    let customerLocation = {
+      lat: null,
+      lon: null,
+    };
+
+    if (assignment.order.deliveryAddress) {
+      customerLocation.lat = assignment.order.deliveryAddress.latitude;
+      customerLocation.lon = assignment.order.deliveryAddress.longitude;
+    }
+
+    res.status(200).json({
+      message: "Assignment accepted successfully",
+      data: {
+        _id: assignment.order._id,
+        user: assignment.order.user,
+        shopOrder,
+        deliveryAddress: assignment.order.deliveryAddress,
+        deliveryBoyLocation,
+        customerLocation
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -130,7 +210,3 @@ export const getCurrentDeliveryAssignmentController = async (req, res) => {
     });
   }
 };
-
-//assignment ko find assignedTo, status ke based per with populate karna hai (assignedTo, shop, order ke ander user ko)
-//order se shopOrders ko nikalkar find karo assined and shopOrder ke matches based
-//_id: order ke id, order ke user, shoporders, deliveryAddress order ke, deliveryBoylocation, customerlocation, 

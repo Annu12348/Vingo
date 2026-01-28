@@ -13,8 +13,6 @@ const LiveUpdateLocation = () => {
         { lat, lon },
         { withCredentials: true }
       );
-    console.log(response.data.message);
-    console.log(response.data.data);
     };
     navigator.geolocation.watchPosition((pos) =>
       updateLocation(pos.coords.latitude, pos.coords.longitude)
