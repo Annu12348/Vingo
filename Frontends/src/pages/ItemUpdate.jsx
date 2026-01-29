@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../utils/axios";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { setItem, setitemByCity, setSingleItem } from "../redux/reducer/ItemReducer";
+import { setItem, setSingleItem } from "../redux/reducer/ItemReducer";
 
 const ItemUpdate = () => {
   const dispatch = useDispatch();

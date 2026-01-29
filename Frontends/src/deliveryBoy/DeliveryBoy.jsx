@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
 import { setAcceptOrders, setDeliveryAssignment } from "../redux/reducer/AssignmentReducer";
 import { toast } from "react-toastify";
 import { IndianRupeeIcon, Package } from 'lucide-react';
+import DeliveryAcceptCreatingLiveTracking from "./DeliveryAcceptCreatingLiveTracking";
 
 const DeliveryBoy = () => {
   const { user } = useSelector((store) => store.Auth);
   const dispatch = useDispatch();
   const { deliveryAssignment } = useSelector((store) => store.Assignment);
   const { acceptOrders } = useSelector((store) => store.Assignment);
+  const [showOtpBox, setShowOtpBox] = useState(false)
 
   const getdeliveryAssignment = async () => {
     try {
@@ -104,19 +106,31 @@ const DeliveryBoy = () => {
       {acceptOrders && (
         <div className="bg-white p-2 w-[50%] rounded-lg shadow-sm ">
           <h1 className="flex items-center gap-3 text-xl capitalize font-bold tracking-tight leading-none"><Package className="text-amber-500" />current order</h1>
-          <p className="text-zinc-700 ml-2 font-semibold tracking-tight my-1">
-            {
-              (() => {
-                const text = acceptOrders.deliveryAddress.text || "";
-                const parts = text.split(",").map(s => s.trim());
-                const filtered = parts.filter(Boolean);
-                const state = filtered.length >= 2 ? filtered[filtered.length - 2] : "";
-                const country = filtered.length >= 1 ? filtered[filtered.length - 1] : "";
-                return `${state}${state && country ? ', ' : ''}${country}`;
-              })()
-            }
-          </p>
-          <p className="ml-2 text-zinc-300 flex mt-1">{acceptOrders?.shopOrder?.shopOrderItem?.length} | {acceptOrders?.shopOrder?.subtotal}</p>
+          <div className="border border-zinc-400  p-2 rounded my-3 ">
+            <p className="text-zinc-700 ml-2 font-semibold tracking-tight ">
+              {
+                (() => {
+                  const text = acceptOrders.deliveryAddress.text || "";
+                  const parts = text.split(",").map(s => s.trim());
+                  const filtered = parts.filter(Boolean);
+                  const state = filtered.length >= 2 ? filtered[filtered.length - 2] : "";
+                  const country = filtered.length >= 1 ? filtered[filtered.length - 1] : "";
+                  return `${state}${state && country ? ', ' : ''}${country}`;
+                })()
+              }
+            </p>
+            <p className="ml-2 text-zinc-300 flex mt-1">{acceptOrders?.shopOrder?.shopOrderItem?.length} | {acceptOrders?.shopOrder?.subtotal}</p>
+          </div>
+          <DeliveryAcceptCreatingLiveTracking data={acceptOrders} />
+          {showOtpBox == false ? (
+            <button onClick={() => setShowOtpBox(true)} className="w-full bg-green-500 rounded text-white mt-5 mb-2 p-4 font-bold capitalize tracking-tight leading-none ">
+              Mark as delivered
+            </button>
+          ) : (
+            <div className="mt-5 mb-2 border p-2 rounded border-zinc-300"  >
+              <p>Enter Otp send to {acceptOrders}</p>
+            </div>
+          )}
         </div>
       )}
     </div>
