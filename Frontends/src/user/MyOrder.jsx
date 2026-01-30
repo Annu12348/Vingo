@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import OwnerOrderCard from "./OwnerOrderCard";
+import OwnerOrderCard from "../pages/OwnerOrderCard";
 import UserOrderCard from "./UserOrderCard";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";

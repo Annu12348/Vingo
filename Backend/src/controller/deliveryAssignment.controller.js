@@ -134,14 +134,17 @@ export const getCurrentDeliveryAssignmentController = async (req, res) => {
       assignedTo: assignmentId,
       status: "assigned"
     })
+      .populate("shop", "shopName")
+      .populate("assignedTo", "fullname email contact location")
       .populate({
         path: "order",
-        populate: {
-          path: "shopOrders",
-        }
-      })
-      .populate("shop", "shopName")
-      .populate("assignedTo", "fullName email contact location");
+        populate: [
+          { 
+            path: "user", 
+            select: "fullname email contact location" 
+          }
+        ]
+      });
 
     if (!assignment) {
       return res.status(404).json({
@@ -170,6 +173,7 @@ export const getCurrentDeliveryAssignmentController = async (req, res) => {
     let deliveryBoyLocation = {
       lat: null,
       lon: null,
+
     };
 
     if (
@@ -210,3 +214,41 @@ export const getCurrentDeliveryAssignmentController = async (req, res) => {
     });
   }
 };
+
+export const getOrderByid = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+  const order = await orderModel.findById(orderId)
+  .populate("user")
+  .populate({
+    path: "shopOrders.shop",
+    model: "Shop"
+  })
+  .populate({
+    path: "shopOrders.assignedDeliveryBoy",
+    model: "User"
+  })
+  .populate({
+    path: "shopOrders.shopOrderItem.item",
+    model: "Item"
+  })
+  .lean()
+
+  if (!order) {
+    return res.status(404).json({
+      message: "order not found",
+    })
+  }
+
+  res.status(200).json({
+    message: "Order fetched by id successfully",
+    data: order,
+  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: `Error accepting assignment: ${error.message}`,
+    });
+  }
+}

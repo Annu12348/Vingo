@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   userOrders: [],
   ownerOrders: [],
+  singleTrackOrder: null
 };
 
 export const OrderReducer = createSlice({
@@ -40,6 +41,10 @@ export const OrderReducer = createSlice({
         }
       }
     },
+
+    setSingleTrackOrder: (state, action) => {
+      state.singleTrackOrder = action.payload;
+    }
   },
 });
 
@@ -49,5 +54,6 @@ export const {
   setOwnerOrders,
   ownerUpdateOrderStatus,
   userUpdateOrderStatus,
+  setSingleTrackOrder
 } = OrderReducer.actions;
 export default OrderReducer.reducer;

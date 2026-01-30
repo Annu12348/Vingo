@@ -123,12 +123,16 @@ const DeliveryBoy = () => {
           </div>
           <DeliveryAcceptCreatingLiveTracking data={acceptOrders} />
           {showOtpBox == false ? (
-            <button onClick={() => setShowOtpBox(true)} className="w-full bg-green-500 rounded text-white mt-5 mb-2 p-4 font-bold capitalize tracking-tight leading-none ">
+            <button onClick={() => setShowOtpBox(!showOtpBox)} className="w-full cursor-pointer bg-green-500 rounded text-white mt-5 mb-2 p-4 font-bold capitalize tracking-tight leading-none ">
               Mark as delivered
             </button>
           ) : (
             <div className="mt-5 mb-2 border p-2 rounded border-zinc-300"  >
-              <p>Enter Otp send to {acceptOrders}</p>
+              <p className="font-semibold tracking-tight ">
+                Enter Otp send to {" "}
+                <span className="text-red-500">{acceptOrders.user.fullname}</span></p>
+              <input className="w-full border p-2 rounded border-zinc-300 mt-2 mb-2 font-semibold outline-none" type="text" placeholder="Enter Otp" />
+              <button className="bg-red-600 cursor-pointer p-2 w-full font-semibold tracking-tight rounded mt-1">Submit OTP</button>
             </div>
           )}
         </div>

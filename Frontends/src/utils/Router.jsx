@@ -13,8 +13,9 @@ import CartItem from "../pages/CartItem";
 import CheckOut from "../pages/CheckOut";
 import ProtectedItemRoutes from "../components/ProtectedItemRoutes";
 import PlaceOrder from "../pages/PlaceOrder";
-import MyOrder from "../pages/MyOrder";
+import MyOrder from "../user/MyOrder";
 import Profile from "../pages/Profile";
+import TrackOrder from "../user/TrackOrder";
 
 const Router = () => {
   return (
@@ -109,6 +110,14 @@ const Router = () => {
         element={
           <ProtectedRoutes>
             <MyOrder />
+          </ProtectedRoutes>
+        }
+      />
+      <Route
+        path="/track-order/:orderId"
+        element={
+          <ProtectedRoutes>
+            <TrackOrder  />
           </ProtectedRoutes>
         }
       />

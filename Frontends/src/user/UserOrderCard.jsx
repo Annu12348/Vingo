@@ -1,10 +1,10 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"
 
 const UserOrderCard = ({ data }) => {
-  console.log(data.status);
-  const { userOrders } = useSelector((store) => store.Order);
-  console.log(userOrders)
+  const navigate = useNavigate()
+  console.log(data)
+
   const formDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-GB", {
@@ -79,7 +79,7 @@ const UserOrderCard = ({ data }) => {
         <h1 className="text-md  capitalize font-semibold tracking-tight leading-none">
           total : ₹{data.totalAmount}
         </h1>
-        <button className="text-md capitalize cursor-pointer  font-semibold text-white bg-red-500 px-4 rounded-lg py-2">
+        <button onClick={() => navigate(`/track-order/${data._id}`)} className="text-md capitalize cursor-pointer  font-semibold text-white bg-red-500 px-4 rounded-lg py-2">
           track order
         </button>
       </div>
