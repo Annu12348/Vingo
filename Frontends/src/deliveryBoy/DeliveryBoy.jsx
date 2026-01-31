@@ -50,6 +50,17 @@ const DeliveryBoy = () => {
     }
   }
 
+  const sendotpApi = async (orderId, shopOrderId) => {
+    try {
+      const result = await instance.get("/deliveryBoy/send-delivery-otp", {
+        withCredentials: true
+      })
+      
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   useEffect(() => {
     getdeliveryAssignment();
     acceptOrder()

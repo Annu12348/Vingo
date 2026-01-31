@@ -14,7 +14,7 @@ const TrackOrder = () => {
 
   const gettrackorderapi = async () => {
     try {
-      const result = await instance.get(`/deliveryBoy/orderbyId/${orderId}`, {
+      const result = await instance.get(`/order/orderbyId/${orderId}`, {
         withCredentials: true
       })
       dispatch(setSingleTrackOrder(result.data.data))
