@@ -5,7 +5,8 @@ import {
   getUserOrderController,
   placeOrderController,
   statusChangesController,
-  sendDeliveryOtpController
+  sendDeliveryOtpController,
+  verifyOtpController
 } from "../controller/order.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
 const router = express.Router();
@@ -35,6 +36,6 @@ router.get(
 )
 
 router.post("/send-delivery-otp", authenticationMiddleware, sendDeliveryOtpController)
-router.post("/delivered", authenticationMiddleware, sendDeliveryOtpController)
+router.post("/verify-delivery-otp", authenticationMiddleware, verifyOtpController)
 
 export default router;

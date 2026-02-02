@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
 import { setAcceptOrders, setDeliveryAssignment } from "../redux/reducer/AssignmentReducer";
 import { toast } from "react-toastify";
-import { IndianRupeeIcon, Package } from 'lucide-react';
+import { Package } from 'lucide-react';
 import DeliveryAcceptCreatingLiveTracking from "./DeliveryAcceptCreatingLiveTracking";
 
 const DeliveryBoy = () => {
@@ -12,6 +12,7 @@ const DeliveryBoy = () => {
   const { deliveryAssignment } = useSelector((store) => store.Assignment);
   const { acceptOrders } = useSelector((store) => store.Assignment);
   const [showOtpBox, setShowOtpBox] = useState(false)
+  const [otp, setOtp] = useState("")
 
   const getdeliveryAssignment = async () => {
     try {
@@ -50,12 +51,31 @@ const DeliveryBoy = () => {
     }
   }
 
-  const sendotpApi = async (orderId, shopOrderId) => {
+  const sendotpApi = async () => {
     try {
-      const result = await instance.get("/deliveryBoy/send-delivery-otp", {
+      const result = await instance.post("/order/send-delivery-otp", {
+        orderId: acceptOrders._id,
+        shopOrderId: acceptOrders.shopOrder._id
+      }, {
         withCredentials: true
       })
-      
+      setShowOtpBox(true)
+      toast.success(result.data.message)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const verifyOtpApi = async () => {
+    try {
+      const result = await instance.post("/order/verify-delivery-otp", {
+        orderId: acceptOrders._id,
+        shopOrderId: acceptOrders.shopOrder._id,
+        otp
+      },
+        { withCredentials: true }
+      )
+      toast.success(result.data.message)
     } catch (error) {
       console.error(error)
     }
@@ -134,7 +154,7 @@ const DeliveryBoy = () => {
           </div>
           <DeliveryAcceptCreatingLiveTracking data={acceptOrders} />
           {showOtpBox == false ? (
-            <button onClick={() => setShowOtpBox(!showOtpBox)} className="w-full cursor-pointer bg-green-500 rounded text-white mt-5 mb-2 p-4 font-bold capitalize tracking-tight leading-none ">
+            <button onClick={sendotpApi} className="w-full cursor-pointer bg-green-500 rounded text-white mt-5 mb-2 p-4 font-bold capitalize tracking-tight leading-none ">
               Mark as delivered
             </button>
           ) : (
@@ -142,8 +162,19 @@ const DeliveryBoy = () => {
               <p className="font-semibold tracking-tight ">
                 Enter Otp send to {" "}
                 <span className="text-red-500">{acceptOrders.user.fullname}</span></p>
-              <input className="w-full border p-2 rounded border-zinc-300 mt-2 mb-2 font-semibold outline-none" type="text" placeholder="Enter Otp" />
-              <button className="bg-red-600 cursor-pointer p-2 w-full font-semibold tracking-tight rounded mt-1">Submit OTP</button>
+              <input
+                className="w-full border p-2 rounded border-zinc-300 mt-2 mb-2 font-semibold outline-none"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                type="text"
+                placeholder="Enter Otp"
+              />
+              <button
+                className="bg-red-600 cursor-pointer p-2 w-full font-semibold tracking-tight rounded mt-1"
+                onClick={verifyOtpApi}
+              >
+                Submit OTP
+              </button>
             </div>
           )}
         </div>

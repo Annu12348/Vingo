@@ -3,16 +3,16 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
 import { setitemByCity } from "../redux/reducer/ItemReducer";
-import FoodCard from "./FoodCard";
+import FoodCard from "../pages/FoodCard";
 
-const UserShopFoodCity = () => {
+const UserShopFoodCity = ({data, updatedItemsList}) => {
   const scrollRef = useRef(null);
   const dispatch = useDispatch();
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
   const { city } = useSelector((store) => store.Auth);
-  const { itemByCity } = useSelector((store) => store.Item);
   const { shopByCity } = useSelector((store) => store.Shop);
+  
 
   useEffect(() => {
     const scrollElement = scrollRef.current;
@@ -87,7 +87,7 @@ const UserShopFoodCity = () => {
   return (
     <>
       {shopByCity.length > 0 ? (
-        itemByCity.length > 0 ? (
+        data.length > 0 ? (
           <div className="w-full mt-5 mb-2 ">
             <h1 className="text-xl capitalize font-bold tracking-tight leading-none ">
               best shop in {city?.city}
@@ -132,7 +132,7 @@ const UserShopFoodCity = () => {
                 }}
                 tabIndex={-1}
               >
-                {itemByCity.map((item) => (
+                {updatedItemsList?.map((item) => (
                   <FoodCard key={item._id} item={item} />
                 ))}
               </div>
@@ -151,3 +151,4 @@ const UserShopFoodCity = () => {
 };
 
 export default UserShopFoodCity;
+

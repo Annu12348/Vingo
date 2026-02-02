@@ -86,7 +86,7 @@ const TrackOrder = () => {
                   <p className="text-green-600 font-semibold tracking-tight leading-none capitalize">Delivered</p>
                 )}
               </div>
-              {shopOrder.assignedDeliveryBoy && (
+              {shopOrder.assignedDeliveryBoy && shopOrder.status !== "delivered" && (
                 <div>
                   <DeliveryAcceptCreatingLiveTracking data={{
                     deliveryBoyLocation: {
