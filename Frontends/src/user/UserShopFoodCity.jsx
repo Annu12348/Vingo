@@ -3,7 +3,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
 import { setitemByCity } from "../redux/reducer/ItemReducer";
-import FoodCard from "../pages/FoodCard";
+import FoodCard from "./FoodCard";
 
 const UserShopFoodCity = ({data, updatedItemsList}) => {
   const scrollRef = useRef(null);

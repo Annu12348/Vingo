@@ -3,6 +3,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
 import { setShopByCity } from "../redux/reducer/ShopReducer";
+import { Link } from "react-router-dom";
 
 const UserShopCity = () => {
   const scrollRef = useRef(null);
@@ -129,8 +130,9 @@ const UserShopCity = () => {
               tabIndex={-1}
             >
               {shopByCity.map((shop) => (
-                <div
+                <Link
                   key={shop?._id}
+                  to={`/details/${shop?._id}`}
                   className="bg-amber-200 min-w-[36.4vh] h-[24vh] rounded-xl overflow-hidden relative inline-block  group"
                 >
                   <img
@@ -141,7 +143,7 @@ const UserShopCity = () => {
                   <h1 className="text-[17px] text-white absolute bottom-0 text-center py-0.5 font-semibold w-full bg-[#8da98184]">
                     {shop?.shopName}
                   </h1>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

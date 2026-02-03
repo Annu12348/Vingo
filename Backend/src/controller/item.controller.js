@@ -332,9 +332,9 @@ export const itemFetchedByCityController = async (req, res) => {
       });
     }
 
-    const shopIds = shops.map(shop => shop._id); 
+    const shopIds = shops.map(shop => shop._id);
 
-    const items = await itemModel.find({shop: {$in: shopIds}})
+    const items = await itemModel.find({ shop: { $in: shopIds } })
 
     if (!items || items.length === 0) {
       return res.status(404).json({
@@ -353,3 +353,39 @@ export const itemFetchedByCityController = async (req, res) => {
     });
   }
 };
+
+export const shopItemFetchController = async (req, res) => {
+  try {
+    const shopId = req.params.shopId;
+
+    if (!shopId) {
+      return res.status(400).json({
+        message: "shopId is required"
+      });
+    }
+
+    const shop = await shopModel.findById(shopId);
+
+    if (!shop) {
+      return res.status(404).json({
+        message: "Shop not found"
+      });
+    }
+
+    const items = await itemModel.find({ shop: shopId });
+
+    res.status(200).json({
+      success: true,
+      message: "Shop items fetched by Id successfully",
+      data: {
+        shop,
+        items,
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+}

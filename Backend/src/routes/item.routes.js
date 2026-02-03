@@ -6,6 +6,7 @@ import {
   itemFetchController,
   itemFetchedByCityController,
   itemUpdatedController,
+  shopItemFetchController
 } from "../controller/item.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
 const router = express.Router();
@@ -48,5 +49,10 @@ router.get(
   authenticationMiddleware,
   itemFetchedByCityController
 );
+
+router.get("/shop/:shopId",
+  authenticationMiddleware,
+  shopItemFetchController
+)
 
 export default router;

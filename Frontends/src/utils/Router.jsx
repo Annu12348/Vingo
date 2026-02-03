@@ -16,6 +16,7 @@ import PlaceOrder from "../pages/PlaceOrder";
 import MyOrder from "../user/MyOrder";
 import Profile from "../pages/Profile";
 import TrackOrder from "../user/TrackOrder";
+import ShopFindDetails from "../user/ShopFindDetails";
 
 const Router = () => {
   return (
@@ -118,6 +119,14 @@ const Router = () => {
         element={
           <ProtectedRoutes>
             <TrackOrder  />
+          </ProtectedRoutes>
+        }
+      />
+      <Route
+        path="/details/:detailsId"
+        element={
+          <ProtectedRoutes>
+            <ShopFindDetails  />
           </ProtectedRoutes>
         }
       />
