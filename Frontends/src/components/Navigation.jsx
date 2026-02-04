@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -6,13 +6,12 @@ import instance from "../utils/axios";
 import { setUser } from "../redux/reducer/AuthenticationSlice";
 import { FaLocationDot } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
-import { CiShoppingCart } from "react-icons/ci";
 import { FiMenu } from "react-icons/fi";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
 import { persistor } from "../redux/store";
 import { setShop } from "../redux/reducer/ShopReducer";
-import { setItem } from "../redux/reducer/ItemReducer";
+import { setItem, setSearchItem } from "../redux/reducer/ItemReducer";
 import { RiShoppingCartFill } from "react-icons/ri";
 
 const Navigation = () => {
@@ -22,7 +21,8 @@ const Navigation = () => {
   const dispatch = useDispatch();
   const { city } = useSelector((store) => store.Auth);
   const { shop } = useSelector((store) => store.Shop);
-  const { cartItems } = useSelector(store => store.Item)
+  const { cartItems } = useSelector(store => store.Item);
+  const [query, setQuery] = useState("");
 
   const logoutApi = async () => {
     try {
@@ -33,7 +33,7 @@ const Navigation = () => {
       persistor.purge();
       toast.success("Successfully logged out user");
       navigate("/login");
-      console.log(result.data.data)
+      console.log(result.data.data);
     } catch (error) {
       console.error(error);
       toast.error("Failed to log out. Please try again.");
@@ -47,6 +47,32 @@ const Navigation = () => {
   const clickHandler = () => {
     setValues((prev) => !prev);
   };
+
+  const searchQueryApi = async (query) => {
+    try {
+      const result = await instance.get(`/item/search-item?query=${query}&city=${city?.city}`, {
+        withCredentials: true,
+      });
+      dispatch(setSearchItem(result.data.data))
+      console.log(result.data.data);
+    } catch (error) {
+      console.error(error);
+      dispatch(setSearchItem([]));
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (query) {
+        searchQueryApi(query);
+      } else {
+        dispatch(setSearchItem([]))
+      }
+    }, 30)
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
   return (
     <div className="w-full fixed z-10   flex   items-center justify-center     ">
       <div className="md:w-[60%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
@@ -73,6 +99,8 @@ const Navigation = () => {
                 </label>
                 <input
                   className=" outline-none md:py-1.5 py-1 px-1 font-semibold text-zinc-500 w-full text-sm tracking-tight"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                   type="search"
                   placeholder="Search food..."
                 />
@@ -82,7 +110,7 @@ const Navigation = () => {
 
           <div className="flex items-center gap-4 justify-center">
             {user?.role === "user" && (
-              <Link to='/cart' className=" text-2xl md:block hidden relative text-[rgb(240,107,41)]">
+              <Link to="/cart" className=" text-2xl md:block hidden relative text-[rgb(240,107,41)]">
                 <RiShoppingCartFill />
                 <span className="text-[12px] absolute -top-1.5 -right-1.5">
                   {cartItems.length}
@@ -110,13 +138,13 @@ const Navigation = () => {
               </div>
             )}
 
-            <Link to='/my-order' className="text-[11px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
+            <Link to="/my-order" className="text-[11px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
               <span className="text-xl">
                 <FaFileInvoiceDollar />
               </span>
               my oders
             </Link>
-            <Link to='/profile' className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
+            <Link to="/profile" className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
               {user?.FullName.slice(0, 1)}
             </Link>
             <button

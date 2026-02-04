@@ -20,7 +20,9 @@ const PlaceOrder = () => {
           Thank you for your purchase. Your order is being prepared You  can
           track your order status in the "My Orders" section.
         </p>
-        <Link to='/my-order' className="text-md mt-2 font-semibold text-white bg-amber-700 py-2 px-5 rounded">Back to my orders</Link>
+        <Link to='/my-order' className="text-md mt-2 font-semibold text-white bg-amber-700 py-2 px-5 rounded">
+        Back to my orders
+        </Link>
       </div>
     </div>
   );

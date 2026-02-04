@@ -30,8 +30,9 @@ const CheckOut = () => {
   const dispatch = useDispatch();
   const { cartItems } = useSelector((store) => store.Item);
   const { totalAmount } = useSelector((store) => store.Item);
-  const deliveryFees = totalAmount>500?0:40
-  const totalAmountWithDeliveryFees = totalAmount+deliveryFees
+  const deliveryFees = totalAmount > 500 ? 0 : 40
+  const totalAmountWithDeliveryFees = totalAmount + deliveryFees
+  const { user } = useSelector(store => store.Auth);
   const navigate = useNavigate()
 
   const onDragend = (e) => {
@@ -41,16 +42,10 @@ const CheckOut = () => {
   };
 
   const getCurrentLocation = async () => {
-    try {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        dispatch(setLocation({ lat: latitude, lon: longitude }));
-        getAddressByLatLng(latitude, longitude);
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    const latitude = user.location.coordinates[1]
+    const longitude = user.location.coordinates[0]
+    dispatch(setLocation({ lat: latitude, lon: longitude }));
+    getAddressByLatLng(latitude, longitude);
   };
 
   const getAddressByLatLng = async (lat, lng) => {
@@ -169,11 +164,10 @@ const CheckOut = () => {
             </h1>
             <div className="w-full md:flex items-center justify-between">
               <div
-                className={`p-2 flex gap-3 items-center  mt-1.5 border ${
-                  payMent === "cod"
+                className={`p-2 flex gap-3 items-center  mt-1.5 border ${payMent === "cod"
                     ? "border-red-700"
                     : "bg-zinc-100 border-none"
-                } w-full  md:w-[49%] rounded `}
+                  } w-full  md:w-[49%] rounded `}
                 onClick={() => setPayMent("cod")}
               >
                 <span className="text-xl bg-zinc-200 block w-fit p-1.5 rounded-full ">
@@ -190,9 +184,8 @@ const CheckOut = () => {
               </div>
               <div
                 onClick={() => setPayMent("online")}
-                className={`p-2 flex gap-3  items-center md:mt-1.5 mt-3 shadow ${
-                  payMent === "online" ? "border-red-700 border" : "bg-zinc-100"
-                } mt-1.5 w-full md:w-[50%] rounded `}
+                className={`p-2 flex gap-3  items-center md:mt-1.5 mt-3 shadow ${payMent === "online" ? "border-red-700 border" : "bg-zinc-100"
+                  } mt-1.5 w-full md:w-[50%] rounded `}
               >
                 <span className="text-xl bg-zinc-200 block text-blue-900 w-fit p-1.5 rounded-full ">
                   <FaMobile />
@@ -245,7 +238,7 @@ const CheckOut = () => {
                   deliveryFees
                 </span>
                 <span className="tracking-tight font-semibold text-md capitalize leading-none">
-                  {deliveryFees==0?"free" : 40}
+                  {deliveryFees == 0 ? "free" : 40}
                 </span>
               </div>
 
@@ -261,7 +254,7 @@ const CheckOut = () => {
           </div>
 
           <button className="mt-5 cursor-pointer flex items-center justify-center bg-red-500 py-3 w-full rounded text-white capitalize font-semibold  " onClick={handlerPlaceOrder}>
-            {payMent=="cod" ? "place order" : "pay & place order"}
+            {payMent == "cod" ? "place order" : "pay & place order"}
           </button>
         </div>
       </div>

@@ -34,10 +34,10 @@ const UserOrderCard = ({ data }) => {
       <hr className="text-xl text-zinc-300 my-1 mt-2" />
 
       <div className="w-full ">
-        {data.shopOrders.map((shopOrder) => (
+        {data?.shopOrders?.map((shopOrder) => (
           <div key={shopOrder._id} className="mt-7">
             <h1 className="text-xl font-bold capitalize tracking-tight leading-none">
-              {shopOrder.shop.shopName}
+              {shopOrder?.shop?.shopName}
             </h1>
 
             <div className="flex gap-2 flex-wrap items-center my-2 mt-3">
@@ -48,11 +48,11 @@ const UserOrderCard = ({ data }) => {
                 >
                   <img
                     className=" w-full h-[14vh] object-cover rounded "
-                    src={orderItem.item.image}
-                    alt={orderItem.item.name || "Order Item"}
+                    src={orderItem?.item?.image}
+                    alt={orderItem?.item?.shopName || "Order Item"}
                   />
                   <h1 className="text-md capitalize mt-2 font-semibold tracking-tight leading-none">
-                    {orderItem.item.foodName}
+                    {orderItem?.item?.foodName}
                   </h1>
                   <h1 className="text-md capitalize pb-2 text-zinc-500 mt-1.5 font-semibold tracking-tight leading-none">
                     Qty : {orderItem.quantity} x ₹{orderItem.price}

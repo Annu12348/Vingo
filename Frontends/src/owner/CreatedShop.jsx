@@ -16,7 +16,7 @@ const CreatedShop = () => {
     image: "",
     city: city?.city || "",
     state: city?.state || "",
-    address: city?.address_line1 || "",
+    address: city?.address_line2 || "",
   });
   const [imagePreview, setImagePreview] = useState(null);
 

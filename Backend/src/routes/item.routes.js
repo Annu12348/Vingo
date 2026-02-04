@@ -6,6 +6,7 @@ import {
   itemFetchController,
   itemFetchedByCityController,
   itemUpdatedController,
+  searchItemController,
   shopItemFetchController
 } from "../controller/item.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
@@ -31,7 +32,11 @@ router.put(
   itemUpdatedController
 );
 
-router.get("/fetch", authenticationMiddleware, itemFetchController);
+router.get("/fetch",
+  authenticationMiddleware,
+  itemFetchController
+);
+
 router.delete(
   "/delete/:itemId",
   authenticationMiddleware,
@@ -53,6 +58,11 @@ router.get(
 router.get("/shop/:shopId",
   authenticationMiddleware,
   shopItemFetchController
+)
+
+router.get("/search-item",
+  authenticationMiddleware,
+  searchItemController
 )
 
 export default router;

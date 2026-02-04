@@ -389,3 +389,50 @@ export const shopItemFetchController = async (req, res) => {
     });
   }
 }
+
+export const searchItemController = async (req, res) => {
+  try {
+    const { query, city } = req.query;
+
+    if (!query || !city) {
+      return res.status(400).json({
+        success: false,
+        message: "query and city are required"
+      });
+    }
+    
+    const shop = await shopModel.find({
+      city: { $regex: `^${city}$`, $options: 'i' }, 
+    })
+
+    if (!shop || shop.length === 0) {
+      return res.status(404).json({
+        message: "Shop not found"
+      });
+    }
+
+    const shopIds = shop.map(id => id._id)
+
+    const items = await itemModel.find({
+      shop: { $in: shopIds },
+      foodName: { $regex: query, $options: "i" }
+    });
+
+    if (!items || items.length === 0) {
+      return res.status(404).json({
+        message: "items not found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "items search query successfully",
+      data: items
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+}

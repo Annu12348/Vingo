@@ -230,7 +230,6 @@ export const shopDeleteController = async (req, res) => {
 
 export const shopfetchCityController = async (req, res) => {
   try {
-    //const userId = req.user.id;
     const { city } = req.params;
 
     if (!city) {
@@ -239,9 +238,8 @@ export const shopfetchCityController = async (req, res) => {
       });
     }
 
-    // City case-insensitive search
     const shops = await shopModel.find({
-      city: { $regex: `^${city}$`, $options: 'i' }, // i = case-insensitive
+      city: { $regex: `^${city}$`, $options: 'i' }, 
     });
 
     if (!shops || shops.length === 0) {

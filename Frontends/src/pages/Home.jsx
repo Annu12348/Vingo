@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Navigation from "../components/Navigation";
-import Shop from "./Shop";
-import Item from "./Item";
+import Shop from "../owner/Shop";
+import Item from "../owner/Item";
 import { useSelector } from "react-redux";
 import UserDetails from "../user/UserDetails";
 import UserShopCity from "../user/UserShopCity";
 import UserShopFoodCity from "../user/UserShopFoodCity";
 import DeliveryBoy from "../deliveryBoy/DeliveryBoy";
+import SearchBar from "../user/SearchBar";
 
 const Home = () => {
   const { shop } = useSelector((store) => store.Shop);
   const { user } = useSelector((store) => store.Auth);
   const { itemByCity } = useSelector((store) => store.Item);
   const [updatedItemsList, setUpdatedItemLinst] = useState([])
+  const { searchItem } = useSelector(store => store.Item)
 
   const handleFilterByCategory = (category) => {
     if (category == "All Food") {
@@ -33,7 +35,8 @@ const Home = () => {
       <Navigation />
       <div className="w-full min-h-[40vh]   md:px-25 md:mt-20 mt-12 ">
         {user?.role === "user" && (
-          <div className="w-full ">
+          <div className="w-full  ">
+            {searchItem.length > 0 ? <SearchBar /> : null}
             <UserDetails
               onclicked={handleFilterByCategory}
             />
@@ -45,7 +48,7 @@ const Home = () => {
           </div>
         )}
         {user?.role === "owner" && (
-          <div className="w-full ">
+          <div className="w-full   ">
             <Shop />
             {shop.length > 0 && <Item />}
           </div>
