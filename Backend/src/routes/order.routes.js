@@ -6,17 +6,23 @@ import {
   placeOrderController,
   statusChangesController,
   sendDeliveryOtpController,
-  verifyOtpController
+  verifyOtpController,
+  verifyPaymentController
 } from "../controller/order.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
-router.post("/place-order", authenticationMiddleware, placeOrderController);
+router.post("/place-order", 
+  authenticationMiddleware, 
+  placeOrderController
+);
+
 router.get(
   "/user-order-fetch",
   authenticationMiddleware,
   getUserOrderController
 );
+
 router.get(
   "/owner-order-fetch",
   authenticationMiddleware,
@@ -35,7 +41,18 @@ router.get(
   getOrderByid
 )
 
-router.post("/send-delivery-otp", authenticationMiddleware, sendDeliveryOtpController)
-router.post("/verify-delivery-otp", authenticationMiddleware, verifyOtpController)
+router.post("/send-delivery-otp", 
+  authenticationMiddleware, 
+  sendDeliveryOtpController
+)
+router.post("/verify-delivery-otp", 
+  authenticationMiddleware, 
+  verifyOtpController
+)
+
+router.post("/verify-payment", 
+  authenticationMiddleware,
+  verifyPaymentController
+)
 
 export default router;

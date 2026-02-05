@@ -19,6 +19,7 @@ const MyOrder = () => {
         withCredentials: true,
       });
       dispatch(setUserOrders(response.data.orders));
+      console.log(response.data.orders)
     } catch (error) {
       console.error(error);
     }
@@ -30,6 +31,7 @@ const MyOrder = () => {
         withCredentials: true,
       });
       dispatch(setOwnerOrders(response.data.filteredOrders));
+      console.log(response.data.filteredOrders)
     } catch (error) {
       console.error(error);
     }
@@ -42,7 +44,6 @@ const MyOrder = () => {
     } else if (user.role === "owner") {
       getOwnerOrderApi();
     }
-    // eslint-disable-next-line
   }, [user?.role]);
 
   return (

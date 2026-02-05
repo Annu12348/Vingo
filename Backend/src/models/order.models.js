@@ -87,6 +87,20 @@ const orderSehema = new mongoose.Schema(
     },
 
     shopOrders: [shopOrderSchema],
+    payments: {
+      type: Boolean,
+      default: false
+    },
+
+    rezorpayOrderId: {
+      type: String,
+      default: ""
+    },
+
+    rezorPaymentId: {
+      type: String,
+      default: ""
+    }
   },
 
   { timestamps: true }

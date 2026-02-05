@@ -1,8 +1,15 @@
+import { config } from "../config/config.js";
 import DeliveryAssignmentModel from "../models/deliveryAssignment.model.js";
 import orderModel from "../models/order.models.js";
 import shopModel from "../models/shop.models.js";
 import userModel from "../models/user.models.js";
 import { sendDeliveryOtpMail } from "../utils/mail.utils.js";
+import Razorpay from 'razorpay';
+
+let instances = new Razorpay({
+  key_id: config.REZORPAY_API_KEY_ID,
+  key_secret: config.REZORPAY_API_SECRET_KEY,
+});
 
 export const placeOrderController = async (req, res) => {
   try {
@@ -72,6 +79,31 @@ export const placeOrderController = async (req, res) => {
         };
       })
     );
+
+    if (paymentMethod == "online") {
+      const rezorpayOrder = await instances.orderModel.create({
+        amount: Math.round(totalAmount * 100),
+        currency: 'INR',
+        receipt: `receipt_${Date.now()}`
+      })
+
+      const newOrder = await orderModel.create({
+        user: req.user._id,
+        deliveryAddress,
+        totalAmount,
+        cartItems,
+        shopOrders,
+        paymentMethod,
+        rezorpayOrderId: rezorpayOrder.id,
+        payments: false
+      });
+
+      return res.status(200).json({
+        rezorpayOrder,
+        orderId: newOrder._id,
+        key_id: config.REZORPAY_API_KEY_ID,
+      })
+    }
 
     const newOrder = await orderModel.create({
       user: req.user._id,
@@ -339,7 +371,7 @@ export const sendDeliveryOtpController = async (req, res) => {
 
     const shopOrder = order.shopOrders.id(shopOrderId)
 
-    if(!order || !shopOrder) {
+    if (!order || !shopOrder) {
       return res.status(400).json({
         message: "Is valid order/shopOrderId"
       })
@@ -347,7 +379,7 @@ export const sendDeliveryOtpController = async (req, res) => {
 
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
     shopOrder.deliveryOtp = otp;
-    shopOrder.otpExpires = Date.now() + 5*60*1000
+    shopOrder.otpExpires = Date.now() + 5 * 60 * 1000
     await order.save()
 
     await sendDeliveryOtpMail(order.user, otp)
@@ -371,7 +403,7 @@ export const verifyOtpController = async (req, res) => {
 
     const shopOrder = order.shopOrders.id(shopOrderId)
 
-    if(!order || !shopOrder) {
+    if (!order || !shopOrder) {
       return res.status(400).json({
         message: "Is valid order/shopOrderId"
       })
@@ -384,7 +416,7 @@ export const verifyOtpController = async (req, res) => {
     }
 
     shopOrder.status = "delivered"
-    shopOrder.deliveredAt=Date.now()
+    shopOrder.deliveredAt = Date.now()
     await order.save()
 
     const delivered = await DeliveryAssignmentModel.deleteOne({
@@ -402,3 +434,52 @@ export const verifyOtpController = async (req, res) => {
     });
   }
 } 
+
+export const verifyPaymentController = async (req, res) => {
+  console.log("🔥 verifyPaymentController HIT");
+  console.log("BODY:", req.body);
+  try {
+    const { rezor_payment_id, orderId } = req.body;
+
+    if (!rezor_payment_id || !orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "rezor_payment_id and orderId are feild required"
+      })
+    }
+
+    const payment = await instances.payments.fetch(rezor_payment_id);
+
+    if (!payment || payment.status !== "captured") {
+      return res.status(401).json({
+        success: false,
+        message: "Payment was not successful or not captured."
+      });
+    }
+
+    const order = await orderModel.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "order not found"
+      })
+    }
+
+    order.payments=true;
+    order.rezorPaymentId=rezor_payment_id
+    await order.save()
+
+    res.status(200).json({
+      message: "razor payment success fully verify",
+      data: order
+    })
+  } catch (error) {
+    console.error("🔥 VERIFY PAYMENT ERROR:", error);
+    console.error(error.stack);
+
+    res.status(500).json({
+      message: `verify payment error ${error}`,
+    });
+  }
+}

@@ -95,10 +95,10 @@ const Navigation = () => {
               </div>
               <div className="flex w-[72%] items-center border-zinc-300 border-l-3 px-3 gap-2">
                 <label className="text-xl">
-                  <CiSearch />
+                <CiSearch />
                 </label>
                 <input
-                  className=" outline-none md:py-1.5 py-1 px-1 font-semibold text-zinc-500 w-full text-sm tracking-tight"
+                  className=" outline-none  md:py-1.5 py-1 px-1 font-semibold text-zinc-500 w-full text-sm tracking-tight"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   type="search"

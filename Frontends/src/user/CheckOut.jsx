@@ -87,11 +87,47 @@ const CheckOut = () => {
       }, {
         withCredentials: true
       })
-      console.log(response.data.newOrder)
-      navigate("/place-order")
+      if (payMent === "cod") {
+        navigate("/place-order");
+      } else {
+        const orderId = response.data.orderId;
+        const rezorpayOrder = response.data.rezorpayOrder;
+        openRezorpayWindow(orderId, rezorpayOrder);
+      }
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const openRezorpayWindow = (orderId, rezorpayOrder) => {
+    const option = {
+      key: import.meta.env.VITE_REZORPAY_API_KEY_ID,
+      amount: rezorpayOrder.amount,
+      currency: "INR",
+      name: "VINGO",
+      order_id: rezorpayOrder.id,
+      description: "food delivery website",
+      handler: async (response) => {
+        try {
+          await instance.post(
+            "/order/verify-payment",
+            { 
+              orderId, 
+              rezor_payment_id: response.rezorpay_payment_id 
+            },
+            {
+              withCredentials: true
+            }
+          )
+          navigate("/place-order")
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+
+    const rzp = new window.Razorpay(option)
+    rzp.open()
   }
 
   useEffect(() => {
@@ -165,8 +201,8 @@ const CheckOut = () => {
             <div className="w-full md:flex items-center justify-between">
               <div
                 className={`p-2 flex gap-3 items-center  mt-1.5 border ${payMent === "cod"
-                    ? "border-red-700"
-                    : "bg-zinc-100 border-none"
+                  ? "border-red-700"
+                  : "bg-zinc-100 border-none"
                   } w-full  md:w-[49%] rounded `}
                 onClick={() => setPayMent("cod")}
               >
