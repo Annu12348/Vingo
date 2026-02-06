@@ -8,6 +8,7 @@ import {
 } from "../redux/reducer/OrderReducer";
 
 const OwnerOrderCard = ({ data }) => {
+  console.log(data)
   const dispatch = useDispatch();
   const { ownerOrders } = useSelector((store) => store.Order);
   const [availableBoys, setAvailableBoys] = useState([]);
@@ -24,7 +25,6 @@ const OwnerOrderCard = ({ data }) => {
         { status },
         { withCredentials: true }
       );
-      console.log(response.data);
       dispatch(ownerUpdateOrderStatus({ orderId, shopId, status }));
       setAvailableBoys(response.data.availableBoys || []);
     } catch (error) {
@@ -47,6 +47,15 @@ const OwnerOrderCard = ({ data }) => {
           </span>{" "}
           : {data.user.contact}
         </p>
+        {data.paymentMethod === "cod" ? (
+          <p>Payment Method: Cash on Delivery</p>
+        ) : (
+          data.payments ? (
+            <p>Payment Method: Online (Paid)</p>
+          ) : (
+            <p>Payment Method: Online (Unpaid)</p>
+          )
+        )}
       </div>
 
       <div className=" ">

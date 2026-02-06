@@ -12,6 +12,7 @@ import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import { setAddress, setLocation } from "../redux/reducer/MapReducer";
 import axios from "axios";
 import instance from "../utils/axios";
+import { addUserOrders } from "../redux/reducer/OrderReducer";
 
 const RecenterMap = ({ location }) => {
   if (location.lat && location.lon) {
@@ -76,7 +77,7 @@ const CheckOut = () => {
   const handlerPlaceOrder = async () => {
     try {
       const response = await instance.post('/order/place-order', {
-        totalAmount,
+        totalAmount: totalAmountWithDeliveryFees,
         paymentMethod: payMent,
         cartItems,
         deliveryAddress: {
@@ -88,10 +89,12 @@ const CheckOut = () => {
         withCredentials: true
       })
       if (payMent === "cod") {
+        dispatch(addUserOrders(response.data.newOrder))
+        console.log(response.data.newOrder)
         navigate("/place-order");
       } else {
         const orderId = response.data.orderId;
-        const rezorpayOrder = response.data.rezorpayOrder;
+        const rezorpayOrder = response.data.rezorOrder;
         openRezorpayWindow(orderId, rezorpayOrder);
       }
     } catch (error) {
@@ -101,33 +104,38 @@ const CheckOut = () => {
 
   const openRezorpayWindow = (orderId, rezorpayOrder) => {
     const option = {
-      key: import.meta.env.VITE_REZORPAY_API_KEY_ID,
+      key: "rzp_test_SCQ8RyOz9FMqeM",
       amount: rezorpayOrder.amount,
       currency: "INR",
       name: "VINGO",
       order_id: rezorpayOrder.id,
-      description: "food delivery website",
+      description: "Food delivery website",
       handler: async (response) => {
         try {
-          await instance.post(
+          const verify = await instance.post(
             "/order/verify-payment",
             { 
               orderId, 
-              rezor_payment_id: response.rezorpay_payment_id 
+              rezor_payment_id: response.razorpay_payment_id 
             },
             {
               withCredentials: true
             }
-          )
-          navigate("/place-order")
+          );
+          dispatch(addUserOrders(verify.data.data));
+          navigate("/place-order");
         } catch (error) {
-          console.error(error)
+          console.error("Payment verification failed", error);
         }
       }
     }
 
-    const rzp = new window.Razorpay(option)
-    rzp.open()
+    if (window.Razorpay) {
+      const rzp = new window.Razorpay(option);
+      rzp.open();
+    } else {
+      console.error("Razorpay SDK not loaded");
+    }
   }
 
   useEffect(() => {

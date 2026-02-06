@@ -14,6 +14,11 @@ export const OrderReducer = createSlice({
       state.userOrders = action.payload;
     },
 
+    addUserOrders: (state, action) => {
+      if (!action.payload || !action.payload._id) return;
+      state.userOrders.push(action.payload);
+    },
+
     setOwnerOrders: (state, action) => {
       state.ownerOrders = action.payload;
     },
@@ -51,6 +56,7 @@ export const OrderReducer = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   setUserOrders,
+  addUserOrders,
   setOwnerOrders,
   ownerUpdateOrderStatus,
   userUpdateOrderStatus,

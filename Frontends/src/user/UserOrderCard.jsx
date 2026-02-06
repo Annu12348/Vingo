@@ -20,7 +20,15 @@ const UserOrderCard = ({ data }) => {
           order <span>#{data._id.slice(-6)}</span>
         </h1>
         <h1 className="text-md uppercase font-semibold text-zinc-400">
-          {data.paymentMethod}
+        {data.paymentMethod === "cod" ? (
+          <p>Cash on Delivery</p>
+        ) : (
+          data.payments ? (
+            <p>Online (Paid)</p>
+          ) : (
+            <p>Online (Unpaid)</p>
+          )
+        )}
         </h1>
       </div>
       <div className="w-full flex items-center justify-between ">

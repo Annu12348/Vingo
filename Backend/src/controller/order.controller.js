@@ -6,7 +6,7 @@ import userModel from "../models/user.models.js";
 import { sendDeliveryOtpMail } from "../utils/mail.utils.js";
 import Razorpay from 'razorpay';
 
-let instances = new Razorpay({
+let razorpayInstance = new Razorpay({
   key_id: config.REZORPAY_API_KEY_ID,
   key_secret: config.REZORPAY_API_SECRET_KEY,
 });
@@ -28,12 +28,13 @@ export const placeOrderController = async (req, res) => {
     }
 
     if (
+      !deliveryAddress ||
       !deliveryAddress.text ||
-      !deliveryAddress.latitude ||
-      !deliveryAddress.longitude
+      deliveryAddress.latitude === undefined ||
+      deliveryAddress.longitude === undefined
     ) {
       return res.status(400).json({
-        message: "send complete deliveryAddress",
+        message: "complete deliveryAddress required",
       });
     }
 
@@ -56,16 +57,16 @@ export const placeOrderController = async (req, res) => {
         const shop = await shopModel.findById(shopId).populate("owner");
 
         if (!shop) {
-          return res.status(404).json({
-            message: "shop not found",
-          });
+          throw new Error(`Shop not found: ${shopId}`);
         }
 
         const item = groupItemByShop[shopId];
+
         const subtotal = item.reduce(
           (sum, i) => sum + Number(i.price) * Number(i.quantity),
           0
         );
+
         return {
           shop: shopId,
           owner: shop.owner._id,
@@ -81,11 +82,11 @@ export const placeOrderController = async (req, res) => {
     );
 
     if (paymentMethod == "online") {
-      const rezorpayOrder = await instances.orderModel.create({
+      const rezorOrder = await razorpayInstance.orders.create({
         amount: Math.round(totalAmount * 100),
         currency: 'INR',
         receipt: `receipt_${Date.now()}`
-      })
+      });
 
       const newOrder = await orderModel.create({
         user: req.user._id,
@@ -94,12 +95,12 @@ export const placeOrderController = async (req, res) => {
         cartItems,
         shopOrders,
         paymentMethod,
-        rezorpayOrderId: rezorpayOrder.id,
+        rezorpayOrderId: rezorOrder.id,
         payments: false
       });
 
       return res.status(200).json({
-        rezorpayOrder,
+        rezorOrder,
         orderId: newOrder._id,
         key_id: config.REZORPAY_API_KEY_ID,
       })
@@ -119,6 +120,7 @@ export const placeOrderController = async (req, res) => {
       newOrder,
     });
   } catch (error) {
+    console.error("Place Order Error:", error);
     res.status(500).json({
       message: `place order error ${error}`,
     });
@@ -179,6 +181,7 @@ export const getOwnerOrderController = async (req, res) => {
       ),
       deliveryAddress: order.deliveryAddress,
       status: order.status,
+      payments: order.payments
     }));
 
     res.status(200).json({
@@ -325,7 +328,6 @@ export const statusChangesController = async (req, res) => {
   }
 };
 
-
 export const getOrderByid = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -433,11 +435,9 @@ export const verifyOtpController = async (req, res) => {
       message: `Verify otp Error: ${error.message}`,
     });
   }
-} 
+}
 
 export const verifyPaymentController = async (req, res) => {
-  console.log("🔥 verifyPaymentController HIT");
-  console.log("BODY:", req.body);
   try {
     const { rezor_payment_id, orderId } = req.body;
 
@@ -448,7 +448,7 @@ export const verifyPaymentController = async (req, res) => {
       })
     }
 
-    const payment = await instances.payments.fetch(rezor_payment_id);
+    const payment = await razorpayInstance.payments.fetch(rezor_payment_id);
 
     if (!payment || payment.status !== "captured") {
       return res.status(401).json({
@@ -466,8 +466,8 @@ export const verifyPaymentController = async (req, res) => {
       })
     }
 
-    order.payments=true;
-    order.rezorPaymentId=rezor_payment_id
+    order.payments = true;
+    order.rezorPaymentId = rezor_payment_id
     await order.save()
 
     res.status(200).json({
@@ -475,8 +475,7 @@ export const verifyPaymentController = async (req, res) => {
       data: order
     })
   } catch (error) {
-    console.error("🔥 VERIFY PAYMENT ERROR:", error);
-    console.error(error.stack);
+    console.error(error);
 
     res.status(500).json({
       message: `verify payment error ${error}`,
