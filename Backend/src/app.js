@@ -1,5 +1,6 @@
 import express from "express";
 const app = express();
+const server = http.createServer(app)
 import authRoutes from "./routes/auth.routes.js";
 import shopRoutes from "./routes/shop.routes.js";
 import itemRoutes from "./routes/item.routes.js";
