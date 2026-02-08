@@ -56,6 +56,7 @@ export const RegisterApi = async (req, res) => {
         location: user.location,
         isOnline: user.isOnline,
         lastSeen: user.lastSeen,
+        socketId: user.socketId
       },
       token,
     });
@@ -110,6 +111,7 @@ export const loginUser = async (req, res) => {
         location: user.location,
         isOnline: user.isOnline,
         lastSeen: user.lastSeen,
+        socketId: user.socketId
       },
       token,
     });
@@ -192,6 +194,7 @@ export const updatedController = async (req, res) => {
         location: user.location,
         isOnline: user.isOnline,
         lastSeen: user.lastSeen,
+        socketId: user.socketId
       },
     });
   } catch (error) {
@@ -340,6 +343,7 @@ export const googleAuthController = async (req, res) => {
         location: user.location,
         isOnline: user.isOnline,
         lastSeen: user.lastSeen,
+        socketId: user.socketId
       },
       token,
     });
@@ -384,6 +388,7 @@ export const googleAuthLoginController = async (req, res) => {
         location: user.location,
         isOnline: user.isOnline,
         lastSeen: user.lastSeen,
+        socketId: user.socketId
       },
       token,
     });

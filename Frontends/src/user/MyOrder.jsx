@@ -3,9 +3,10 @@ import OwnerOrderCard from "../pages/OwnerOrderCard";
 import UserOrderCard from "./UserOrderCard";
 import { useDispatch, useSelector } from "react-redux";
 import instance from "../utils/axios";
-import { setOwnerOrders, setUserOrders } from "../redux/reducer/OrderReducer";
+import { addOwnerOrder, setOwnerOrders, setUserOrders } from "../redux/reducer/OrderReducer";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { getSocket } from "../socket/socket";
 
 const MyOrder = () => {
   const { user } = useSelector((store) => store.Auth);
@@ -46,6 +47,25 @@ const MyOrder = () => {
     }
   }, [user?.role]);
 
+  useEffect(() => {
+    const socket = getSocket()
+    if (!socket || !user?.id) return;
+
+    const handleNewOrder = (data) => {
+      console.log("🔥 NEW ORDER:", data);
+
+      if (data?.shopOrders?.owner?._id === user.id) {
+        dispatch(addOwnerOrder(data))
+      }
+    }
+
+    socket.on("newOrder", handleNewOrder)
+    
+    return () => {
+      socket?.off('newOrder', handleNewOrder)
+    }
+  }, [user?.id, dispatch])
+
   return (
     <div className="w-full min-h-screen p-2">
       <div className="w-full p-2 flex items-center gap-2 ">
@@ -57,11 +77,11 @@ const MyOrder = () => {
         </h1>
       </div>
       <div className=" w-full  flex flex-col gap-2 items-center  justify-center  ">
-        {user.role == "user"
+        {user?.role == "user"
           ? userOrders?.map((order) => (
               <UserOrderCard data={order} key={order._id} />
             ))
-          : user.role == "owner"
+          : user?.role == "owner"
           ? ownerOrders?.map((ownerOrder, idx) => (
               <OwnerOrderCard data={ownerOrder} key={idx} />
             ))

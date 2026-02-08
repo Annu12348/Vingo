@@ -115,6 +115,32 @@ export const placeOrderController = async (req, res) => {
       paymentMethod,
     });
 
+    await newOrder.populate("shopOrders.shopOrderItem.item", "foodName image price")
+    await newOrder.populate("shopOrders.shop", "shopName")
+    await newOrder.populate("shopOrders.owner", "fullname socketId")
+    await newOrder.populate("user", "fullName email contact ")
+
+    const io = req.app.get('io')
+
+    if (io) {
+      newOrder.shopOrders.forEach(shopOrder => {
+        const ownerSocketId = shopOrder.owner.socketId
+        const ownerId = shopOrder.owner._id.toString()
+        console.log("🔥 EMITTING newOrder TO OWNER:", ownerId);
+
+        io.to(ownerId).emit("newOrder", {
+          _id: newOrder._id,
+          paymentMethod: newOrder.paymentMethod,
+          user: newOrder.user,
+          createdAt: newOrder.createdAt,
+          shopOrders: shopOrder,
+          deliveryAddress: newOrder.deliveryAddress,
+          status: newOrder.status,
+          payments: newOrder.payments
+        }) 
+      })
+    }
+
     res.status(201).json({
       message: "new order successfully created",
       newOrder,

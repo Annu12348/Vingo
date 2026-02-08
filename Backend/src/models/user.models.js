@@ -60,6 +60,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
+    socketId: {
+      type: String,
+      default: null
+    },
     location: {
       type: {
         type: String,

@@ -23,6 +23,10 @@ export const OrderReducer = createSlice({
       state.ownerOrders = action.payload;
     },
 
+    addOwnerOrder: (state, action) => {
+      state.ownerOrders.unshift(action.payload)
+    },
+
     ownerUpdateOrderStatus: (state, action) => {
       const { orderId, shopId, status } = action.payload;
       const order = state.ownerOrders.find((o) => o._id === orderId);
@@ -60,6 +64,7 @@ export const {
   setOwnerOrders,
   ownerUpdateOrderStatus,
   userUpdateOrderStatus,
-  setSingleTrackOrder
+  setSingleTrackOrder,
+  addOwnerOrder,
 } = OrderReducer.actions;
 export default OrderReducer.reducer;
