@@ -62,7 +62,6 @@ const userSchema = new mongoose.Schema(
     },
     socketId: {
       type: String,
-      default: null
     },
     location: {
       type: {

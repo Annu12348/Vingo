@@ -8,7 +8,6 @@ import {
 } from "../redux/reducer/OrderReducer";
 
 const OwnerOrderCard = ({ data }) => {
-  console.log(data)
   const dispatch = useDispatch();
   const { ownerOrders } = useSelector((store) => store.Order);
   const [availableBoys, setAvailableBoys] = useState([]);
@@ -27,6 +26,7 @@ const OwnerOrderCard = ({ data }) => {
       );
       dispatch(ownerUpdateOrderStatus({ orderId, shopId, status }));
       setAvailableBoys(response.data.availableBoys || []);
+      console.log(response.data.availableBoys)
     } catch (error) {
       console.error(error.message);
     }
@@ -133,7 +133,7 @@ const OwnerOrderCard = ({ data }) => {
           {availableBoys?.length > 0 ? (
             availableBoys.map((b) => (
               <h1
-                key={b._id}
+                key={b.id}
                 className="text-sm font-semibold text-zinc-600 mt-1.5 mb-0.5 capitalize "
               >
                 {b.fullName} - {b.contact}

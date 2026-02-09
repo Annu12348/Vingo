@@ -125,19 +125,20 @@ export const placeOrderController = async (req, res) => {
     if (io) {
       newOrder.shopOrders.forEach(shopOrder => {
         const ownerSocketId = shopOrder.owner.socketId
-        const ownerId = shopOrder.owner._id.toString()
-        console.log("🔥 EMITTING newOrder TO OWNER:", ownerId);
+        console.log("ownerSocket :", ownerSocketId)
 
-        io.to(ownerId).emit("newOrder", {
-          _id: newOrder._id,
-          paymentMethod: newOrder.paymentMethod,
-          user: newOrder.user,
-          createdAt: newOrder.createdAt,
-          shopOrders: shopOrder,
-          deliveryAddress: newOrder.deliveryAddress,
-          status: newOrder.status,
-          payments: newOrder.payments
-        }) 
+        if (ownerSocketId) {
+          io.to(ownerSocketId).emit('newOrder', {
+            _id: newOrder._id,
+            paymentMethod: newOrder.paymentMethod,
+            user: newOrder.user,
+            createdAt: newOrder.createdAt,
+            shopOrders: [shopOrder],
+            deliveryAddress: newOrder.deliveryAddress,
+            status: newOrder.status,
+            payments: newOrder.payments
+          })
+        }
       })
     }
 
@@ -332,13 +333,28 @@ export const statusChangesController = async (req, res) => {
     }
 
     const updatedShopOrder = order.shopOrders.find((o) => o.shop == shopId);
-    await order.populate("shopOrders.shop", "name");
+    await order.populate("shopOrders.shop", "shopName");
     await order.populate(
       "shopOrders.assignedDeliveryBoy",
       "fullname email contact"
-    );
+    )
+    await order.populate("user", "socketId");
 
     await order.save();
+
+    const io = req.app.get('io')
+
+    if (io) {
+      const userSocketId = order.user.socketId;
+      if (userSocketId) {
+        io.to(userSocketId).emit('update-status', {
+          orderId: order._id,
+          shopId: updatedShopOrder.shop._id,
+          status: updatedShopOrder.status,
+          userId: order.user._id
+        })
+      }
+    }
 
     res.status(200).json({
       shopOrder: updatedShopOrder,
@@ -495,6 +511,33 @@ export const verifyPaymentController = async (req, res) => {
     order.payments = true;
     order.rezorPaymentId = rezor_payment_id
     await order.save()
+
+    await order.populate("shopOrders.shopOrderItem.item", "foodName image price")
+    await order.populate("shopOrders.shop", "shopName")
+    await order.populate("shopOrders.owner", "fullname socketId")
+    await order.populate("user", "fullName email contact ")
+
+    const io = req.app.get('io')
+
+    if (io) {
+      order.shopOrders.forEach(shopOrder => {
+        const ownerSocketId = shopOrder.owner.socketId
+        console.log("ownerSocket :", ownerSocketId)
+
+        if (ownerSocketId) {
+          io.to(ownerSocketId).emit('newOrder', {
+            _id: order._id,
+            paymentMethod: order.paymentMethod,
+            user: order.user,
+            createdAt: order.createdAt,
+            shopOrders: [shopOrder],
+            deliveryAddress: order.deliveryAddress,
+            status: order.status,
+            payments: order.payments
+          })
+        }
+      })
+    }
 
     res.status(200).json({
       message: "razor payment success fully verify",

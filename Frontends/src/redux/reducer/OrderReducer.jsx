@@ -53,6 +53,24 @@ export const OrderReducer = createSlice({
 
     setSingleTrackOrder: (state, action) => {
       state.singleTrackOrder = action.payload;
+    },
+
+    updateUserRealTimeOrderStatus: (state, action) => {
+      const { orderId, shopId, status } = action.payload;
+
+      const order = state.userOrders.find(
+        so => so._id == orderId
+      );
+
+      if (order) {
+        const shopOrder = order.shopOrders.find(
+          so => so.shop._id == shopId
+        )
+
+        if (shopOrder) {
+          shopOrder.status = status
+        }
+      }
     }
   },
 });
@@ -66,5 +84,6 @@ export const {
   userUpdateOrderStatus,
   setSingleTrackOrder,
   addOwnerOrder,
+  updateUserRealTimeOrderStatus,
 } = OrderReducer.actions;
 export default OrderReducer.reducer;
