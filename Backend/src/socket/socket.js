@@ -20,6 +20,30 @@ export const socketIoHandler = (io) => {
                 console.error("❌ identity error:", error);
             }
         })
+
+        socket.on('updateLocation', async ({latitude, longitude, userId}) => {
+            try {
+                const user = await userModel.findByIdAndUpdate(userId, {
+                    location: {
+                        type: point,
+                        coordinates: [longitude, latitude]
+                    },
+                    isOnline: true,
+                    socketId: socket.id,
+                })
+
+                if (user) {
+                    io.emit('UpdateDeliveryOrderLocation', {
+                        deliveryBoyId: userId,
+                        latitude,
+                        longitude
+                    })
+                }
+            } catch (error) {
+                console.error("Update Delivery Location Error", error.message)
+            }
+        })
+
         socket.on("disconnect", async () => {
             try {
                 await userModel.findOneAndUpdate({socketId: socket.id}, {

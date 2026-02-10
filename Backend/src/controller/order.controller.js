@@ -271,7 +271,7 @@ export const statusChangesController = async (req, res) => {
 
     let deliveryBoyPayload = [];
 
-    if (status == "out of delivery" || !shopOrder.assignment) {
+    if (status == "out of delivery" && !shopOrder.assignment) {
       const { longitude, latitude } = order.deliveryAddress;
 
       const nearByDeliveryBoys = await userModel.find({
@@ -307,7 +307,7 @@ export const statusChangesController = async (req, res) => {
 
       if (candidates.length == 0) {
         await order.save();
-        return res.json({
+        res.json({
           message:
             "order status updated but there is no available delivery boy",
         });
@@ -330,6 +330,34 @@ export const statusChangesController = async (req, res) => {
         latitude: b.location.coordinates?.[1],
         contact: b.contact,
       }));
+
+      await deliveryAssignment.populate("order")
+      await deliveryAssignment.populate("shop")
+
+      const io = req.app.get('io')
+
+      if (io) {
+        availableBoys.forEach(boy => {
+          const boySockrtId = boy.socketId
+
+          if (boySockrtId) {
+            const shopOrder = deliveryAssignment.order?.shopOrders?.find(
+              (so) => String(so._id) === String(deliveryAssignment.shopOrderId)
+            );
+
+            io.to(boySockrtId).emit('newAssignment', {
+              sentTo: boy._id,
+              assignmentId: deliveryAssignment._id,
+              orderId: deliveryAssignment.order?._id,
+              shopName: deliveryAssignment.shop?.shopName,
+              deliveryAddress: deliveryAssignment.order?.deliveryAddress,
+              items: shopOrder?.shopOrderItem || [],
+              subtotal: shopOrder?.subtotal || 0,
+            })
+          }
+        })
+      }
+
     }
 
     const updatedShopOrder = order.shopOrders.find((o) => o.shop == shopId);

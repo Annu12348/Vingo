@@ -31,7 +31,6 @@ const Register = () => {
       const response = await instance.post("/auth/register", val, {
         withCredentials: true,
       });
-      dispatch(setUser(response.data.user));
       toast.success(response.data.message || "successfully register");
       navigate("/login");
       setVal({

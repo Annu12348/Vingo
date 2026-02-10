@@ -21,7 +21,7 @@ const persistConfig = {
   key: 'Vingo_root',
   version: 1,
   storage,
-  whitelist: ['Auth', 'Shop', 'Item', 'Map', 'Order', 'Assignment'], // Only Auth state is persisted
+  whitelist: ['Auth'], // Only Auth state is persisted
 };
 
 const rootReducer = combineReducers({

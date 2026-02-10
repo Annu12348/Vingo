@@ -58,17 +58,26 @@ export const OrderReducer = createSlice({
     updateUserRealTimeOrderStatus: (state, action) => {
       const { orderId, shopId, status } = action.payload;
 
-      const order = state.userOrders.find(
+      const orderIndex = state.userOrders.findIndex(
         so => so._id == orderId
       );
 
-      if (order) {
-        const shopOrder = order.shopOrders.find(
+      if (orderIndex !== -1) {
+        const shopOrderIndex = state.userOrders[orderIndex].shopOrders.findIndex(
           so => so.shop._id == shopId
         )
 
-        if (shopOrder) {
-          shopOrder.status = status
+        if (shopOrderIndex !== -1) {
+          state.userOrders[orderIndex].shopOrders = [
+            ...state.userOrders[orderIndex].shopOrders.slice(0, shopOrderIndex),
+
+            {
+              ...state.userOrders[orderIndex].shopOrders[shopOrderIndex],
+              status: status,
+            },
+
+            ...state.userOrders[orderIndex].shopOrders.slice(shopOrderIndex + 1),
+          ]
         }
       }
     }
