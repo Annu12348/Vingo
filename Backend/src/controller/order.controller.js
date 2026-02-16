@@ -99,6 +99,8 @@ export const placeOrderController = async (req, res) => {
         payments: false
       });
 
+      
+
       return res.status(200).json({
         rezorOrder,
         orderId: newOrder._id,

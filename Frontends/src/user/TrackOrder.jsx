@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import instance from '../utils/axios'
 import { Link, useParams } from 'react-router-dom'
 import { IoArrowBackSharp } from 'react-icons/io5'
@@ -10,7 +10,7 @@ const TrackOrder = () => {
   const { orderId } = useParams()
   const dispatch = useDispatch()
   const { singleTrackOrder } = useSelector(store => store.Order)
-  console.log(singleTrackOrder)
+  const [ liveDeliveryOrderLocation, setLiveDeliveryOrderLocation ] = useState({})
 
   const gettrackorderapi = async () => {
     try {
@@ -22,6 +22,28 @@ const TrackOrder = () => {
       console.error(error)
     }
   }
+
+  useEffect(() => {
+    const socket = window.socketInstance;
+
+    const handleUpdateLiveLocation = ({ deliveryBoyId, latitude, longitude }) => {
+      setLiveDeliveryOrderLocation(prev => ({
+        ...prev,
+        [deliveryBoyId]: { lat: latitude, lon: longitude }
+      }));
+    };
+
+    if (socket && typeof socket.on === "function") {
+      socket.on('updateDeliveryOrderLiveLocation', handleUpdateLiveLocation);
+    }
+
+    // Cleanup listener on unmount
+    return () => {
+      if (socket && typeof socket.off === "function") {
+        socket.off('updateDeliveryOrderLiveLocation', handleUpdateLiveLocation);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     gettrackorderapi()
@@ -89,7 +111,7 @@ const TrackOrder = () => {
               {shopOrder.assignedDeliveryBoy && shopOrder.status !== "delivered" && (
                 <div>
                   <DeliveryAcceptCreatingLiveTracking data={{
-                    deliveryBoyLocation: {
+                    deliveryBoyLocation: liveDeliveryOrderLocation[shopOrder.assignedDeliveryBoy._id] || {
                       lat: shopOrder.assignedDeliveryBoy.location.coordinates[1],
                       lon: shopOrder.assignedDeliveryBoy.location.coordinates[0]
                     },

@@ -14,6 +14,36 @@ const DeliveryBoy = () => {
   const [showOtpBox, setShowOtpBox] = useState(false)
   const [otp, setOtp] = useState("")
 
+  useEffect(() => {
+    const socket = window.socketInstance;
+
+    if (!socket || user.role !== "deliveryBoy") return;
+    let watchId;
+
+    if (navigator.geolocation) {
+      watchId = navigator.geolocation.watchPosition((position) => {
+        const latitude = position.coords.latitude
+        const longitude = position.coords.longitude
+
+        socket.emit('updateLocation', {
+          latitude,
+          longitude,
+          userId: user.id,
+        })
+      }),
+      (error) => {
+        console.log(error)
+      },
+      {
+        enableHighAccuracy: true,
+      }
+    }
+
+    return () => {
+      if (watchId) navigator.geolocation.clearWatch(watchId)
+    }
+  }, [])
+
   const getdeliveryAssignment = async () => {
     try {
       const result = await instance.get("/deliveryBoy/assiments", {
@@ -85,6 +115,8 @@ const DeliveryBoy = () => {
     getdeliveryAssignment();
     acceptOrder()
   }, [user]);
+
+  
   return (
     <div className="w-full flex items-center justify-cente flex-col gap-5">
       <div className="w-[50%] rounded-lg bg-white p-2 flex shadow items-center justify-center flex-col">

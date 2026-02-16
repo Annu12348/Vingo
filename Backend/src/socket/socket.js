@@ -25,7 +25,7 @@ export const socketIoHandler = (io) => {
             try {
                 const user = await userModel.findByIdAndUpdate(userId, {
                     location: {
-                        type: point,
+                        type: "Point",
                         coordinates: [longitude, latitude]
                     },
                     isOnline: true,
@@ -33,7 +33,7 @@ export const socketIoHandler = (io) => {
                 })
 
                 if (user) {
-                    io.emit('UpdateDeliveryOrderLocation', {
+                    io.emit('updateDeliveryOrderLiveLocation', {
                         deliveryBoyId: userId,
                         latitude,
                         longitude

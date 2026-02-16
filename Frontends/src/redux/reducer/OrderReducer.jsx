@@ -24,7 +24,7 @@ export const OrderReducer = createSlice({
     },
 
     addOwnerOrder: (state, action) => {
-      state.ownerOrders.unshift(action.payload)
+      state.ownerOrders = [action.payload, ...state.ownerOrders]
     },
 
     ownerUpdateOrderStatus: (state, action) => {
