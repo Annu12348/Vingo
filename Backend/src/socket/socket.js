@@ -46,17 +46,19 @@ export const socketIoHandler = (io) => {
 
         socket.on("disconnect", async () => {
             try {
-                await userModel.findOneAndUpdate({socketId: socket.id}, {
+                const user = await userModel.findOneAndUpdate({socketId: socket.id}, {
                     socketId: null,
                     isOnline: false
+                }, {
+                    new: true
                 })
                 if (user) {
                     console.log("socketId :", user?.socketId, "isOnline :", user?.isOnline);
                 } else {
-                    console.warn(`User with ID ${userId} not found`);
+                    console.warn(`User with ID ${user.id} not found`);
                 }
             } catch (error) {
-                console.log(SyntaxError)
+                console.log(error.message)
             }
             
         })

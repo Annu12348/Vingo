@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   userOrders: [],
   ownerOrders: [],
-  singleTrackOrder: null
+  singleTrackOrder: null,
+  ordertodayDeliveries: [] 
 };
 
 export const OrderReducer = createSlice({
@@ -80,7 +81,11 @@ export const OrderReducer = createSlice({
           ]
         }
       }
-    }
+    },
+
+    setOrdertodayDeliveries: (state, action) => {
+      state.ordertodayDeliveries = action.payload;
+    },
   },
 });
 
@@ -94,5 +99,6 @@ export const {
   setSingleTrackOrder,
   addOwnerOrder,
   updateUserRealTimeOrderStatus,
+  setOrdertodayDeliveries,
 } = OrderReducer.actions;
 export default OrderReducer.reducer;

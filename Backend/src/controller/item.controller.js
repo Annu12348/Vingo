@@ -436,3 +436,52 @@ export const searchItemController = async (req, res) => {
     });
   }
 }
+
+export const ratingController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { itemId, rating } = req.body;
+
+    if (!userId || !itemId || !rating) {
+      return res.status(400).json({
+        success: false,
+        message: "userId, itemId, and rating are required"
+      });
+    }
+
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Rating must be between 1 and 5"
+      });
+    }
+
+    const item = await itemModel.findById(itemId)
+
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found"
+      });
+    }
+
+    const newCount = item.rating.count + 1;
+    const newAverage = (item.rating.average*item.rating.count + rating)/newCount
+
+    item.rating.count = newCount;
+    item.rating.average = newAverage;
+    await item.save()
+
+    res.status(200).json({
+      success: true,
+      message: "Rating updated successfully",
+      rating: item.rating
+    });
+    
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error, please try again later",
+    });
+  }
+}

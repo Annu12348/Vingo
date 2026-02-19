@@ -10,6 +10,8 @@ const transporter = nodemailer.createTransport({
 });
 
 
+
+
 export const sendOtpMail = async (to, otp) => {
   try {
     const info = await transporter.sendMail({

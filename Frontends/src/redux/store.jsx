@@ -16,6 +16,7 @@ import ItemReducer from './reducer/ItemReducer';
 import  MapReducer  from './reducer/MapReducer';
 import  OrderReducer  from './reducer/OrderReducer';
 import AssignmentReducer from './reducer/AssignmentReducer';
+import socketReducer from "./reducer/socketSlice";
 
 const persistConfig = {
   key: 'Vingo_root',
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   Item: ItemReducer,
   Map: MapReducer,
   Order: OrderReducer,
-  Assignment: AssignmentReducer
+  Assignment: AssignmentReducer,
+  socket: socketReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -39,9 +41,10 @@ const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
+      //serializableCheck: {
+      //  ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      //},
+      serializableCheck: false,
     }),
 });
 

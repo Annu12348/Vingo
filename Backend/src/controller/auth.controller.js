@@ -224,11 +224,11 @@ export const resetController = async (req, res) => {
 
     res.status(200).json({
       message: "OTP sent successfully",
+      user
     });
   } catch (error) {
     res.status(500).json({
       message: "Internal server error: please try again later.",
-      user,
     });
   }
 };

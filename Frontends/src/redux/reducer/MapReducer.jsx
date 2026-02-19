@@ -6,6 +6,7 @@ const initialState = {
     lon: null,
   },
   address: null,
+  liveLocation: null,
 }
 
 export const mapReducer = createSlice({
@@ -20,10 +21,15 @@ export const mapReducer = createSlice({
 
     setAddress: (state, action) => {
         state.address = action.payload
-    } 
+    },
+
+    setLiveLocation: (state, action) => {
+      state.liveLocation = action.payload;
+    },
+    
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setLocation, setAddress } = mapReducer.actions
+export const { setLocation, setAddress, setLiveLocation } = mapReducer.actions
 export default mapReducer.reducer

@@ -1,9 +1,12 @@
-import React from "react";
-import { useNavigate } from "react-router-dom"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import instance from "../utils/axios";
 
 const UserOrderCard = ({ data }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [selectedRating, setSelectedRating] = useState({});
 
+  // Format date utility
   const formDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-GB", {
@@ -12,6 +15,24 @@ const UserOrderCard = ({ data }) => {
       year: "numeric",
     });
   };
+
+  // Handle rating submit
+  const handleRating = async (itemId, rating) => {
+    try {
+      await instance.post(
+        "/item/rating",
+        { itemId, rating },
+        { withCredentials: true }
+      );
+      setSelectedRating((prev) => ({
+        ...prev,
+        [itemId]: rating,
+      }));
+    } catch (error) {
+      console.error("Failed to submit rating:", error);
+    }
+  };
+
   return (
     <div className="md:w-[48%] w-full bg-white rounded py-2 px-3 shadow">
       <div className="w-full flex items-center justify-between">
@@ -19,15 +40,13 @@ const UserOrderCard = ({ data }) => {
           order <span>#{data._id.slice(-6)}</span>
         </h1>
         <h1 className="text-md uppercase font-semibold text-zinc-400">
-        {data.paymentMethod === "cod" ? (
-          <p>Cash on Delivery</p>
-        ) : (
-          data.payments ? (
-            <p>Online (Paid)</p>
+          {data.paymentMethod === "cod" ? (
+            <span>Cash on Delivery</span>
+          ) : data.payments ? (
+            <span>Online (Paid)</span>
           ) : (
-            <p>Online (Unpaid)</p>
-          )
-        )}
+            <span>Online (Unpaid)</span>
+          )}
         </h1>
       </div>
       <div className="w-full flex items-center justify-between ">
@@ -51,10 +70,10 @@ const UserOrderCard = ({ data }) => {
               {shopOrder.shopOrderItem.map((orderItem) => (
                 <div
                   key={orderItem._id}
-                  className="p-1 border  md:w-[24%] w-[48.8%] rounded "
+                  className="p-1 border md:w-[24%] w-[48.8%] rounded "
                 >
                   <img
-                    className=" w-full h-[14vh] object-cover rounded "
+                    className="w-full h-[14vh] object-cover rounded "
                     src={orderItem?.item?.image}
                     alt={orderItem?.item?.shopName || "Order Item"}
                   />
@@ -64,29 +83,45 @@ const UserOrderCard = ({ data }) => {
                   <h1 className="text-md capitalize pb-2 text-zinc-500 mt-1.5 font-semibold tracking-tight leading-none">
                     Qty : {orderItem.quantity} x ₹{orderItem.price}
                   </h1>
+
+                  {shopOrder.status === "delivered" && (
+                    <div className="flex items-center gap-1 mt-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => handleRating(orderItem.item._id, star)}
+                          className={`text-lg ${selectedRating[orderItem.item._id] >= star ? 'text-yellow-400' : 'text-gray-400'}`}
+                        >
+                          ★
+                        </button>
+                      ))}
+
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
             <hr className="text-xl text-zinc-300 my-1 mt-7" />
             <div className="flex w-full items-center justify-between">
-              <h1 className="text-md  capitalize font-semibold tracking-tight leading-none">
+              <h1 className="text-md capitalize font-semibold tracking-tight leading-none">
                 subTotal : ₹{shopOrder.subtotal}
               </h1>
-              
-              <h1 className="text-md capitalize  font-semibold text-blue-600">
-              {shopOrder.status}
+              <h1 className="text-md capitalize font-semibold text-blue-600">
+                {shopOrder.status}
               </h1>
-            
             </div>
           </div>
         ))}
       </div>
       <hr className="text-xl text-zinc-300 my-1 mt-2" />
       <div className="flex w-full items-center justify-between mt-3">
-        <h1 className="text-md  capitalize font-semibold tracking-tight leading-none">
+        <h1 className="text-md capitalize font-semibold tracking-tight leading-none">
           total : ₹{data.totalAmount}
         </h1>
-        <button onClick={() => navigate(`/track-order/${data._id}`)} className="text-md capitalize cursor-pointer  font-semibold text-white bg-red-500 px-4 rounded-lg py-2">
+        <button
+          onClick={() => navigate(`/track-order/${data._id}`)}
+          className="text-md capitalize cursor-pointer font-semibold text-white bg-red-500 px-4 rounded-lg py-2"
+        >
           track order
         </button>
       </div>

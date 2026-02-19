@@ -9,35 +9,35 @@ import { useDispatch, useSelector } from 'react-redux';
 import { io } from 'socket.io-client'
 import { addOwnerOrder, updateUserRealTimeOrderStatus } from './redux/reducer/OrderReducer';
 import { addDeliveryAssignment } from './redux/reducer/AssignmentReducer';
+import { removeSocket, setSocket } from './redux/reducer/socketSlice';
 
 const App = () => {
   const { user } = useSelector(store => store.Auth)
   const dispatch = useDispatch();
-  console.log(user)
+  const { socket } = useSelector(store => store.socket)
 
   LiveLocation()
   LiveUpdateLocation()
 
   useEffect(() => {
-    const socketInstance = io(instance.defaults.baseURL, { withCredentials: true });
+    if (!user?.id || socket) return;
 
-    window.socketInstance = socketInstance;
+    const socketInstance = io(instance.defaults.baseURL,
+      { withCredentials: true }
+    );
 
-    socketInstance.on('connect', () => {
-      if (user?.id) {
-        socketInstance.emit('identity', { userId: user?.id })
-        console.log("IDENTITY SENT:", user.id);
-      }
-    })
+    dispatch(setSocket(socketInstance))
+
+    socketInstance.emit('identity', { userId: user?.id })
+
 
     return () => {
       socketInstance.disconnect()
-      window.socketInstance = null;
+      dispatch(removeSocket())
     }
   }, [user?.id]);
 
   useEffect(() => {
-    const socket = window.socketInstance;
     if (!socket || !user?.id) return;
 
     const statusHandler = ({ orderId, shopId, status, userId }) => {
@@ -54,7 +54,7 @@ const App = () => {
 
     const newOrderHandler = (data) => {
       const ownerId = data?.shopOrders?.[0]?.owner?._id || data?.shopOrders?.[0]?.owner;
-      
+
       if (ownerId === user.id) {
         dispatch(addOwnerOrder(data));
       }
@@ -69,7 +69,7 @@ const App = () => {
       socket.off('newAssignment', assignmentHandler);
       socket.off('newOrder', newOrderHandler);
     };
-  }, [user?.id, dispatch]);
+  }, [user?.id, dispatch, socket]);
 
 
   return (

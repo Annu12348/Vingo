@@ -7,7 +7,8 @@ import {
   statusChangesController,
   sendDeliveryOtpController,
   verifyOtpController,
-  verifyPaymentController
+  verifyPaymentController,
+  gettodayDeliveriesController
 } from "../controller/order.controller.js";
 import { authenticationMiddleware } from "../middleware/auth.middleware.js";
 const router = express.Router();
@@ -54,5 +55,7 @@ router.post("/verify-payment",
   authenticationMiddleware,
   verifyPaymentController
 )
+
+router.get("/order-today-deliveries", authenticationMiddleware, gettodayDeliveriesController)
 
 export default router;

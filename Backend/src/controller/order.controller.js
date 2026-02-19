@@ -581,3 +581,60 @@ export const verifyPaymentController = async (req, res) => {
     });
   }
 }
+
+export const gettodayDeliveriesController = async (req, res) => {
+  try {
+    const deliveryBoyId = req.user.id;
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    // Find all orders that have at least one delivered shopOrder by this delivery boy today
+    const orders = await orderModel.find({
+      "shopOrders.assignedDeliveryBoy": deliveryBoyId,
+      "shopOrders.status": "delivered",
+      "shopOrders.deliveredAt": { $gte: startOfDay }
+    }).lean();
+
+    let todaysDeliveries = [];
+
+    orders.forEach(order => {
+      order.shopOrders.forEach(shopOrder => {
+        if (
+          shopOrder.assignedDeliveryBoy &&
+          `${shopOrder.assignedDeliveryBoy}` === `${deliveryBoyId}` &&
+          shopOrder.status === "delivered" &&
+          shopOrder.deliveredAt &&
+          new Date(shopOrder.deliveredAt) >= startOfDay
+        ) {
+          todaysDeliveries.push(shopOrder);
+        }
+      });
+    });
+
+    let stats = {};
+
+    todaysDeliveries.forEach(shopOrder => {
+      const deliveredDate = new Date(shopOrder.deliveredAt);
+      const hour = deliveredDate.getHours();
+      stats[hour] = (stats[hour] || 0) + 1;
+    });
+
+    let formattedStats = Object.keys(stats).map(hour => ({
+      hour: parseInt(hour, 10),
+      count: stats[hour]
+    }));
+
+    formattedStats.sort((a, b) => a.hour - b.hour);
+
+    return res.status(200).json({
+      message: "Today's deliveries statistics fetched successfully",
+      data: formattedStats,
+    });
+  } catch (error) {
+    console.error("Error in gettodayDeliveriesController:", error);
+    return res.status(500).json({
+      message: "Failed to fetch today's deliveries statistics",
+      error: error.message || error.toString()
+    });
+  }
+};

@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import instance from '../utils/axios'
 import { Link, useParams } from 'react-router-dom'
 import { IoArrowBackSharp } from 'react-icons/io5'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSingleTrackOrder } from '../redux/reducer/OrderReducer'
 import DeliveryAcceptCreatingLiveTracking from "../deliveryBoy/DeliveryAcceptCreatingLiveTracking"
+import { setLiveLocation } from '../redux/reducer/MapReducer'
 
 const TrackOrder = () => {
   const { orderId } = useParams()
   const dispatch = useDispatch()
   const { singleTrackOrder } = useSelector(store => store.Order)
-  const [ liveDeliveryOrderLocation, setLiveDeliveryOrderLocation ] = useState({})
+  const { liveLocation } = useSelector(store => store.Map)
+  const { socket } = useSelector(store => store.socket)
 
+  // Fetch order details by orderId
   const gettrackorderapi = async () => {
     try {
       const result = await instance.get(`/order/orderbyId/${orderId}`, {
@@ -23,34 +26,32 @@ const TrackOrder = () => {
     }
   }
 
+  // Subscribe to live delivery boy location updates
   useEffect(() => {
-    const socket = window.socketInstance;
+    if (!socket) return;
 
-    const handleUpdateLiveLocation = ({ deliveryBoyId, latitude, longitude }) => {
-      setLiveDeliveryOrderLocation(prev => ({
-        ...prev,
+    const handleLocationUpdate = ({ deliveryBoyId, latitude, longitude }) => {
+      dispatch(setLiveLocation({
         [deliveryBoyId]: { lat: latitude, lon: longitude }
-      }));
+      }))
     };
 
-    if (socket && typeof socket.on === "function") {
-      socket.on('updateDeliveryOrderLiveLocation', handleUpdateLiveLocation);
-    }
+    socket.on('updateDeliveryOrderLiveLocation', handleLocationUpdate);
 
-    // Cleanup listener on unmount
     return () => {
-      if (socket && typeof socket.off === "function") {
-        socket.off('updateDeliveryOrderLiveLocation', handleUpdateLiveLocation);
-      }
+      socket.off('updateDeliveryOrderLiveLocation', handleLocationUpdate);
     };
-  }, []);
+  }, [socket, dispatch]);
 
+  // Fetch order tracking info on mount or orderId change
   useEffect(() => {
     gettrackorderapi()
+    // eslint-disable-next-line
   }, [orderId])
+
   return (
     <div className="w-full min-h-screen p-2">
-      <div className="w-full p-2 flex items-center  gap-2 ">
+      <div className="w-full p-2 flex items-center gap-2">
         <Link to="/my-order" className="mt-1 text-xl">
           <IoArrowBackSharp />
         </Link>
@@ -58,33 +59,35 @@ const TrackOrder = () => {
           tracking order
         </h1>
       </div>
-      <div className='w-full flex items-center justify-center '>
-        <div className='w-[50%] bg-white p-2 rounded '>
+      <div className='w-full flex items-center justify-center'>
+        <div className='w-[50%] bg-white p-2 rounded'>
           {singleTrackOrder && singleTrackOrder.shopOrders && singleTrackOrder.shopOrders.map(shopOrder => (
-            <div key={shopOrder.shop._id} className="p-3 mb-4 bg-zinc-100 shadow rounded ">
-              <h2 className="text-lg text-red-500 tracking-tight mb-2 leading-none font-semibold">{shopOrder.shop.shopName}</h2>
+            <div key={shopOrder.shop._id} className="p-3 mb-4 bg-zinc-100 shadow rounded">
+              <h2 className="text-lg text-red-500 tracking-tight mb-2 leading-none font-semibold">
+                {shopOrder.shop.shopName}
+              </h2>
               <div>
-                <div>
-                  <span className="font-semibold tracking-tight capitalize leading-none">
-                    Items: {shopOrder.shopOrderItem.map(item => item.name).join(", ")}
+                <span className="font-semibold tracking-tight capitalize leading-none">
+                  Items: {shopOrder.shopOrderItem.map(item => item.name).join(", ")}
+                </span>
+                <p className='font-semibold leading-none tracking-tight capitalize mb-3.5'>
+                  subtotal: <span className='font-normal'>{shopOrder.subtotal}</span>
+                </p>
+                <p className='font-semibold mb-3 tracking-tight leading-none capitalize'>
+                  delivery address:{" "}
+                  <span className='font-normal'>
+                    {
+                      (() => {
+                        const text = singleTrackOrder.deliveryAddress?.text || "";
+                        const parts = text.split(",").map(s => s.trim());
+                        const filtered = parts.filter(Boolean);
+                        const state = filtered.length >= 2 ? filtered[filtered.length - 2] : "";
+                        const country = filtered.length >= 1 ? filtered[filtered.length - 1] : "";
+                        return `${state}${state && country ? ', ' : ''}${country}`;
+                      })()
+                    }
                   </span>
-                  <p className='font-semibold leading-none tracking-tight capitalize mb-3.5'>subtotal: {" "}<span className='font-normal'>{shopOrder.subtotal}</span></p>
-                  <p className='font-semibold mb-3 tracking-tight leading-none capitalize'>
-                    delivery address: {" "}
-                    <span className='font-normal '>
-                      {
-                        (() => {
-                          const text = singleTrackOrder.deliveryAddress.text || "";
-                          const parts = text.split(",").map(s => s.trim());
-                          const filtered = parts.filter(Boolean);
-                          const state = filtered.length >= 2 ? filtered[filtered.length - 2] : "";
-                          const country = filtered.length >= 1 ? filtered[filtered.length - 1] : "";
-                          return `${state}${state && country ? ', ' : ''}${country}`;
-                        })()
-                      }
-                    </span>
-                  </p>
-                </div>
+                </p>
               </div>
               <div className='mb-7'>
                 {shopOrder.status !== "delivered" ? (
@@ -97,27 +100,38 @@ const TrackOrder = () => {
                         </p>
                         <p className='tracking-tight leading-none capitalize mt-1'>
                           <span className='font-semibold capitalize'>delivery boy contact no. : </span>
-                          {shopOrder.assignedDeliveryBoy.fullname}
+                          {shopOrder.assignedDeliveryBoy.phone || "N/A"}
                         </p>
                       </div>
                     ) : (
-                      <p className='text-sm tracking-tight leading-none mt-2 text-zinc-400'>Delivery boy is not assigned yet</p>
+                      <p className='text-sm tracking-tight leading-none mt-2 text-zinc-400'>
+                        Delivery boy is not assigned yet
+                      </p>
                     )}
                   </div>
                 ) : (
-                  <p className="text-green-600 font-semibold tracking-tight leading-none capitalize">Delivered</p>
+                  <p className="text-green-600 font-semibold tracking-tight leading-none capitalize">
+                    Delivered
+                  </p>
                 )}
               </div>
               {shopOrder.assignedDeliveryBoy && shopOrder.status !== "delivered" && (
                 <div>
                   <DeliveryAcceptCreatingLiveTracking data={{
-                    deliveryBoyLocation: liveDeliveryOrderLocation[shopOrder.assignedDeliveryBoy._id] || {
-                      lat: shopOrder.assignedDeliveryBoy.location.coordinates[1],
-                      lon: shopOrder.assignedDeliveryBoy.location.coordinates[0]
-                    },
+                    deliveryBoyLocation:
+                      (liveLocation && liveLocation[shopOrder.assignedDeliveryBoy._id])
+                        ? liveLocation[shopOrder.assignedDeliveryBoy._id]
+                        : (
+                          shopOrder.assignedDeliveryBoy.location?.coordinates
+                            ? {
+                                lat: shopOrder.assignedDeliveryBoy.location.coordinates[1],
+                                lon: shopOrder.assignedDeliveryBoy.location.coordinates[0]
+                              }
+                            : { lat: null, lon: null }
+                        ),
                     customerLocation: {
-                      lat: singleTrackOrder.deliveryAddress.latitude,
-                      lon: singleTrackOrder.deliveryAddress.longitude
+                      lat: singleTrackOrder.deliveryAddress?.latitude,
+                      lon: singleTrackOrder.deliveryAddress?.longitude
                     }
                   }} />
                 </div>

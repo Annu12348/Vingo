@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: null,
   city: null,
-  socket: null,
 }
 
 export const AuthenticationSlice = createSlice({
@@ -13,6 +12,7 @@ export const AuthenticationSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+
     setCity: (state, action) => {
       state.city = action.payload;
     },
