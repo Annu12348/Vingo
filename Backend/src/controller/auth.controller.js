@@ -40,6 +40,8 @@ export const RegisterApi = async (req, res) => {
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      secure: true,          
+      sameSite: "none",
     });
 
     res.status(201).json({
@@ -91,7 +93,13 @@ export const loginUser = async (req, res) => {
       { id: user._id, role: user.role },
       config.JWT_SECRET_KEY
     );
-    res.cookie("token", token);
+
+    res.cookie("token", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,          
+      sameSite: "none",
+    });
 
     user.isOnline = true;
     user.lastSeen = new Date();
@@ -328,6 +336,8 @@ export const googleAuthController = async (req, res) => {
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      secure: true,          
+      sameSite: "none",
     });
 
     res.status(200).json({
@@ -373,6 +383,8 @@ export const googleAuthLoginController = async (req, res) => {
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      secure: true,          
+      sameSite: "none",
     });
 
     res.status(200).json({
