@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://vingo-frontend-cm2c.onrender.com",
+    origin: "https://vingo-olive.vercel.app",
     credentials: true,
     methods: ["POST", "GET"],
   }
@@ -25,7 +25,7 @@ app.set("io", io)
 
 app.use(
   cors({
-    origin: "https://vingo-frontend-cm2c.onrender.com",
+    origin: "https://vingo-olive.vercel.app",
     credentials: true,
   })
 );
