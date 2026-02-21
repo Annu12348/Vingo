@@ -235,12 +235,13 @@ export const resetController = async (req, res) => {
     user.otpVerify = false;
 
     await user.save();
-    await sendOtpMail(email, otp);
 
     res.status(200).json({
       message: "OTP sent successfully",
       user
     });
+
+    await sendOtpMail(email, otp);
   } catch (error) {
     res.status(500).json({
       message: "Internal server error: please try again later.",
