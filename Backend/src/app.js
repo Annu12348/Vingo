@@ -17,7 +17,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "https://vingo-olive.vercel.app",
+      "https://vingo-frontend-cm2c.onrender.com",
       "http://localhost:5173"
     ],
     credentials: true,
@@ -30,7 +30,7 @@ app.set("io", io)
 app.use(
   cors({
     origin: [
-      "https://vingo-olive.vercel.app",
+      "https://vingo-frontend-cm2c.onrender.com",
       "http://localhost:5173"
     ],
     credentials: true,
