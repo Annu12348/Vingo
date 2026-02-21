@@ -1,6 +1,9 @@
 import nodemailer from "nodemailer";
 import { config } from "../config/config.js";
 
+console.log("EMAIL_USER:", config.EMAIL_USER);
+console.log("MONGODB_URL:", config.EMAIL_PASS);
+
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
