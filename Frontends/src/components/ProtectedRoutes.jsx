@@ -7,7 +7,7 @@ const ProtectedRoutes = ({ children }) => {
   const navigate = useNavigate();
   const ProtectedRoutesApi = async () => {
     try {
-      const response = await instance.get("https://vingo-backend.onrender.com/auth/me", {
+      const response = await instance.get("/auth/me", {
         withCredentials: true,
       });
     } catch (error) {

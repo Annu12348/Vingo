@@ -12,10 +12,14 @@ import deliveryAssimentRoutes from "./routes/deliveryAssignment.routes.js"
 import { socketIoHandler } from "./socket/socket.js";
 
 const app = express();
+app.set("trust proxy", 1);  
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://vingo-frontend-cm2c.onrender.com",
+    origin: [
+      "https://vingo-frontend-cm2c.onrender.com",
+      "http://localhost:5173"
+    ],
     credentials: true,
     methods: ["POST", "GET"],
   }
@@ -25,7 +29,10 @@ app.set("io", io)
 
 app.use(
   cors({
-    origin: "https://vingo-frontend-cm2c.onrender.com",
+    origin: [
+      "https://vingo-frontend-cm2c.onrender.com",
+      "http://localhost:5173"
+    ],
     credentials: true,
   })
 );

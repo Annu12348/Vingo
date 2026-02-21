@@ -151,12 +151,19 @@ export const logoutUser = async (req, res) => {
         message: "user not found",
       });
     }
-    res.clearCookie("token");
 
-    res.status(200).json({
+    // ✅ IMPORTANT — same options as login cookie
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    return res.status(200).json({
       message: "Logout successfully",
       data: user,
     });
+
   } catch (error) {
     console.error(error.message);
     res.status(500).json({
