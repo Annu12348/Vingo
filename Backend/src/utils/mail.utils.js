@@ -4,20 +4,21 @@ import { config } from "../config/config.js";
 console.log("EMAIL_USER:", config.EMAIL_USER);
 console.log("EMAIL_PASS:", config.EMAIL_PASS);
 
+
+
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
+  host: config.SMTP_HOST,
+  port: config.SMTP_PORT,
   secure: false,
   auth: {
-    user: config.EMAIL_USER,
-    pass: config.EMAIL_PASS,
+    user: config.SMTP_USER,
+    pass: config.SMTP_PASS,
   },
-  connectionTimeout: 50000,
 });
 
-transporter.verify((err, success) => {
-  if (err) console.log("SMTP ERROR", err);
-  else console.log("SMTP READY");
+transporter.verify((err) => {
+  if (err) console.log("SMTP ERROR ❌", err);
+  else console.log("SMTP READY ✅");
 });
 
 
