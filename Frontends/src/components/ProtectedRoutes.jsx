@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import instance from "../utils/axios";
-import axios from "axios";
 
 const ProtectedRoutes = ({ children }) => {
   const navigate = useNavigate();

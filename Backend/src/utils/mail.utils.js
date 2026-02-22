@@ -2,17 +2,17 @@ import nodemailer from "nodemailer";
 import { config } from "../config/config.js";
 
 console.log("EMAIL_USER:", config.EMAIL_USER);
-console.log("MONGODB_URL:", config.EMAIL_PASS);
+console.log("EMAIL_PASS:", config.EMAIL_PASS);
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
   auth: {
     user: config.EMAIL_USER,
     pass: config.EMAIL_PASS,
   },
-  connectionTimeout: 20000,
+  connectionTimeout: 50000,
 });
 
 transporter.verify((err, success) => {
