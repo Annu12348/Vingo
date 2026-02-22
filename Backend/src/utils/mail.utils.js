@@ -2,7 +2,9 @@ import nodemailer from "nodemailer";
 import { config } from "../config/config.js";
 
 console.log("EMAIL_USER:", config.EMAIL_USER);
-console.log("EMAIL_PASS:", config.EMAIL_PASS);
+console.log("SMTP_USER:", config.SMTP_USER);
+console.log("SMTP_HOST:", config.SMTP_HOST);
+console.log("SMTP_PORT:", config.SMTP_PORT ? "OK" : "MISSING");
 
 
 
@@ -25,14 +27,14 @@ transporter.verify((err) => {
 export const sendOtpMail = async (to, otp) => {
   try {
     const info = await transporter.sendMail({
-      from: config.EMAIL_USER, 
+      from: `"Vingo" <${config.EMAIL_USER}>`, 
       to, 
       subject: "Your Vingo Password Reset OTP",
       text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
       html: `<p>Your OTP is <b>${otp}</b>. It will expire in 5 minutes.</p>`
     });
   } catch (err) {
-    console.error("Error while sending mail", err);
+    console.error("MAIL ERROR ❌", err.message);;
   }
 };
 
@@ -46,6 +48,6 @@ export const sendDeliveryOtpMail = async (user, otp) => {
       html: `<p>Your OTP is <b>${otp}</b>. It will expire in 5 minutes.</p>`
     });
   } catch (err) {
-    console.error("Error while sending mail", err);
+    console.error("MAIL ERROR ❌", err.message);;
   }
 };
