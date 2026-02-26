@@ -17,9 +17,6 @@ if (process.env.NODE_ENV !== "production") {
 
 const transporter = nodemailer.createTransport({
   host: config.SMTP_HOST,
-  port: config.SMTP_PORT,
-  port: Number(config.SMTP_PORT),
-  secure: false,
   auth: {
     user: config.SMTP_USER,
     pass: config.SMTP_PASS,
