@@ -8,6 +8,7 @@ import DeliveryAcceptCreatingLiveTracking from "./DeliveryAcceptCreatingLiveTrac
 import { setLiveLocation } from "../redux/reducer/MapReducer";
 import { setOrdertodayDeliveries } from "../redux/reducer/OrderReducer";
 import Recharts from "./Recharts";
+import { useNavigate } from "react-router-dom";
 
 const DeliveryBoy = () => {
   const { user } = useSelector((store) => store.Auth);
@@ -18,6 +19,9 @@ const DeliveryBoy = () => {
   const [otp, setOtp] = useState("")
   const { socket } = useSelector(store => store.socket)
   const { liveLocation } = useSelector(store => store.Map)
+  const navigate = useNavigate()
+
+  
 
   // Utility function to compare lat/lon with high precision (6 decimal places)
   function isLocationsEqual(locA, locB, precision = 6) {
@@ -164,61 +168,79 @@ const DeliveryBoy = () => {
   const getLng = () => liveLocation?.longitude ?? user?.location?.coordinates?.[0] ?? "N/A";
 
   return (
-    <div className="w-full flex items-center justify-center flex-col gap-5">
-      <div className="w-[50%] rounded-lg bg-white p-2 flex shadow items-center justify-center flex-col">
-        <h1 className="text-xl text-red-500 font-bold tracking-tight leading-none mb-2 capitalize">
+    <div className="w-full flex flex-col items-center justify-center gap-5 px-2 sm:px-4 md:px-8">
+      <div className="w-full max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl rounded-lg bg-white p-4 sm:p-6 md:p-8 shadow flex flex-col items-center justify-center mx-auto">
+        <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-red-500 font-bold tracking-tight leading-tight mb-2 capitalize text-center">
           Welcome, {user?.FullName}
         </h1>
-        <h1 className="text-red-800 text-center font-semibold">
-          <span className="font-bold">latitude:</span>{" "}
-          {getLat()}
-          <span className="font-bold ml-2">longitude:</span>{" "}
-          {getLng()}
-        </h1>
+        <div className="text-red-800 text-center font-semibold break-all text-sm sm:text-base md:text-lg w-full flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-4">
+          <span className="font-bold">Latitude:</span>
+          <span>{getLat()}</span>
+          <span className="font-bold">Longitude:</span>
+          <span>{getLng()}</span>
+        </div>
       </div>
 
+      
       <Recharts />
+      
 
       {!acceptOrders && (
-        <div className="w-[50%] rounded-lg bg-white p-2 shadow">
-          <h1 className="text-xl capitalize font-bold mb-3 tracking-tight">
-            Available delivery Assignments
+        <div className="bg-white rounded-lg shadow-md p-5 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto mb-6 border border-orange-100 flex flex-col">
+          <h1 className="text-xl md:text-2xl font-bold capitalize mb-2 md:mb-4 tracking-tight text-center text-orange-600">
+            Available Delivery Assignments
           </h1>
           {deliveryAssignment && deliveryAssignment.length > 0 ? (
-            deliveryAssignment.map((item, idx) => (
-              <div
-                key={item.assignmentId || idx}
-                className="border-3 border-zinc-400 hover:border-red-400 px-2 rounded mt-2 flex items-center justify-between"
-              >
-                <div>
-                  <h1 className="text-md font-bold tracking-tight">
-                    {item.shopName}
-                  </h1>
-                  <p className="text-sm text-zinc-600 font-semibold pb-0.5">
-                    {item.deliveryAddress?.text}
-                  </p>
-                  <p className="text-sm text-zinc-600 font-semibold pb-1.5">
-                    {item.items?.length ?? 0} item{(item.items?.length ?? 0) !== 1 ? "s" : ""} | ₹{item.subtotal}
-                  </p>
-                </div>
-                <button
-                  onClick={() => getdeliveryByIdAssignment(item.assignmentId)}
-                  className="bg-amber-300 text-white px-6 capitalize font-semibold rounded cursor-pointer py-2"
+            <div className="flex flex-col gap-3 md:gap-4">
+              {deliveryAssignment.map((item, idx) => (
+                <div
+                  key={item.assignmentId || idx}
+                  className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border border-zinc-200 hover:border-orange-400 transition-colors px-3 md:px-5 py-3 rounded-lg bg-gray-50 shadow-sm"
                 >
-                  Accept
-                </button>
-              </div>
-            ))
+                  <div className="flex flex-col flex-1 min-w-0 md:pr-3">
+                    <h2 className="text-base md:text-lg font-semibold tracking-tight text-gray-800 truncate">
+                      {item.shopName}
+                    </h2>
+                    <div className="flex flex-col gap-1 w-full">
+                      <p className="text-xs sm:text-sm md:text-base text-gray-700 font-medium break-words whitespace-pre-line w-full">
+                        {item.deliveryAddress?.text}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {item.deliveryType &&
+                          <span className="bg-blue-100 text-blue-700 text-[10px] sm:text-xs px-2 py-0.5 rounded font-semibold uppercase tracking-wide">
+                            {item.deliveryType === "industrial" ? "Industrial" : "Production"}
+                          </span>
+                        }
+                        {item.zone &&
+                          <span className="bg-orange-100 text-orange-700 text-[10px] sm:text-xs px-2 py-0.5 rounded font-semibold uppercase tracking-wide">
+                            {item.zone}
+                          </span>
+                        }
+                      </div>
+                    </div>
+                    <p className="text-xs md:text-sm text-gray-500 font-semibold">
+                      {item.items?.length ?? 0} item{(item.items?.length ?? 0) !== 1 ? "s" : ""} | <span className="text-green-600 font-bold">₹{item.subtotal}</span>
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => getdeliveryByIdAssignment(item.assignmentId)}
+                    className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 transition text-white px-4 py-2 capitalize font-semibold rounded focus:outline-none focus:ring-2 focus:ring-orange-400 shadow text-sm md:text-base"
+                  >
+                    Accept
+                  </button>
+                </div>
+              ))}
+            </div>
           ) : (
-            <p className="text-xl font-semibold text-zinc-200 capitalize">
-              No assignments available.....
+            <p className="text-center text-base md:text-lg font-semibold text-gray-400 capitalize py-6">
+              No assignments available...
             </p>
           )}
         </div>
       )}
 
       {acceptOrders && (
-        <div className="bg-white p-2 w-[50%] rounded-lg shadow-sm">
+        <div className="bg-white rounded-lg shadow-md p-5 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto mb-6 border border-orange-100 flex flex-col">
           <h1 className="flex items-center gap-3 text-xl capitalize font-bold tracking-tight leading-none">
             <Package className="text-amber-500" />
             Current Order
