@@ -6,9 +6,10 @@ import { toast } from "react-toastify";
 import { Package } from 'lucide-react';
 import DeliveryAcceptCreatingLiveTracking from "./DeliveryAcceptCreatingLiveTracking";
 import { setLiveLocation } from "../redux/reducer/MapReducer";
-import { setOrdertodayDeliveries } from "../redux/reducer/OrderReducer";
+import { setOrderAllDeliveries, setOrdertodayDeliveries } from "../redux/reducer/OrderReducer";
 import Recharts from "./Recharts";
 import { useNavigate } from "react-router-dom";
+import AllDelivery from "./AllDelivery";
 
 const DeliveryBoy = () => {
   const { user } = useSelector((store) => store.Auth);
@@ -158,10 +159,22 @@ const DeliveryBoy = () => {
     }
   }
 
+  const allDeliveredOrders = async () => {
+    try {
+        const result = await instance.get("/order/order-All-deliveries", {
+            withCredentials: true
+        })
+        dispatch(setOrderAllDeliveries(result.data.data))
+    } catch (error) {
+        console.error(error)
+    }
+}
+
   useEffect(() => {
     getdeliveryAssignment();
     acceptOrder()
     orderTodayDeliveries()
+    allDeliveredOrders()
   }, [user]);
 
   const getLat = () => liveLocation?.latitude ?? user?.location?.coordinates?.[1] ?? "N/A";
@@ -183,6 +196,7 @@ const DeliveryBoy = () => {
 
       
       <Recharts />
+      <AllDelivery />
       
 
       {!acceptOrders && (

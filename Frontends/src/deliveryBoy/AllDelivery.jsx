@@ -1,25 +1,20 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer
+  } from 'recharts';
 
-const Recharts = () => {
-  const { ordertodayDeliveries } = useSelector(store => store.Order);
-
-
-  
-  
-  
-    const ratePerDelivery = 50
-    const totalEarning = ordertodayDeliveries.reduce((sum, d) => sum + d.count*ratePerDelivery, 0)
- 
+const AllDelivery = () => {
+    const { orderAllDeliveries } = useSelector(store => store.Order);
+    
+    const ratePerDeliveries = 50
+    const totalEarning = orderAllDeliveries.reduce((sum, d) => sum + d.count*ratePerDeliveries, 0)
   return (
     <div className="bg-white rounded-lg shadow-md p-5 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto mb-6 border border-orange-100 flex flex-col">
       <h1 className="text-lg md:text-xl capitalize font-bold mb-3 text-[#ff4d2d]">
@@ -29,7 +24,7 @@ const Recharts = () => {
       <div className="flex-1 min-h-[175px]">
         <ResponsiveContainer width="100%" height={220}>
           <BarChart
-            data={ordertodayDeliveries}
+            data={orderAllDeliveries}
             margin={{ top: 16, right: 24, left: 0, bottom: 8 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
@@ -65,4 +60,4 @@ const Recharts = () => {
   )
 }
 
-export default Recharts
+export default AllDelivery

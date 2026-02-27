@@ -4,7 +4,8 @@ const initialState = {
   userOrders: [],
   ownerOrders: [],
   singleTrackOrder: null,
-  ordertodayDeliveries: [] 
+  ordertodayDeliveries: [], 
+  orderAllDeliveries: [] 
 };
 
 export const OrderReducer = createSlice({
@@ -86,6 +87,10 @@ export const OrderReducer = createSlice({
     setOrdertodayDeliveries: (state, action) => {
       state.ordertodayDeliveries = action.payload;
     },
+
+    setOrderAllDeliveries: (state, action) => {
+      state.orderAllDeliveries = action.payload
+    }
   },
 });
 
@@ -100,5 +105,6 @@ export const {
   addOwnerOrder,
   updateUserRealTimeOrderStatus,
   setOrdertodayDeliveries,
+  setOrderAllDeliveries
 } = OrderReducer.actions;
 export default OrderReducer.reducer;

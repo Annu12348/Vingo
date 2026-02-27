@@ -638,3 +638,83 @@ export const gettodayDeliveriesController = async (req, res) => {
     });
   }
 };
+
+
+export const getAllDeliveredController = async (req, res) => {
+  try {
+    const deliveryBoyId = req.user.id;
+
+    const deliveryBoy = await userModel.findById(deliveryBoyId).select("createdAt")
+
+    if (!deliveryBoy || deliveryBoy.createdAt === undefined) {
+      return res.status(404).json({
+        message: "delivery boy not found"
+      });
+    }
+
+    const startOfDate = deliveryBoy.createdAt;
+
+    const orders = await orderModel.find({
+      "shopOrders.assignedDeliveryBoy": deliveryBoyId,
+      "shopOrders.status": "delivered",
+      "shopOrders.deliveredAt": { $gte: startOfDate }
+    })
+
+    // Add deliveredDate (YYYY-MM-DD string) groupings instead of just per-hour buckets
+    // We'll collect counts per date and hour
+
+    let stats = {};
+
+    orders.forEach(order => {
+      order.shopOrders.forEach(shopOrder => {
+        if (
+          shopOrder.assignedDeliveryBoy &&
+          `${shopOrder.assignedDeliveryBoy}` === `${deliveryBoyId}` &&
+          shopOrder.status === "delivered" &&
+          shopOrder.deliveredAt
+        ) {
+          const deliveredAtDate = new Date(shopOrder.deliveredAt);
+          const dateStr = deliveredAtDate.toISOString().slice(0, 10); // YYYY-MM-DD
+          const hour = deliveredAtDate.getHours();
+
+          if (!stats[dateStr]) stats[dateStr] = {};
+          stats[dateStr][hour] = (stats[dateStr][hour] || 0) + 1;
+        }
+      });
+    });
+
+    // Format data as array of { date, hour, count }
+    let formattedStats = [];
+    Object.entries(stats).forEach(([date, hourObj]) => {
+      Object.entries(hourObj).forEach(([hour, count]) => {
+        formattedStats.push({
+          date,                      // in YYYY-MM-DD format
+          hour: parseInt(hour, 10),
+          count
+        });
+      });
+    });
+
+    // Sort by date then hour
+    formattedStats.sort((a, b) => {
+      if (a.date === b.date) {
+        return a.hour - b.hour;
+      } else {
+        return a.date.localeCompare(b.date);
+      }
+    });
+
+
+
+     res.status(200).json({
+      message: "All deliveries statistics fetched successfully",
+      data: formattedStats
+    });
+  } catch (error) {
+    console.error("Error in gettodayDeliveriesController:", error);
+    return res.status(500).json({
+      message: "Failed to fetch today's deliveries statistics",
+      error: error.message || error.toString()
+    });
+  }
+};
