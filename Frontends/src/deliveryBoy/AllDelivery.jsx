@@ -10,7 +10,6 @@ import {
     ResponsiveContainer
 } from 'recharts';
 
-// Utility to format date as dd MMM yyyy
 function formatDate(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -26,7 +25,6 @@ const AllDelivery = () => {
     const ratePerDeliveries = 42;
     const totalEarning = orderAllDeliveries.reduce((sum, d) => sum + d.count * ratePerDeliveries, 0);
 
-    // Map API date to display label, but keep all other info as is for recharts
     const chartData = orderAllDeliveries.map(d => ({
         ...d,
         dateLabel: formatDate(d.date)
@@ -37,7 +35,6 @@ const AllDelivery = () => {
             <h1 className="text-base sm:text-lg md:text-xl capitalize font-bold mb-2 sm:mb-3 text-[#ff4d2d]">
                 All Deliveries (By Day)
             </h1>
-
             <div className="flex-1 min-h-[150px] sm:min-h-[175px] w-full">
                 <ResponsiveContainer width="100%" height={180} minWidth={180}>
                     <BarChart
@@ -50,7 +47,7 @@ const AllDelivery = () => {
                             fontSize={9}
                             interval={0}
                             dx={-6}
-                            tick={{fontWeight:'bold'}}
+                            tick={{ fontWeight: 'bold' }}
                         />
                         <YAxis
                             dataKey="count"
@@ -69,7 +66,6 @@ const AllDelivery = () => {
                     </BarChart>
                 </ResponsiveContainer>
             </div>
-
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2">
                 <span className="text-xs sm:text-sm text-gray-600 font-medium">
                     Total Earnings

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import L from "leaflet";
 import { useSelector } from "react-redux";
+import home from "/home.png";
+import scooter from "/scooter.png";
 import {
   MapContainer,
   Marker,
@@ -9,9 +11,6 @@ import {
   TileLayer,
   useMap,
 } from "react-leaflet";
-
-import home from "/home.png";
-import scooter from "/scooter.png";
 
 const deliveryBoyIcon = new L.Icon({
   iconUrl: scooter,
@@ -25,8 +24,6 @@ const customerIcon = new L.Icon({
   iconAnchor: [20, 40],
 });
 
-
-// ✅ MAP AUTO MOVE COMPONENT
 const MapUpdater = ({ lat, lng }) => {
   const map = useMap();
 
@@ -42,18 +39,15 @@ const MapUpdater = ({ lat, lng }) => {
 const DeliveryAcceptCreatingLiveTracking = ({ data }) => {
   const { liveLocation } = useSelector((store) => store.Map);
 
-  // ✅ DELIVERY BOY LIVE LOCATION (Redux → fallback → API)
   const deliveryBoyLat =
     liveLocation?.latitude || data?.deliveryBoyLocation?.lat;
 
   const deliveryBoyLng =
     liveLocation?.longitude || data?.deliveryBoyLocation?.lon;
-
-  // ✅ CUSTOMER LOCATION
+  
   const customerLat = data?.customerLocation?.lat;
   const customerLng = data?.customerLocation?.lon;
 
-  // ❌ render mat karo agar location nahi hai
   if (!deliveryBoyLat || !deliveryBoyLng || !customerLat || !customerLng)
     return null;
 
@@ -73,11 +67,7 @@ const DeliveryAcceptCreatingLiveTracking = ({ data }) => {
           attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-
-        {/* ✅ AUTO MOVE MAP */}
         <MapUpdater lat={deliveryBoyLat} lng={deliveryBoyLng} />
-
-        {/* ✅ DELIVERY BOY MARKER (LIVE MOVE) */}
         <Marker
           key={`${deliveryBoyLat}-${deliveryBoyLng}`}
           position={[deliveryBoyLat, deliveryBoyLng]}
@@ -85,13 +75,9 @@ const DeliveryAcceptCreatingLiveTracking = ({ data }) => {
         >
           <Popup>Delivery Boy</Popup>
         </Marker>
-
-        {/* ✅ CUSTOMER MARKER */}
         <Marker position={[customerLat, customerLng]} icon={customerIcon}>
           <Popup>Customer</Popup>
         </Marker>
-
-        {/* ✅ LIVE PATH */}
         <Polyline positions={path} color="blue" weight={4} />
       </MapContainer>
     </div>

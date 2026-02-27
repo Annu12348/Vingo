@@ -20,14 +20,9 @@ const DeliveryBoy = () => {
   const [otp, setOtp] = useState("")
   const { socket } = useSelector(store => store.socket)
   const { liveLocation } = useSelector(store => store.Map)
-  const navigate = useNavigate()
 
-  
-
-  // Utility function to compare lat/lon with high precision (6 decimal places)
   function isLocationsEqual(locA, locB, precision = 6) {
     if (!locA || !locB) return false;
-    // Allow for very slight floating point differences
     const toFixed = (num) => typeof num === "number" ? Number(num.toFixed(precision)) : null;
     return (
       toFixed(locA.lat) === toFixed(locB.lat) &&
@@ -35,11 +30,9 @@ const DeliveryBoy = () => {
     );
   }
 
-  // customerLocation and deliveryBoyLocation from acceptedOrder
   const customerLocation = acceptOrders?.customerLocation;
   const deliveryBoyLocation = acceptOrders?.deliveryBoyLocation;
 
-  // Prefer the most recent live location if available for delivery boy
   const currentDeliveryBoyLocation = liveLocation?.latitude && liveLocation?.longitude
     ? { lat: Number(liveLocation.latitude), lon: Number(liveLocation.longitude) }
     : deliveryBoyLocation;
@@ -48,7 +41,6 @@ const DeliveryBoy = () => {
 
   useEffect(() => {
     if (!socket || user?.role !== "deliveryBoy") return;
-    //console.log("wtch started")
 
     let watchId;
 
@@ -97,7 +89,6 @@ const DeliveryBoy = () => {
           withCredentials: true,
         }
       );
-      // Also fetch new assignments and accepted orders if any
       getdeliveryAssignment();
       acceptOrder();
       toast.success(result.data.message);
@@ -141,8 +132,8 @@ const DeliveryBoy = () => {
       },
         { withCredentials: true }
       )
-      toast.success(result.data.message);
       window.location.reload();
+      toast.success(result.data.message);
     } catch (error) {
       console.error(error)
     }
@@ -153,8 +144,8 @@ const DeliveryBoy = () => {
       const result = await instance.get("/order/order-today-deliveries", {
         withCredentials: true
       })
-       dispatch(setOrdertodayDeliveries(result.data.data))
-       console.log(result.data.data)
+      dispatch(setOrdertodayDeliveries(result.data.data))
+      console.log(result.data.data)
     } catch (error) {
       console.error(error)
     }
@@ -162,14 +153,14 @@ const DeliveryBoy = () => {
 
   const allDeliveredOrders = async () => {
     try {
-        const result = await instance.get("/order/order-All-deliveries", {
-            withCredentials: true
-        })
-        dispatch(setOrderAllDeliveries(result.data.data))
+      const result = await instance.get("/order/order-All-deliveries", {
+        withCredentials: true
+      })
+      dispatch(setOrderAllDeliveries(result.data.data))
     } catch (error) {
-        console.error(error)
+      console.error(error)
     }
-}
+  }
 
   useEffect(() => {
     getdeliveryAssignment();
@@ -194,12 +185,8 @@ const DeliveryBoy = () => {
           <span>{getLng()}</span>
         </div>
       </div>
-
-      
       <Recharts />
       <AllDelivery />
-      
-
       {!acceptOrders && (
         <div className="bg-white rounded-lg shadow-md p-5 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto mb-6 border border-orange-100 flex flex-col">
           <h1 className="text-xl md:text-2xl font-bold capitalize mb-2 md:mb-4 tracking-tight text-center text-orange-600">
@@ -253,7 +240,6 @@ const DeliveryBoy = () => {
           )}
         </div>
       )}
-
       {acceptOrders && (
         <div className="bg-white rounded-lg shadow-md p-5 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto mb-6 border border-orange-100 flex flex-col">
           <h1 className="flex items-center gap-3 text-xl capitalize font-bold tracking-tight leading-none">
@@ -278,7 +264,6 @@ const DeliveryBoy = () => {
             </p>
           </div>
           <DeliveryAcceptCreatingLiveTracking data={acceptOrders} />
-          {/* Mark as Delivered button should be present ONLY when locations are equal */}
           {!showOtpBox && canMarkAsDelivered && (
             <button
               onClick={sendotpApi}
@@ -287,7 +272,6 @@ const DeliveryBoy = () => {
               Mark as Delivered
             </button>
           )}
-          {/* If not equal, show disabled button with explanatory message */}
           {!showOtpBox && !canMarkAsDelivered && (
             <button
               className="w-full rounded cursor-not-allowed bg-gray-300 text-gray-500 mt-5 mb-2 p-4 font-bold capitalize tracking-tight leading-none opacity-60"
@@ -320,8 +304,6 @@ const DeliveryBoy = () => {
               </button>
             </div>
           )}
-          {/* Show a helper message if unable to mark as delivered */}
-          
         </div>
       )}
     </div>
