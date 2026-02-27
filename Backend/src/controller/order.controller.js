@@ -582,6 +582,7 @@ export const verifyPaymentController = async (req, res) => {
   }
 }
 
+ 
 export const gettodayDeliveriesController = async (req, res) => {
   try {
     const deliveryBoyId = req.user.id;
@@ -660,9 +661,6 @@ export const getAllDeliveredController = async (req, res) => {
       "shopOrders.deliveredAt": { $gte: startOfDate }
     })
 
-    // Add deliveredDate (YYYY-MM-DD string) groupings instead of just per-hour buckets
-    // We'll collect counts per date and hour
-
     let stats = {};
 
     orders.forEach(order => {
@@ -673,26 +671,22 @@ export const getAllDeliveredController = async (req, res) => {
           shopOrder.status === "delivered" &&
           shopOrder.deliveredAt
         ) {
-          const date = new Date(shopOrder.deliveredAt)
-            .toISOString()
-            .split("T")[0]; 
+          const indiaDate = new Date(shopOrder.deliveredAt).toLocaleDateString(
+            "en-CA", 
+            { timeZone: "Asia/Kolkata" }
+          )
 
-          stats[date] = (stats[date] || 0) + 1;
+          stats[indiaDate] = (stats[indiaDate] || 0) + 1;
         }
       });
     });
 
-    // Format data as array of { date, hour, count }
     const formattedStats = Object.keys(stats)
     .map(date => ({
       date,
       count: stats[date]
     }))
     .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-  
-
-
 
      res.status(200).json({
       message: "All deliveries statistics fetched successfully",
