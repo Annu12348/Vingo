@@ -673,36 +673,24 @@ export const getAllDeliveredController = async (req, res) => {
           shopOrder.status === "delivered" &&
           shopOrder.deliveredAt
         ) {
-          const deliveredAtDate = new Date(shopOrder.deliveredAt);
-          const dateStr = deliveredAtDate.toISOString().slice(0, 10); // YYYY-MM-DD
-          const hour = deliveredAtDate.getHours();
+          const date = new Date(shopOrder.deliveredAt)
+            .toISOString()
+            .split("T")[0]; 
 
-          if (!stats[dateStr]) stats[dateStr] = {};
-          stats[dateStr][hour] = (stats[dateStr][hour] || 0) + 1;
+          stats[date] = (stats[date] || 0) + 1;
         }
       });
     });
 
     // Format data as array of { date, hour, count }
-    let formattedStats = [];
-    Object.entries(stats).forEach(([date, hourObj]) => {
-      Object.entries(hourObj).forEach(([hour, count]) => {
-        formattedStats.push({
-          date,                      // in YYYY-MM-DD format
-          hour: parseInt(hour, 10),
-          count
-        });
-      });
-    });
+    const formattedStats = Object.keys(stats)
+    .map(date => ({
+      date,
+      count: stats[date]
+    }))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Sort by date then hour
-    formattedStats.sort((a, b) => {
-      if (a.date === b.date) {
-        return a.hour - b.hour;
-      } else {
-        return a.date.localeCompare(b.date);
-      }
-    });
+  
 
 
 

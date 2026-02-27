@@ -141,7 +141,8 @@ const DeliveryBoy = () => {
       },
         { withCredentials: true }
       )
-      toast.success(result.data.message)
+      toast.success(result.data.message);
+      window.location.reload();
     } catch (error) {
       console.error(error)
     }
