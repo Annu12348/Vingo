@@ -47,6 +47,7 @@ router.post("/send-delivery-otp",
   authenticationMiddleware, 
   sendDeliveryOtpController
 )
+
 router.post("/verify-delivery-otp", 
   authenticationMiddleware, 
   verifyOtpController
@@ -57,7 +58,14 @@ router.post("/verify-payment",
   verifyPaymentController
 )
 
-router.get("/order-today-deliveries", authenticationMiddleware, gettodayDeliveriesController)
-router.get("/order-All-deliveries", authenticationMiddleware, getAllDeliveredController)
+router.get("/order-today-deliveries", 
+authenticationMiddleware, 
+gettodayDeliveriesController
+)
+
+router.get("/order-All-deliveries", 
+authenticationMiddleware, 
+getAllDeliveredController
+)
 
 export default router;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSelector } from 'react-redux';
 import {
   BarChart,
@@ -13,10 +13,6 @@ import {
 const Recharts = () => {
   const { ordertodayDeliveries } = useSelector(store => store.Order);
 
-
-  
-  
-  
     const ratePerDelivery = 50
     const totalEarning = ordertodayDeliveries.reduce((sum, d) => sum + d.count*ratePerDelivery, 0)
  
