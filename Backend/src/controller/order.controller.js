@@ -586,17 +586,32 @@ export const verifyPaymentController = async (req, res) => {
 export const gettodayDeliveriesController = async (req, res) => {
   try {
     const deliveryBoyId = req.user.id;
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
+    const now = new Date();
+
+    const istNow = new Date(
+      now.toLocaleString("en-US", {
+        timeZone: "Asia/Kolkata"
+      })
+    )
+
+    const startOfDay = new Date(istNow);
+    startOfDay.setHours(0, 0, 0, 0)
+
+    const endOfDay = new Date(istNow);
+    endOfDay.setHours(23, 59, 59, 999)
 
     // Find all orders that have at least one delivered shopOrder by this delivery boy today
     const orders = await orderModel.find({
       "shopOrders.assignedDeliveryBoy": deliveryBoyId,
       "shopOrders.status": "delivered",
-      "shopOrders.deliveredAt": { $gte: startOfDay }
+      "shopOrders.deliveredAt": { 
+        $gte: startOfDay,
+        $lte: endOfDay
+       },
     }).lean();
 
-    let todaysDeliveries = [];
+    
+    let stats = {};
 
     orders.forEach(order => {
       order.shopOrders.forEach(shopOrder => {
@@ -605,27 +620,27 @@ export const gettodayDeliveriesController = async (req, res) => {
           `${shopOrder.assignedDeliveryBoy}` === `${deliveryBoyId}` &&
           shopOrder.status === "delivered" &&
           shopOrder.deliveredAt &&
-          new Date(shopOrder.deliveredAt) >= startOfDay
+          new Date(shopOrder.deliveredAt) >= startOfDay &&
+          new Date(shopOrder.deliveredAt) <= endOfDay 
         ) {
-          todaysDeliveries.push(shopOrder);
+          const hour = new Date(
+            new Date(shopOrder.deliveredAt).toLocaleString("en-US", {
+              timeZone: "Asia/Kolkata",
+            })
+          ).getHours();
+
+          stats[hour] = (stats[hour] || 0) + 1;
         }
       });
     });
 
-    let stats = {};
-
-    todaysDeliveries.forEach(shopOrder => {
-      const deliveredDate = new Date(shopOrder.deliveredAt);
-      const hour = deliveredDate.getHours();
-      stats[hour] = (stats[hour] || 0) + 1;
-    });
+    
 
     let formattedStats = Object.keys(stats).map(hour => ({
-      hour: parseInt(hour, 10),
+      hour: Number(hour),
       count: stats[hour]
-    }));
-
-    formattedStats.sort((a, b) => a.hour - b.hour);
+    }))
+    .sort((a, b) => a.hour - b.hour)
 
     return res.status(200).json({
       message: "Today's deliveries statistics fetched successfully",
