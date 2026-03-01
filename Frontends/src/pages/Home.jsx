@@ -33,7 +33,7 @@ const Home = () => {
   return (
     <div className="w-full md:px-2  md:py-2 py-0.5 min-h-full">
       <Navigation />
-      <div className="w-full min-h-[40vh]   md:px-25 md:mt-20 mt-12 ">
+      <div className="w-full min-h-[40vh]   md:px-25 md:mt-20 mt-17 ">
         {user?.role === "user" && (
           <div className="w-full  ">
             {searchItem.length > 0 ? <SearchBar /> : null}

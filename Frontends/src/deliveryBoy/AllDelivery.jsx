@@ -33,7 +33,7 @@ const AllDelivery = () => {
     return (
         <div className="bg-white rounded-lg shadow-md p-3 sm:p-5 w-full max-w-full sm:max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto mb-4 sm:mb-6 border border-orange-100 flex flex-col">
             <h1 className="text-base sm:text-lg md:text-xl capitalize font-bold mb-2 sm:mb-3 text-[#ff4d2d]">
-                All Deliveries (By Day)
+                All Deliveries (day By Day)
             </h1>
             <div className="flex-1 min-h-[150px] sm:min-h-[175px] w-full">
                 <ResponsiveContainer width="100%" height={180} minWidth={180}>

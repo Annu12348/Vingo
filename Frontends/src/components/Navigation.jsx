@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../utils/axios";
 import { setUser } from "../redux/reducer/AuthenticationSlice";
-import { FaLocationDot } from "react-icons/fa6";
+import { FaGaugeSimple, FaLocationDot } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { FiMenu } from "react-icons/fi";
 import { FaFileInvoiceDollar } from "react-icons/fa";
@@ -13,6 +13,9 @@ import { persistor } from "../redux/store";
 import { setShop } from "../redux/reducer/ShopReducer";
 import { setItem, setSearchItem } from "../redux/reducer/ItemReducer";
 import { RiShoppingCartFill } from "react-icons/ri";
+import { IoMdClose } from "react-icons/io";
+import { CgProfile } from "react-icons/cg";
+import gsap from 'gsap'
 
 const Navigation = () => {
   const { user } = useSelector((store) => store.Auth);
@@ -23,6 +26,7 @@ const Navigation = () => {
   const { shop } = useSelector((store) => store.Shop);
   const { cartItems } = useSelector(store => store.Item);
   const [query, setQuery] = useState("");
+  const [manuBar, setManuBar] = useState(false)
 
   const logoutApi = async () => {
     try {
@@ -95,7 +99,7 @@ const Navigation = () => {
               </div>
               <div className="flex w-[72%] items-center border-zinc-300 border-l-3 px-3 gap-2">
                 <label className="text-xl">
-                <CiSearch />
+                  <CiSearch />
                 </label>
                 <input
                   className=" outline-none  md:py-1.5 py-1 px-1 font-semibold text-zinc-500 w-full text-sm tracking-tight"
@@ -129,36 +133,107 @@ const Navigation = () => {
                   </span>
                   add food item
                 </Link>
-                <Link
-                  to="/add-food"
-                  className="text-md p-1 md:hidden   bg-zinc-300 rounded-full text-red-950 text-2xl  block"
-                >
-                  <IoMdAdd />
-                </Link>
               </div>
             )}
 
-            <Link to="/my-order" className="text-[11px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
-              <span className="text-xl">
-                <FaFileInvoiceDollar />
-              </span>
-              my oders
-            </Link>
+            {(user?.role === "user" || user?.role === "owner") && user?.role !== "deliveryBoy" && (
+              <Link to="/my-order" className="text-[11px] relative hidden md:flex items-center gap-2  rounded  capitalize font-semibold bg-zinc-200 text-[rgb(240,107,41)] px-3 py-1.5">
+                <span className="text-xl">
+                  <FaFileInvoiceDollar />
+                </span>
+                my oders
+              </Link>
+            )}
+
             <Link to="/profile" className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
               {user?.FullName.slice(0, 1)}
             </Link>
+
             <button
               onClick={clickedHandlers}
               className="px-3 py-2.5 bg-red-500 md:block cursor-pointer hidden rounded-lg text-white font-semibold tracking-tight leading-none"
             >
               Logout
             </button>
+
           </div>
         </div>
-        <button className="text-xl md:hidden text-zinc-400">
-          <FiMenu />
+        <button onClick={() => setManuBar(!manuBar)} className="text-xl relative z-20  md:hidden text-zinc-800  rounded-full  p-1">
+          {manuBar ? <IoMdClose /> : <FiMenu />}
         </button>
       </div>
+
+      {manuBar === true && (
+        <div className="text-sm absolute md:hidden  w-full bg-zinc-400  rounded-b-3xl -top-1  p-3 " >
+          <div className=" pb-5  ">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-[rgb(240,107,41)] flex items-center justify-center rounded-full text-white text-xl font-bold uppercase">
+                {user?.FullName?.[0] || ''}
+              </div>
+              <div>
+                <span className="block text-xs text-zinc-700 font-medium">Welcome back,</span>
+                <h1 className="text-lg font-semibold text-zinc-900 capitalize leading-tight">{user?.FullName}</h1>
+              </div>
+            </div>
+            <Link to='/profile' className="flex items-center mt-6 gap-3 border p-2 rounded-xl border-zinc-500">
+              <span className="text-4xl text-blue-800"><CgProfile /></span>
+              <h3 className="text-xl tracking-tight leading-none capitalize hover:border-blue-500 font-semibold text-zinc-600">
+                profile
+              </h3>
+            </Link>
+
+            {user?.role === "user" && (
+              <Link to="/cart" className="flex items-center mt-3 gap-3 border p-2 rounded-xl border-zinc-500">
+                <span className="text-3xl text-red-800">
+                <RiShoppingCartFill />
+                </span>
+                <h3 className="text-xl tracking-tight leading-none capitalize hover:border-blue-500 font-semibold text-zinc-600">
+                  order request
+                </h3>
+              </Link>
+            )}
+
+            {user?.role === "owner" && shop.length > 0 && (
+              <Link
+                to="/add-food"
+                className="flex items-center mt-3 gap-3 border p-2 py-2.5 rounded-xl border-zinc-500"
+              >
+                <span className="text-3xl text-red-800">
+                  <IoMdAdd />
+                </span>
+                <h3 className="text-xl tracking-tight leading-none capitalize hover:border-blue-500 font-semibold text-zinc-600">
+                  add food item
+                </h3>
+              </Link>
+            )}
+
+            {(user?.role === "user" || user?.role === "owner") && user?.role !== "deliveryBoy" && (
+              <Link
+                to="/my-order"
+                className="flex items-center mt-3 gap-3 border p-2 py-2.5 rounded-xl border-zinc-500"
+              >
+                <span className="text-3xl text-red-800">
+                <FaFileInvoiceDollar />
+                </span>
+                <h3 className="text-xl tracking-tight leading-none capitalize hover:border-blue-500 font-semibold text-zinc-600">
+                my orders
+                </h3>
+              </Link>
+            )}
+
+
+
+            <button
+              onClick={clickedHandlers}
+              className="px-3 py-2.5 bg-red-500 text-xl capitalize mt-4 cursor-pointer w-full   rounded-lg text-white font-semibold tracking-tight leading-none"
+            >
+              logout
+            </button>
+
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

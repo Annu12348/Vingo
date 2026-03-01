@@ -19,7 +19,7 @@ const Recharts = () => {
   return (
     <div className="bg-white rounded-lg shadow-md p-5 w-full max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto mb-6 border border-orange-100 flex flex-col">
       <h1 className="text-lg md:text-xl capitalize font-bold mb-3 text-[#ff4d2d]">
-        today deliveries
+        today deliveries (hour by hour)
       </h1>
       <div className="flex-1 min-h-[175px]">
         <ResponsiveContainer width="100%" height={220}>
