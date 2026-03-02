@@ -44,92 +44,98 @@ const FoodCard = ({ item }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-xl ">
+    <div className="bg-white shadow-lg rounded-xl flex flex-col w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-[320px] transition-all duration-300 mx-auto">
       <div
         key={item?._id}
-        className="bg-amber-200 min-w-[36.4vh] h-[24vh] rounded-t-xl overflow-hidden relative inline-block group transition-all duration-300"
+        className="bg-amber-200 w-full h-40 sm:h-44 md:h-52 lg:h-56 rounded-t-xl overflow-hidden relative group transition-all duration-300"
       >
         <img
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           src={item?.image}
-          alt={item?.foodName}
+          alt={item?.foodName || "Food"}
+          loading="lazy"
         />
-        <h1 className="absolute top-2 right-2 p-1.5 rounded-full bg-white flex items-center justify-center transition-opacity duration-300 ease-in-out group-hover:opacity-0">
+        <div className="absolute top-2 right-2 p-2 rounded-full bg-white flex items-center justify-center shadow transition-opacity duration-300 ease-in-out group-hover:opacity-80">
           {item.foodType === "Veg" && (
-            <span className="text-[#2E7D32] text-2xl" title="Vegetarian">
+            <span className="text-[#2E7D32] text-xl md:text-2xl" title="Vegetarian">
               <FaLeaf />
             </span>
           )}
           {item.foodType === "Non-Veg" && (
-            <span className="text-[#8B0000] text-2xl" title="Non-Vegetarian">
+            <span className="text-[#8B0000] text-xl md:text-2xl" title="Non-Vegetarian">
               <FaDrumstickBite />
             </span>
           )}
           {item.foodType === "Vegan" && (
-            <span className="text-[#387b8e] text-2xl" title="Vegan">
+            <span className="text-[#387b8e] text-xl md:text-2xl" title="Vegan">
               <GiSprout />
             </span>
           )}
-        </h1>
+        </div>
       </div>
-      <h1 className="text-xl px-2.5 capitalize font-semibold tracking-tight leading-none">
-        {item?.foodName}
-      </h1>
-      <h1 className="text-2xl flex px-2.5 mt-2 items-center">
-        {renderStars(item?.rating?.average)}
-        <span className="font-bold ml-2 text-gray-600 text-xl">
-          ({item?.rating?.count || 0})
-        </span>
-      </h1>
-      <div className="px-2.5 mt-4 flex items-center pb-2 justify-between">
-        <h1 className="text-xl font-bold tracking-tight">₹{item?.price}</h1>
-        <div className="flex items-center justify-center border-2 rounded-full">
-          <button
-            onClick={decrement}
-            className="text-xl font-semibold pl-2  cursor-pointer bg-white py-1.5 px-1 rounded-l-full "
-            disabled={quantity <= 0}
-          >
-            <span className="hover:bg-zinc-200 block">
-              <GrFormSubtract />
-            </span>
-          </button>
-          <span className="text-xl font-semibold bg-white py-0.5 px-1.5 ">
-            {quantity || 0}
+      <div className="flex flex-col flex-1 justify-between p-3">
+        <h2 className="text-lg sm:text-xl capitalize font-semibold tracking-tight leading-tight truncate">
+          {item?.foodName}
+        </h2>
+        <div className="flex items-center gap-2 mt-1">
+          <span className="flex text-xl sm:text-2xl">{renderStars(item?.rating?.average)}</span>
+          <span className="font-bold ml-1 text-gray-600 text-base sm:text-lg">
+            ({item?.rating?.count || 0})
           </span>
-          <button
-            onClick={increment}
-            className="text-xl font-semibold cursor-pointer bg-white py-1.5 px-1 pr-2"
-          >
-            <span className="hover:bg-zinc-200 block">
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-2">
+          <span className="text-lg sm:text-xl font-bold tracking-tight text-black whitespace-nowrap">
+            ₹{item?.price}
+          </span>
+          <div className="flex items-center border-2 border-gray-200 rounded-full bg-gray-50">
+            <button
+              onClick={decrement}
+              className="text-lg sm:text-xl font-semibold cursor-pointer bg-white py-1 px-2 rounded-l-full disabled:opacity-50 disabled:cursor-not-allowed transition"
+              disabled={quantity <= 0}
+              aria-label="Remove one"
+              tabIndex={0}
+            >
+              <GrFormSubtract />
+            </button>
+            <span className="text-base sm:text-lg px-2 font-medium select-none bg-white">
+              {quantity || 0}
+            </span>
+            <button
+              onClick={increment}
+              className="text-lg sm:text-xl font-semibold cursor-pointer bg-white py-1 px-2 rounded-r-none transition"
+              aria-label="Add one"
+              tabIndex={0}
+            >
               <GrAdd />
-            </span>
-          </button>
-          <button
-            className={`text-2xl ${
-              cartItems.some((i) => i.id === item._id)
-                ? "bg-gray-700"
-                : "bg-red-800"
-            } pr-2 px-1 py-1 rounded-r-full cursor-pointer text-white`}
-            onClick={() =>
-              quantity > 0
-                ? dispatch(
-                    addToCart({
-                      id: item._id,
-                      foodName: item.foodName,
-                      shop: item.shop,
-                      price: item.price,
-                      image: item.image,
-                      quantity,
-                      foodType: item.foodType,
-                    })
-                  )
-                : null
-            }
-          >
-            <span>
+            </button>
+            <button
+              type="button"
+              className={`ml-2 text-xl sm:text-2xl flex items-center justify-center transition px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
+                cartItems.some((i) => i.id === item._id)
+                  ? "bg-gray-700"
+                  : "bg-red-800"
+              } text-white`}
+              onClick={() =>
+                quantity > 0
+                  ? dispatch(
+                      addToCart({
+                        id: item._id,
+                        foodName: item.foodName,
+                        shop: item.shop,
+                        price: item.price,
+                        image: item.image,
+                        quantity,
+                        foodType: item.foodType,
+                      })
+                    )
+                  : null
+              }
+              aria-label="Add to cart"
+              tabIndex={0}
+            >
               <RiShoppingCartFill />
-            </span>
-          </button>
+            </button>
+          </div>
         </div>
       </div>
     </div>

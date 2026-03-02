@@ -145,7 +145,6 @@ const DeliveryBoy = () => {
         withCredentials: true
       })
       dispatch(setOrdertodayDeliveries(result.data.data))
-      console.log(result.data.data)
     } catch (error) {
       console.error(error)
     }

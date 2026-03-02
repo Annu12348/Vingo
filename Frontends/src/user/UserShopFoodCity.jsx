@@ -88,64 +88,37 @@ const UserShopFoodCity = ({data, updatedItemsList}) => {
     <>
       {shopByCity.length > 0 ? (
         data.length > 0 ? (
-          <div className="w-full mt-5 mb-2 ">
-            <h1 className="text-xl capitalize font-bold tracking-tight leading-none ">
-              best shop in {city?.city}
+          <section className="w-full mt-6 mb-4">
+            <h1 className="text-2xl sm:text-3xl capitalize font-extrabold tracking-tight leading-none text-gray-900 mb-3">
+              Best Shops in <span className="text-amber-600">{city?.city}</span>
             </h1>
-            <div className="w-full relative  ">
-              {showLeft && (
-                <button
-                  onClick={scrollLeft}
-                  className="text-2xl bg-[#00000097] text-white h-fit absolute top-1/2 -translate-y-1/2 left-2 z-40 p-1 rounded-full transition-opacity"
-                  aria-label="Scroll Left"
-                  type="button"
-                >
-                  <IoIosArrowBack />
-                </button>
-              )}
-              {showRight && (
-                <button
-                  onClick={scrollRight}
-                  className="text-2xl bg-[#00000097] text-white h-fit absolute top-1/2 -translate-y-1/2 right-2 z-40 p-1 rounded-full transition-opacity"
-                  aria-label="Scroll Right"
-                  type="button"
-                >
-                  <IoIosArrowForward />
-                </button>
-              )}
-              <style>
-                {`
-                  .hide-scrollbar::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}
-              </style>
+            <div className="w-full relative">
               <div
-                ref={scrollRef}
-                className=" mt-1.5 flex gap-1.5  items-center justify-center  overflow-x-hidden whitespace-nowrap hide-scrollbar w-full"
-                style={{
-                  scrollbarWidth: "none",
-                  msOverflowStyle: "none",
-                  overscrollBehaviorX: "none",
-                  touchAction: "pan-y",
-                  pointerEvents: "auto",
-                }}
-                tabIndex={-1}
+                className="flex flex-wrap gap-4 justify-center items-stretch w-full"
+                style={{ rowGap: "1.5rem" }}
               >
-                {updatedItemsList?.map((item) => (
-                  <FoodCard key={item._id} item={item} />
-                ))}
+                {updatedItemsList?.length > 0 ? (
+                  updatedItemsList.map((item) => (
+                    <div key={item._id} className="flex-grow-0 basis-[320px] sm:basis-[260px] md:basis-[300px] flex items-stretch">
+                      <FoodCard item={item} />
+                    </div>
+                  ))
+                ) : (
+                  <div className="w-full">
+                    <h2 className="text-center text-lg text-gray-400 font-semibold py-8">
+                      No food items found.
+                    </h2>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          </section>
         ) : (
-          <h1 className="text-center font-semibold text-xl tracking-tight leading-none text-zinc-300 mt-20">
+          <h1 className="text-center font-semibold text-lg md:text-xl tracking-tight leading-none text-gray-400 mt-20">
             No food items available for shops in your city.
           </h1>
         )
-      ) : (
-        ""
-      )}
+      ) : null}
     </>
   );
 };

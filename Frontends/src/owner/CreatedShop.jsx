@@ -82,45 +82,60 @@ const CreatedShop = () => {
     
   };
   return (
-    <div className="w-full py-3 px-4 min-h-screen  ">
-      <Link className="text-2xl  text-zinc-500" to="/">
-        <GoArrowLeft />
-      </Link>
-      <div className="w-full p-2 mt-5 flex items-center justify-center">
-        <div className="shadow md:w-[35%] w-full p-3 rounded bg-zinc-100 flex items-center justify-center flex-col ">
+    <div className="min-h-screen w-full flex flex-col py-6 px-2 sm:px-4 bg-gray-50">
+      <div className="max-w-2xl mx-auto w-full">
+        <Link
+          className="inline-flex items-center text-xl md:text-2xl text-gray-600 hover:text-orange-500 transition mb-2"
+          to="/"
+          aria-label="Back to Home"
+        >
+          <GoArrowLeft />
+        </Link>
+        <section className="bg-white shadow-md rounded-lg p-5 sm:p-8 flex flex-col items-center justify-center mt-4 w-full">
           <img
-            className="w-15 h-15 rounded-full object-cover "
+            className="w-20 h-20 rounded-full object-cover border-2 border-orange-300"
             src="https://imgs.search.brave.com/2OHB7N8AOSzt7IXX88RuaoICC_Hycx_bpIgBH0lZw00/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/Z3JhZGllbnQtc2hv/cC1sb2NhbC1sb2dv/LWRlc2lnbl8yMy0y/MTQ5NjEzMTYwLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA"
-            alt="images show"
+            alt="Shop Logo"
           />
-          <h1 className="text-xl font-bold capitalize mt-2 ">add shop</h1>
-          <form className="w-full mt-2" onSubmit={submitHandler}>
-            <div className="flex flex-col  ">
-              <label className="font-semibold capitalize tracking-tight ">
+          <h1 className="text-xl md:text-2xl font-bold capitalize mt-4 text-gray-900 tracking-tight">
+            Add Shop
+          </h1>
+          <form className="w-full mt-6" onSubmit={submitHandler} autoComplete="off">
+            {/* Shop Name */}
+            <div className="flex flex-col mb-4">
+              <label
+                htmlFor="shopName"
+                className="font-medium text-gray-700 capitalize mb-1"
+              >
                 Shop Name
               </label>
               <input
-                className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300  font-semibold mt-1"
+                id="shopName"
+                className={`border px-3 py-2 rounded-lg outline-none text-gray-700 font-medium transition focus:ring-2 focus:ring-orange-200 border-gray-300 mt-1 ${err.shopName ? 'border-red-400' : ''}`}
                 type="text"
-                placeholder="enter your shop name"
+                placeholder="Enter your shop name"
                 value={addShop.shopName}
                 onChange={(e) =>
                   setAddShop({ ...addShop, shopName: e.target.value })
                 }
                 required
+                autoFocus
               />
               {err.shopName && (
-                <p className="text-red-600 text-[8px] tracking-tight leading-none  font-semibold ">
-                  {err.shopName}
-                </p>
+                <p className="text-red-600 text-xs mt-1 font-medium">{err.shopName}</p>
               )}
             </div>
-            <div className="flex flex-col mt-3  ">
-              <label className="font-semibold capitalize tracking-tight ">
-                shop image
+            {/* Shop Image */}
+            <div className="flex flex-col mb-4">
+              <label
+                htmlFor="shopImage"
+                className="font-medium text-gray-700 capitalize mb-1"
+              >
+                Shop Image
               </label>
               <input
-                className="text-zinc-500 cursor-pointer border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1"
+                id="shopImage"
+                className="text-gray-700 border px-3 py-2 rounded-lg outline-none border-gray-300 font-medium mt-1 file:mr-3 file:border-none file:py-2 file:px-4 file:rounded file:bg-orange-50 file:text-orange-700 file:font-semibold hover:file:bg-orange-100 transition"
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
@@ -128,23 +143,29 @@ const CreatedShop = () => {
               />
             </div>
             {imagePreview && (
-              <div className="w-full h-[22vh] border mt-4 border-red-500 rounded ">
+              <div className="w-full h-44 border mt-4 border-orange-400 rounded overflow-hidden flex items-center justify-center">
                 <img
                   src={imagePreview}
                   alt="Shop Preview"
-                  className="w-full h-full object-cover  rounded"
+                  className="w-full h-full object-cover rounded"
+                  loading="lazy"
                 />
               </div>
             )}
-            <div className="flex md:gap-6 gap-4 mt-3">
-              <div className="flex flex-col  w-[48%]  ">
-                <label className="font-semibold capitalize tracking-tight ">
-                  city
+            {/* City and State */}
+            <div className="flex flex-col sm:flex-row gap-4 md:gap-8 mt-5">
+              <div className="flex flex-col flex-1">
+                <label
+                  htmlFor="shopCity"
+                  className="font-medium text-gray-700 capitalize mb-1"
+                >
+                  City
                 </label>
                 <input
-                  className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1"
+                  id="shopCity"
+                  className={`border px-3 py-2 rounded-lg outline-none text-gray-700 font-medium transition focus:ring-2 focus:ring-orange-200 border-gray-300 mt-1 ${err.city ? 'border-red-400' : ''}`}
                   type="text"
-                  placeholder="enter your shop city"
+                  placeholder="Enter your shop city"
                   value={addShop.city}
                   onChange={(e) =>
                     setAddShop({ ...addShop, city: e.target.value })
@@ -152,19 +173,21 @@ const CreatedShop = () => {
                   required
                 />
                 {err.city && (
-                  <p className="text-red-600 text-[9px] tracking-tight leading-none  font-semibold ">
-                    {err.city}
-                  </p>
+                  <p className="text-red-600 text-xs mt-1 font-medium">{err.city}</p>
                 )}
               </div>
-              <div className="flex flex-col  w-[47%]   ">
-                <label className="font-semibold capitalize tracking-tight ">
-                  state
+              <div className="flex flex-col flex-1">
+                <label
+                  htmlFor="shopState"
+                  className="font-medium text-gray-700 capitalize mb-1"
+                >
+                  State
                 </label>
                 <input
-                  className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300 capitalize font-semibold mt-1 "
+                  id="shopState"
+                  className={`border px-3 py-2 rounded-lg outline-none text-gray-700 font-medium transition focus:ring-2 focus:ring-orange-200 border-gray-300 mt-1 ${err.state ? 'border-red-400' : ''}`}
                   type="text"
-                  placeholder="enter your shop state"
+                  placeholder="Enter your shop state"
                   value={addShop.state}
                   onChange={(e) =>
                     setAddShop({ ...addShop, state: e.target.value })
@@ -172,20 +195,23 @@ const CreatedShop = () => {
                   required
                 />
                 {err.state && (
-                  <p className="text-red-600 text-[8px] tracking-tight leading-none  font-semibold ">
-                    {err.state}
-                  </p>
+                  <p className="text-red-600 text-xs mt-1 font-medium">{err.state}</p>
                 )}
               </div>
             </div>
-            <div className="flex flex-col mt-3 ">
-              <label className="font-semibold capitalize tracking-tight ">
-                address
+            {/* Address */}
+            <div className="flex flex-col mt-5">
+              <label
+                htmlFor="shopAddress"
+                className="font-medium text-gray-700 capitalize mb-1"
+              >
+                Address
               </label>
               <input
-                className="text-zinc-500 border px-2 py-2 rounded-lg outline-none border-zinc-300  font-semibold mt-1"
+                id="shopAddress"
+                className={`border px-3 py-2 rounded-lg outline-none text-gray-700 font-medium transition focus:ring-2 focus:ring-orange-200 border-gray-300 mt-1 ${err.address ? 'border-red-400' : ''}`}
                 type="text"
-                placeholder="enter your shop address"
+                placeholder="Enter your shop address"
                 value={addShop.address}
                 onChange={(e) =>
                   setAddShop({ ...addShop, address: e.target.value })
@@ -193,24 +219,23 @@ const CreatedShop = () => {
                 required
               />
               {err.address && (
-                <p className="text-red-600 text-[8px] tracking-tight leading-none  font-semibold ">
-                  {err.address}
-                </p>
+                <p className="text-red-600 text-xs mt-1 font-medium">{err.address}</p>
               )}
             </div>
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="bg-[rgb(240,107,41)] flex cursor-pointer items-center justify-center capitalize w-full mt-5 py-2.5 rounded-lg text-white font-semibold "
+              className="bg-orange-500 hover:bg-orange-600 transition flex items-center justify-center w-full mt-7 py-3 rounded-lg text-white font-bold text-base shadow focus:outline-none focus:ring-2 focus:ring-orange-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
-                <div className="w-5 h-5 border-white border-b-3 border-t-3 animate-spin rounded-full  "></div>
+                <span className="inline-block w-5 h-5 border-4 border-white border-b-transparent rounded-full animate-spin" />
               ) : (
-                "created shop"
+                "Create Shop"
               )}
             </button>
           </form>
-        </div>
+        </section>
       </div>
     </div>
   );
