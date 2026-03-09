@@ -18,6 +18,7 @@ const io = new Server(server, {
   cors: {
     origin: [
       "https://food-delivery-app-rosy-ten.vercel.app",
+      "https://vingo-frontend-cm2c.onrender.com",
       "http://localhost:5173"
     ],
     credentials: true,
@@ -31,6 +32,7 @@ app.use(
   cors({
     origin: [
       "https://food-delivery-app-rosy-ten.vercel.app",
+      "https://vingo-frontend-cm2c.onrender.com",
       "http://localhost:5173"
     ],
     credentials: true,
