@@ -40,7 +40,7 @@ export const RegisterApi = async (req, res) => {
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      secure: true,          
+      secure: true,
       sameSite: "none",
     });
 
@@ -97,7 +97,7 @@ export const loginUser = async (req, res) => {
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      secure: true,          
+      secure: true,
       sameSite: "none",
     });
 
@@ -235,7 +235,7 @@ export const resetController = async (req, res) => {
     user.otpVerify = false;
 
     await user.save();
-    
+
 
     res.status(200).json({
       message: "OTP sent successfully",
@@ -324,7 +324,6 @@ export const googleAuthController = async (req, res) => {
 
     let user = await userModel.findOne({ email });
     if (user) {
-      // Agar email exist karta hai to error bhej do
       return res.status(400).json({
         message: "user already exists; Please login instead.",
       });
@@ -345,7 +344,7 @@ export const googleAuthController = async (req, res) => {
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      secure: true,          
+      secure: true,
       sameSite: "none",
     });
 
@@ -392,7 +391,7 @@ export const googleAuthLoginController = async (req, res) => {
     res.cookie("token", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      secure: true,          
+      secure: true,
       sameSite: "none",
     });
 

@@ -1,6 +1,5 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Home from "../pages/Home";
 import Register from "../Auth/Register";
 import Login from "../Auth/Login";
 import ForgotPassword from "../Auth/ForgotPassword";
@@ -17,6 +16,10 @@ import MyOrder from "../user/MyOrder";
 import Profile from "../Auth/Profile";
 import TrackOrder from "../user/TrackOrder";
 import ShopFindDetails from "../user/ShopFindDetails";
+import Dashboard from "../pages/Dashboard";
+import Home from "../pages/home/Home";
+import Resturants from "../pages/resturants/Resturants"
+import Contact from "../pages/contact/Contact";
 
 const Router = () => {
   return (
@@ -24,14 +27,48 @@ const Router = () => {
       <Route
         path="/"
         element={
+          <Home />
+        }
+      />
+
+      <Route
+      path='/restaurants'
+      element={
+        <Resturants />
+      }
+      />
+
+      <Route
+      path='/Contact'
+      element={
+        <Contact />
+      }
+      />
+
+      <Route
+        path="/dashboard"
+        element={
           <ProtectedRoutes>
-            <Home />
+            <Dashboard />
           </ProtectedRoutes>
         }
       />
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      <Route 
+      path="/register" 
+      element={<Register />} 
+      />
+
+      <Route 
+      path="/login" 
+      element={<Login />} 
+      />
+
+      <Route 
+      path="/forgot-password" 
+      element={<ForgotPassword />} 
+      />
+
       <Route
         path="/shop-create"
         element={
@@ -58,6 +95,7 @@ const Router = () => {
           </ProtectedRoutes>
         }
       />
+
       <Route
         path="/add-food"
         element={
@@ -66,6 +104,7 @@ const Router = () => {
           </ProtectedRoutes>
         }
       />
+
       <Route
         path="/food-update/:itemId"
         element={
@@ -118,15 +157,16 @@ const Router = () => {
         path="/track-order/:orderId"
         element={
           <ProtectedRoutes>
-            <TrackOrder  />
+            <TrackOrder />
           </ProtectedRoutes>
         }
       />
+      
       <Route
         path="/details/:detailsId"
         element={
           <ProtectedRoutes>
-            <ShopFindDetails  />
+            <ShopFindDetails />
           </ProtectedRoutes>
         }
       />

@@ -78,7 +78,7 @@ const Navigation = () => {
   }, [query]);
 
   return (
-    <div className="w-full fixed z-10   flex   items-center justify-center     ">
+    <div className="w-full fixed z-20   flex   items-center justify-center     ">
       <div className="md:w-[60%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
         <Link
           to="/"
@@ -162,7 +162,6 @@ const Navigation = () => {
           {manuBar ? <IoMdClose /> : <FiMenu />}
         </button>
       </div>
-
       {manuBar === true && (
         <div className="text-sm absolute md:hidden  w-full bg-zinc-400  rounded-b-3xl -top-1  p-3 " >
           <div className=" pb-5  ">
@@ -181,18 +180,16 @@ const Navigation = () => {
                 profile
               </h3>
             </Link>
-
             {user?.role === "user" && (
               <Link to="/cart" className="flex items-center mt-3 gap-3 border p-2 rounded-xl border-zinc-500">
                 <span className="text-3xl text-red-800">
-                <RiShoppingCartFill />
+                  <RiShoppingCartFill />
                 </span>
                 <h3 className="text-xl tracking-tight leading-none capitalize hover:border-blue-500 font-semibold text-zinc-600">
                   order request
                 </h3>
               </Link>
             )}
-
             {user?.role === "owner" && shop.length > 0 && (
               <Link
                 to="/add-food"
@@ -206,31 +203,25 @@ const Navigation = () => {
                 </h3>
               </Link>
             )}
-
             {(user?.role === "user" || user?.role === "owner") && user?.role !== "deliveryBoy" && (
               <Link
                 to="/my-order"
                 className="flex items-center mt-3 gap-3 border p-2 py-2.5 rounded-xl border-zinc-500"
               >
                 <span className="text-3xl text-red-800">
-                <FaFileInvoiceDollar />
+                  <FaFileInvoiceDollar />
                 </span>
                 <h3 className="text-xl tracking-tight leading-none capitalize hover:border-blue-500 font-semibold text-zinc-600">
-                my orders
+                  my orders
                 </h3>
               </Link>
             )}
-
-
-
             <button
               onClick={clickedHandlers}
               className="px-3 py-2.5 bg-red-500 text-xl capitalize mt-4 cursor-pointer w-full   rounded-lg text-white font-semibold tracking-tight leading-none"
             >
               logout
             </button>
-
-
           </div>
         </div>
       )}

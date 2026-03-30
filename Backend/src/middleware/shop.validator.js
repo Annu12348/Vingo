@@ -26,6 +26,36 @@ export const shopValidator = [
     .withMessage("address is required")
     .isLength({ min: 5, max: 100 })
     .withMessage("address must be between 5 and 100 characters"),
+    
+  body("description")
+    .notEmpty()
+    .withMessage("description is required")
+    .isLength({ min: 5, max: 500 })
+    .withMessage("description must be between 5 and 500 characters"),
+  
+  body("category")
+    .notEmpty()
+    .withMessage("category is required")
+    .isString()
+    .withMessage("category must be a string")
+    .isIn([
+      "North Indian",
+      "South Indian",
+      "Chinese",
+      "Fast Food",
+      "Street Food",
+      "Pizza",
+      "Burger",
+      "Biryani",
+      "Cafe",
+      "Bakery",
+      "Desserts",
+      "Beverages",
+      "Pure Veg",
+      "Non Veg",
+      "Multi Cuisine"
+    ])
+    .withMessage("category must be one of the valid categories"),
 
   (req, res, next) => {
     const errors = validationResult(req);

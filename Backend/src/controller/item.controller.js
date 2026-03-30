@@ -1,5 +1,6 @@
 import itemModel from "../models/item.models.js";
 import shopModel from "../models/shop.models.js";
+import itemService from "../services/item.service.js";
 import { Imagekit, uploadImages } from "../services/storage.service.js";
 
 export const itemCreateController = async (req, res) => {
@@ -25,8 +26,8 @@ export const itemCreateController = async (req, res) => {
       });
     }
 
-    const { foodName, price, category, foodType } = req.body;
-    if (!foodName || !price || !category || !foodType) {
+    const { foodName, price, category, foodType, description } = req.body;
+    if (!foodName || !price || !category || !foodType || !description) {
       return res.status(400).json({
         message: "All fields are required",
       });
@@ -50,6 +51,7 @@ export const itemCreateController = async (req, res) => {
       foodType,
       image: image,
       shop,
+      description
     });
 
     res.status(201).json({
@@ -64,6 +66,7 @@ export const itemCreateController = async (req, res) => {
         image: item.image,
         imageId: item.imageId,
         rating: item.rating,
+        description: item.description
       },
     });
   } catch (error) {
@@ -485,3 +488,29 @@ export const ratingController = async (req, res) => {
     });
   }
 }
+
+//public
+
+class itemController {
+  constructor () {
+    this.itemService = new itemService()
+  }
+
+  async allItemReadPublic (req, res) {
+    try {
+      const items = await this.itemService.allItemReadPublic();
+
+      res.status(200).json({
+        success: true,
+        data: items
+      })
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Server Error",
+      });
+    }
+  }
+}
+
+export default itemController;

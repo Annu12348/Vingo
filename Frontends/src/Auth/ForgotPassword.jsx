@@ -15,7 +15,6 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
   const [err, setErr] = useState("");
 
-  //1
   const resetApi = async () => {
     try {
       setLoading(true);
@@ -51,7 +50,6 @@ const ForgotPassword = () => {
     resetApi();
   };
 
-  //2
   const verifyApi = async () => {
     try {
       setLoading(true);
@@ -86,7 +84,7 @@ const ForgotPassword = () => {
     verifyApi();
   };
 
-  //3
+
   const resetPasswordApi = async () => {
     if (newPassword != comfirmPassword) {
       toast.error("Passwords do not match");

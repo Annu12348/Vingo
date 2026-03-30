@@ -44,13 +44,13 @@ const FoodCard = ({ item }) => {
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-xl flex flex-col w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-[320px] transition-all duration-300 mx-auto">
+    <div className="bg-white shadow-lg rounded-xl flex flex-col w-[26%] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-[320px] transition-all duration-300 ">
       <div
         key={item?._id}
-        className="bg-amber-200 w-full h-40 sm:h-44 md:h-52 lg:h-56 rounded-t-xl overflow-hidden relative group transition-all duration-300"
+        className="w-full rounded-t-xl overflow-hidden relative group transition-all duration-300"
       >
         <img
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-[30vh] object-cover transition-transform duration-300 group-hover:scale-105"
           src={item?.image}
           alt={item?.foodName || "Food"}
           loading="lazy"
@@ -78,11 +78,14 @@ const FoodCard = ({ item }) => {
           {item?.foodName}
         </h2>
         <div className="flex items-center gap-2 mt-1">
-          <span className="flex text-xl sm:text-2xl">{renderStars(item?.rating?.average)}</span>
-          <span className="font-bold ml-1 text-gray-600 text-base sm:text-lg">
+          <span className="flex text-xl">{renderStars(item?.rating?.average)}</span>
+          <span className="font-bold ml-1  text-gray-600  text-sm">
             ({item?.rating?.count || 0})
           </span>
         </div>
+        <p className="text-gray-500 text-sm mt-1 line-clamp-2">
+          {item?.description ? item.description : "No description available."} 
+        </p>
         <div className="mt-3 flex items-center justify-between gap-2">
           <span className="text-lg sm:text-xl font-bold tracking-tight text-black whitespace-nowrap">
             ₹{item?.price}
@@ -139,7 +142,7 @@ const FoodCard = ({ item }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default FoodCard;
+export default FoodCard

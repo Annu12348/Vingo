@@ -1,11 +1,12 @@
 import shopModel from "../models/shop.models.js";
+import shopServices from "../services/shop.service.js";
 import { Imagekit, uploadImages } from "../services/storage.service.js";
 
 export const shopCreateController = async (req, res) => {
   try {
-    const { shopName, state, city, address } = req.body;
+    const { shopName, state, city, address, category, description } = req.body;
     const owner = req.id;
-    if (!shopName || !owner || !state || !city || !address) {
+    if (!shopName || !owner || !state || !city || !address || !category || !description) {
       return res.status(400).json({
         message: "All fields are required.",
       });
@@ -32,6 +33,8 @@ export const shopCreateController = async (req, res) => {
       address,
       image: image,
       owner,
+      category,
+      description,
     });
 
     res.status(201).json({
@@ -45,6 +48,14 @@ export const shopCreateController = async (req, res) => {
         address: shop.address,
         id: shop._id,
         fileId: shop.fileId,
+        isOpen: shop.isOpen,
+        isActive: shop.isActive,
+        category: shop.category,
+        description: shop.description,
+        rating: shop.rating,
+        totalReviews: shop.totalReviews,
+        deliveryTime: shop.deliveryTime,
+        minOrderAmount: shop.minOrderAmount
       },
     });
   } catch (error) {
@@ -103,7 +114,7 @@ export const shopUpdatedController = async (req, res) => {
       { new: true }
     );
 
-    
+
     res.status(200).json({
       message: "Shop updated successfully",
       shop: {
@@ -239,7 +250,7 @@ export const shopfetchCityController = async (req, res) => {
     }
 
     const shops = await shopModel.find({
-      city: { $regex: `^${city}$`, $options: 'i' }, 
+      city: { $regex: `^${city}$`, $options: 'i' },
     });
 
     if (!shops || shops.length === 0) {
@@ -259,3 +270,31 @@ export const shopfetchCityController = async (req, res) => {
     });
   }
 };
+
+//public
+
+class shopController {
+  constructor() {
+    this.shopService = new shopServices();
+  }
+
+  async allShopReadPublic(req, res) {
+    try {
+      const shops = await this.shopService.allShopReadPublic()
+
+      res.status(200).json({
+        success: true,
+        message: "Restaurants fetched successfully",
+        data: shops
+      })
+    } catch (error) {
+      res.status(500).json({
+        message: "Internal server error, please try again later",
+      });
+    }
+  }
+}
+
+export default shopController;
+
+//11:00 to 2:10

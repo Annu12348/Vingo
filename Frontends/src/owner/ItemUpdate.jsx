@@ -74,7 +74,7 @@ const ItemUpdate = () => {
         withCredentials: true,
       });
       dispatch(setItem(response.data.item));
-      navigate("/");
+      navigate("/dashboard");
       toast.success(response.data.message);
     } catch (error) {
       if (
@@ -99,7 +99,7 @@ const ItemUpdate = () => {
   };
   return (
     <div className="bg-white min-h-screen w-full px-2 py-2 ">
-      <Link to="/" className="text-2xl text-zinc-400">
+      <Link to="/dashboard" className="text-2xl text-zinc-400">
         <GoArrowLeft />
       </Link>
       <div className="w-full min-h-[93vh] md:mt-2  mt-3 flex items-center justify-center ">

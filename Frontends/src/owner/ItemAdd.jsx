@@ -11,6 +11,7 @@ const ItemAdd = () => {
     image: "",
     category: "",
     foodType: "",
+    description: ""
   });
   const navigate = useNavigate();
   const [errs, setErrs] = useState({});
@@ -37,6 +38,7 @@ const ItemAdd = () => {
       formData.append("price", foodAdd.price);
       formData.append("category", foodAdd.category);
       formData.append("foodType", foodAdd.foodType);
+      formData.append("description", foodAdd.description)
 
       if (foodAdd.image) {
         formData.append("image", foodAdd.image);
@@ -46,13 +48,14 @@ const ItemAdd = () => {
         withCredentials: true,
       });
       toast.success(response.data.message);
-      navigate("/")
+      navigate("/dashboard")
       setFoodAdd({
         foodName: "",
         price: "",
         image: "",
         category: "",
         foodType: "",
+        description: ""
       });
     } catch (error) {
       if (error.response && error.response.data && error.response.data.errors) {
@@ -80,7 +83,7 @@ const ItemAdd = () => {
   };
   return (
     <div className=" bg-white min-h-screen w-full md:px-3 px-2 py-3   ">
-      <Link to="/" className="text-2xl text-zinc-400 block mb-5   ">
+      <Link to="/dashboard" className="text-2xl text-zinc-400 block mb-5   ">
         <GoArrowLeft />
       </Link>
       <div className="w-full min-h-[93vh] md:mt-5 -mt-3  flex items-center justify-center ">
@@ -102,7 +105,7 @@ const ItemAdd = () => {
               <input
                 className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none "
                 type="text"
-                placeholder="enter your food name"
+                placeholder="enter your food name...."
                 required
                 value={foodAdd.foodName}
                 onChange={(e) =>
@@ -111,6 +114,23 @@ const ItemAdd = () => {
               />
             </div>
             {errs.foodName && <h1 className="text-red-700 text-[10px] leading-none capitalize font-semibold tracking-tight ">{errs.foodName}</h1>}
+            <div className="flex mt-4 flex-col w-full">
+              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
+                description
+              </label>
+              <textarea
+                className="text-md rounded resize-none mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none "
+                type="text"
+                rows={6}
+                placeholder="enter your description..."
+                required
+                value={foodAdd.description}
+                onChange={(e) =>
+                  setFoodAdd({ ...foodAdd, description: e.target.value })
+                }
+              />
+            </div>
+            {errs.description && <h1 className="text-red-700 text-[10px] leading-none capitalize font-semibold tracking-tight ">{errs.description}</h1>}
             <div className="flex flex-col mt-4 w-full">
               <label className="text-md capitalize font-semibold tracking-tight leading-none ">
                 food price

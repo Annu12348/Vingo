@@ -24,5 +24,19 @@ export const config = {
   SMTP_USER: process.env.SMTP_USER,
 
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
-  EMAIL_FROM: process.env.EMAIL_FROM
+  EMAIL_FROM: process.env.EMAIL_FROM,
+
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+
+  GOOGLE_CALLBACK_URL: process.env.NODE_ENV === "production"
+    ? process.env.GOOGLE_CALLBACK_LIVE_URL
+    : process.env.GOOGLE_CALLBACK_URL,
+  GOOGLE_LOGIN_CALLBACK_URL: process.env.NODE_ENV === "production"
+    ? process.env.GOOGLE_LOGIN_CALLBACK_LIVE_URL
+    : process.env.GOOGLE_LOGIN_CALLBACK_URL,
+
+  FRONTEND_URL: process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_LIVE_URL
+    : process.env.FRONTEND_URL,
 };

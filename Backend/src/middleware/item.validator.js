@@ -38,6 +38,12 @@ export const itemValidator = [
     .isNumeric()
     .withMessage("price must be a number"),
 
+  body("description")
+    .notEmpty()
+    .withMessage("description is required")
+    .isLength({ min: 5, max: 500 })
+    .withMessage("description must be between 5 and 500 characters"),
+
   (req, res, next) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

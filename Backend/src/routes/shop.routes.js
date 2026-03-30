@@ -1,5 +1,5 @@
 import express from "express";
-import {
+import shopController, {
   shopByIdController,
   shopCreateController,
   shopDeleteController,
@@ -22,23 +22,40 @@ router.post(
   shopValidator,
   shopCreateController
 );
+
 router.put(
   "/update/:shopId",
   authenticationMiddleware,
   upload.single("image"),
   shopUpdatedController
 );
-router.get("/fetch", authenticationMiddleware, shopfetchedController);
+
+router.get(
+  "/fetch", 
+  authenticationMiddleware, 
+  shopfetchedController
+);
+
 router.delete(
   "/delete/:shopId",
   authenticationMiddleware,
   shopDeleteController
 );
-router.get("/fetchBy-Id/:shopId", authenticationMiddleware, shopByIdController);
+
+router.get(
+  "/fetchBy-Id/:shopId", 
+  authenticationMiddleware, 
+  shopByIdController
+);
+
 router.get(
   "/fetchCity-City/:city",
   authenticationMiddleware,
   shopfetchCityController
 );
+
+//public routes
+const shopControllers = new shopController();
+router.get("/shops", shopControllers.allShopReadPublic.bind(shopControllers))
 
 export default router;

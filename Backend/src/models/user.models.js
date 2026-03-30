@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    role: { 
+    role: {
       type: String,
       enum: ["owner", "deliveryBoy", "user"],
       required: true,
@@ -51,6 +51,15 @@ const userSchema = new mongoose.Schema(
     otpExpires: {
       type: Date,
       default: null,
+    },
+    googleId: {
+      type: String,
+      default: ""
+    },
+    provider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local"
     },
     isOnline: {
       type: Boolean,
@@ -71,7 +80,7 @@ const userSchema = new mongoose.Schema(
       },
       coordinates: {
         type: [Number],
-        default: [0,0],
+        default: [0, 0],
       },
     },
   },

@@ -17,6 +17,8 @@ const CreatedShop = () => {
     city: city?.city || "",
     state: city?.state || "",
     address: city?.address_line2 || "",
+    description: "",
+    category: ""
   });
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -39,16 +41,20 @@ const CreatedShop = () => {
       formData.append("city", addShop.city);
       formData.append("state", addShop.state);
       formData.append("address", addShop.address);
+      formData.append("description", addShop.description);
+      formData.append("category", addShop.category);
       if (addShop.image) {
         formData.append("image", addShop.image);
       }
       const response = await instance.post("/shop/create", formData, {
         withCredentials: true,
       });
-      navigate("/");
+      navigate("/dashboard");
       setAddShop({
         shopName: "",
         image: "",
+        description: "",
+        category: ""
       });
       toast.success(response.data.message);
     } catch (error) {
@@ -79,14 +85,14 @@ const CreatedShop = () => {
     e.preventDefault();
     shopCreatedApi();
 
-    
+
   };
   return (
     <div className="min-h-screen w-full flex flex-col py-6 px-2 sm:px-4 bg-gray-50">
       <div className="max-w-2xl mx-auto w-full">
         <Link
           className="inline-flex items-center text-xl md:text-2xl text-gray-600 hover:text-orange-500 transition mb-2"
-          to="/"
+          to="/dashboard"
           aria-label="Back to Home"
         >
           <GoArrowLeft />
@@ -113,7 +119,7 @@ const CreatedShop = () => {
                 id="shopName"
                 className={`border px-3 py-2 rounded-lg outline-none text-gray-700 font-medium transition focus:ring-2 focus:ring-orange-200 border-gray-300 mt-1 ${err.shopName ? 'border-red-400' : ''}`}
                 type="text"
-                placeholder="Enter your shop name"
+                placeholder="Enter your shop name..."
                 value={addShop.shopName}
                 onChange={(e) =>
                   setAddShop({ ...addShop, shopName: e.target.value })
@@ -152,6 +158,65 @@ const CreatedShop = () => {
                 />
               </div>
             )}
+
+            <div className="flex flex-col mb-4">
+              <label
+                htmlFor="category"
+                className="font-medium text-gray-700 capitalize mb-1"
+              >
+                category
+              </label>
+              <select
+                className={`border px-3 py-2 rounded-lg outline-none text-gray-700 font-medium transition focus:ring-2 focus:ring-orange-200 border-gray-300 mt-1 ${err.category ? 'border-red-400' : ''}`}
+                required
+                value={addShop.category}
+                onChange={(e) =>
+                  setAddShop({ ...addShop, category: e.target.value })
+                }
+              >
+                <option value="">Select category</option>
+                <option value="North Indian">North Indian</option>
+                <option value="South Indian">South Indian</option>
+                <option value="Chinese">Chinese</option>
+                <option value="Fast Food">Fast Food</option>
+                <option value="Street Food">Street Food</option>
+                <option value="Pizza">Pizza</option>
+                <option value="Burger">Burger</option>
+                <option value="Biryani">Biryani</option>
+                <option value="Cafe">Cafe</option>
+                <option value="Bakery">Bakery</option>
+                <option value="Desserts">Desserts</option>
+                <option value="Pure Veg">Pure Veg</option>
+                <option value="Non Veg">Non Veg</option>
+                <option value="Multi Cuisine">Multi Cuisine</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col mb-4">
+              <label
+                htmlFor="description"
+                className="font-medium text-gray-700 capitalize mb-1"
+              >
+                description
+              </label>
+              <textarea
+                id="shopName"
+                className={`border px-3 resize-none  py-2 rounded-lg outline-none text-gray-700 font-medium transition focus:ring-2 focus:ring-orange-200 border-gray-300 mt-1 ${err.shopName ? 'border-red-400' : ''}`}
+                type="text"
+                rows={5}
+                placeholder="Enter your description..."
+                value={addShop.description}
+                onChange={(e) =>
+                  setAddShop({ ...addShop, description: e.target.value })
+                }
+                required
+                autoFocus
+              />
+              {err.description && (
+                <p className="text-red-600 text-xs mt-1 font-medium">{err.description}</p>
+              )}
+            </div>
+            
             {/* City and State */}
             <div className="flex flex-col sm:flex-row gap-4 md:gap-8 mt-5">
               <div className="flex flex-col flex-1">

@@ -76,7 +76,7 @@ const EditShop = () => {
       });
       dispatch(setShop(response.data.shop));
       toast.success(response.data.message);
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       if (
         error.response &&
@@ -101,7 +101,7 @@ const EditShop = () => {
 
   return (
     <div className="w-full py-3 md:px-4 px-2 min-h-screen  ">
-      <Link className="text-2xl  text-zinc-500" to="/">
+      <Link className="text-2xl  text-zinc-500" to="/dashboard">
         <GoArrowLeft />
       </Link>
 

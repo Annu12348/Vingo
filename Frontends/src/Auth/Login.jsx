@@ -28,7 +28,7 @@ const Login = () => {
       const res = await instance.post("/auth/login", users, {
         withCredentials: true,
       });
-      navigate("/");
+      navigate("/dashboard");
       toast.success("successfully user login");
       dispatch(setUser(res.data.user));
       setUsers({
@@ -73,7 +73,7 @@ const Login = () => {
         withCredentials: true,
       });
       dispatch(setUser(response.data.user));
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       if (
         error.response &&

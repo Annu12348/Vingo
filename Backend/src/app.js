@@ -10,6 +10,7 @@ import itemRoutes from "./routes/item.routes.js";
 import orderRoutes from "./routes/order.routes.js"
 import deliveryAssimentRoutes from "./routes/deliveryAssignment.routes.js"
 import { socketIoHandler } from "./socket/socket.js";
+import messageRoutes from './routes/messgae.routes.js'
 
 const app = express();
 app.set("trust proxy", 1);  
@@ -17,7 +18,6 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "https://food-delivery-app-rosy-ten.vercel.app",
       "https://vingo-frontend-cm2c.onrender.com",
       "http://localhost:5173"
     ],
@@ -31,7 +31,6 @@ app.set("io", io)
 app.use(
   cors({
     origin: [
-      "https://food-delivery-app-rosy-ten.vercel.app",
       "https://vingo-frontend-cm2c.onrender.com",
       "http://localhost:5173"
     ],
@@ -47,6 +46,7 @@ app.use("/shop", shopRoutes);
 app.use("/item", itemRoutes);
 app.use("/order", orderRoutes);
 app.use("/deliveryBoy", deliveryAssimentRoutes);
+app.use("/contact", messageRoutes);
 
 socketIoHandler(io)
 export default server;

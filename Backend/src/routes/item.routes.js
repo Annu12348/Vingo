@@ -1,5 +1,5 @@
 import express from "express";
-import {
+import itemController, {
   itemCreateController,
   itemDeletedController,
   itemFetchByIdController,
@@ -64,5 +64,9 @@ router.get("/search-item",
   authenticationMiddleware,
   searchItemController
 )
+
+//public
+const itemControllers = new itemController()
+router.get("/item-public", itemControllers.allItemReadPublic.bind(itemControllers))
 
 export default router;

@@ -4,6 +4,7 @@ const initialState = {
   shop: [],
   singleShop: null,
   shopByCity: [],
+  publicShop: [],
 }
 
 export const ShopReducer = createSlice({
@@ -20,11 +21,15 @@ export const ShopReducer = createSlice({
 
     setShopByCity: (state, action) => {
       state.shopByCity = action.payload
+    },
+
+    setPublicShop: (state, action) => {
+      state.publicShop = action.payload
     }
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { setShop, setSingleShop, setShopByCity } = ShopReducer.actions;
+
+export const { setShop, setSingleShop, setShopByCity, setPublicShop } = ShopReducer.actions;
 
 export default ShopReducer.reducer;

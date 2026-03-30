@@ -10,12 +10,16 @@ import { io } from 'socket.io-client'
 import { addOwnerOrder, updateUserRealTimeOrderStatus } from './redux/reducer/OrderReducer';
 import { addDeliveryAssignment } from './redux/reducer/AssignmentReducer';
 import { removeSocket, setSocket } from './redux/reducer/socketSlice';
+import { useAllShop } from './hook/useShop';
+import { useAllItem } from './hook/useItem';
 
 const App = () => {
   const { user } = useSelector(store => store.Auth)
   const dispatch = useDispatch();
   const { socket } = useSelector(store => store.socket)
 
+  useAllShop()
+  useAllItem()
   LiveLocation()
   LiveUpdateLocation()
 

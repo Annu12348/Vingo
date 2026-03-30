@@ -98,10 +98,8 @@ const UserShopFoodCity = ({data, updatedItemsList}) => {
                 style={{ rowGap: "1.5rem" }}
               >
                 {updatedItemsList?.length > 0 ? (
-                  updatedItemsList.map((item) => (
-                    <div key={item._id} className="flex-grow-0 basis-[320px] sm:basis-[260px] md:basis-[300px] flex items-stretch">
-                      <FoodCard item={item} />
-                    </div>
+                  updatedItemsList.map((item) => ( 
+                    <FoodCard key={item._id} item={item} />         
                   ))
                 ) : (
                   <div className="w-full">

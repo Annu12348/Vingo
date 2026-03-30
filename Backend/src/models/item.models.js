@@ -6,19 +6,23 @@ const itemSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     image: {
       type: String,
       required: true,
     },
+
     imageId: {
       type: String,
       default: "",
     },
+
     shop: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Shop",
       required: true,
     },
+
     category: {
       type: String,
       required: true,
@@ -36,24 +40,63 @@ const itemSchema = new mongoose.Schema(
         "Others",
       ],
     },
+
     price: {
       type: Number,
       required: true,
     },
+
     foodType: {
       type: String,
       required: true,
       enum: ["Veg", "Non-Veg", "Vegan"],
     },
+
     rating: {
       average: {
         type: Number,
         default: 0,
       },
+
       count: {
         type: Number,
         default: 0, 
       }
+    },
+
+    veg: {
+      type: Boolean,
+      default: true,
+    },
+
+    isAvailable: {
+      type: Boolean,
+      default: true
+    },
+    
+    isTrending: {
+      type: Boolean,
+      default: false
+    },
+
+    description: {
+      type: String,
+      required: true,
+    },
+    
+    preparationTime: {
+      type: Number, // minutes
+      default: 20
+    },
+    
+    isFeatured: {
+      type: Boolean,
+      default: false
+    },
+    
+    totalOrders: {
+      type: Number,
+      default: 0
     }
   },
   {

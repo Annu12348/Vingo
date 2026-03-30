@@ -6,7 +6,8 @@ const initialState = {
   itemByCity: [],
   cartItems: [],
   totalAmount: 0,
-  searchItem: []
+  searchItem: [],
+  itemPublic: []
 };
 
 export const ItemReducer = createSlice({
@@ -52,6 +53,10 @@ export const ItemReducer = createSlice({
 
     setSearchItem: (state, action) => {
       state.searchItem = action.payload
+    },
+
+    setItemPublic: (state, action) => {
+      state.itemPublic = action.payload;
     }
   },
 });
@@ -63,7 +68,8 @@ export const {
   addToCart,
   removeCartItem,
   updateCartItem,
-  setSearchItem
+  setSearchItem,
+  setItemPublic
 } = ItemReducer.actions;
 
 export default ItemReducer.reducer;

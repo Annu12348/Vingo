@@ -87,7 +87,7 @@ const Register = () => {
         withCredentials: true,
       });
       dispatch(setUser(response.data.user));
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       if (
         error.response &&
