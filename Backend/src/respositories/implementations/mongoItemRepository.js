@@ -1,17 +1,31 @@
 import itemModel from "../../models/item.models.js";
+import shopModel from "../../models/shop.models.js";
 import AppError from "../../utils/error.js";
 import IItemRepository from "../contracts/IItemRepository.js";
 
 class mongoItemRepository extends IItemRepository {
-    async allItemReadPublic () {
-        try {
-            const items = await itemModel.find()
-            .populate("shop", "shopName address")
-            return items;
-        } catch (error) {
-            throw new AppError(`Failed to all item read: ${error.message}`, 500, error)
-        }
-    } 
+  async allItemReadPublic() {
+    try {
+      const items = await itemModel.find()
+        .populate("shop", "shopName address")
+      return items;
+    } catch (error) {
+      throw new AppError(`Failed to all item read: ${error.message}`, 500, error)
+    }
+  }
+
+  async shopByItemFetch(shopId) {
+    try {
+      const shop = await shopModel.findById(shopId);
+      const items = await itemModel.find({ shop: shopId });
+      return {
+        shop,
+        items
+      };
+    } catch (error) {
+      throw new AppError(`Failed to shop by all item read: ${error.message}`, 500, error)
+    }
+  }
 }
 
 export default mongoItemRepository;

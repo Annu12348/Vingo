@@ -1,73 +1,13 @@
 import React, { useRef } from "react";
 import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const DISHES = [
-  {
-    name: "Spicy Paneer Pizza",
-    rating: 4.2,
-    blurb: "Free delivery · 25–30 min",
-    img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Spicy Paneer Pizza",
-    rating: 4.2,
-    blurb: "Free delivery · 25–30 min",
-    img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Spicy Paneer Pizza",
-    rating: 4.2,
-    blurb: "Free delivery · 25–30 min",
-    img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Spicy Paneer Pizza",
-    rating: 4.2,
-    blurb: "Free delivery · 25–30 min",
-    img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Spicy Paneer Pizza",
-    rating: 4.2,
-    blurb: "Free delivery · 25–30 min",
-    img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Spicy Paneer Pizza",
-    rating: 4.2,
-    blurb: "Free delivery · 25–30 min",
-    img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Spicy Paneer Pizza",
-    rating: 4.2,
-    blurb: "Free delivery · 25–30 min",
-    img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Chicken Biryani",
-    rating: 4.6,
-    blurb: "Free delivery · 20–25 min",
-    img: "https://images.unsplash.com/photo-1563379091339-03246963d4b9?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Chocolate Fudge Cake",
-    rating: 4.4,
-    blurb: "Free delivery · 15–20 min",
-    img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80",
-  },
-  {
-    name: "Loaded Burger",
-    rating: 4.5,
-    blurb: "Free delivery · 18–22 min",
-    img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
-  },
-];
+
 
 const TrendingDishes = () => {
   const scroller = useRef(null);
+  const Navigate = useNavigate()
   const { itemPublic } = useSelector(store => store.Item);
 
   const scroll = (dir) => {
@@ -76,6 +16,10 @@ const TrendingDishes = () => {
     const amount = Math.min(el.clientWidth * 0.85, 360);
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
   };
+
+  const clickedHandler = () => {
+    Navigate("/dashboard")
+  }
 
   return (
     <section id="trending-dishes" className="border-b border-[#E5E5E5] bg-white py-14 md:py-16">
@@ -129,7 +73,8 @@ const TrendingDishes = () => {
                 <div className="mt-4 flex justify-end">
                   <button
                     type="button"
-                    className="rounded-lg bg-[#FF7A00] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#E66D00]"
+                    onClick={clickedHandler}
+                    className="rounded-lg cursor-pointer bg-[#FF7A00] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#E66D00]"
                   >
                     Order Now
                   </button>

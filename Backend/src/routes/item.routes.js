@@ -56,7 +56,6 @@ router.get(
 );
 
 router.get("/shop/:shopId",
-  authenticationMiddleware,
   shopItemFetchController
 )
 
@@ -68,5 +67,7 @@ router.get("/search-item",
 //public
 const itemControllers = new itemController()
 router.get("/item-public", itemControllers.allItemReadPublic.bind(itemControllers))
+router.get("/shops/:shopId", itemControllers.shopByItemFetch.bind(itemControllers))
 
 export default router;
+//4:00 to 6:40

@@ -1,10 +1,15 @@
 import React from "react";
 import { FaStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const PopularRestaurants = () => {
   const { publicShop } = useSelector(store => store.Shop)
+  const Navigate = useNavigate()
+
+  const clickedHandler = () => {
+    Navigate("/dashboard")
+  }
   return (
     <section id="popular-restaurants" className="border-b border-[#E5E5E5] bg-white py-14 md:py-16">
       <div className="mx-auto max-w-[1400px] px-4 md:px-10 lg:px-14">
@@ -26,9 +31,11 @@ const PopularRestaurants = () => {
             >
               <div className="relative h-[200px] w-full shrink-0">
                 <img src={r?.image} alt="" className="h-full w-full object-cover" loading="lazy" />
-                <span className="absolute bottom-3 right-3 rounded-md bg-[#4CAF50] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-md">
+                <button
+                onClick={clickedHandler} 
+                className="absolute bottom-3 cursor-pointer right-3 rounded-md bg-[#4CAF50] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-md">
                   OPEN NOW
-                </span>
+                </button>
               </div>
               <div className="flex flex-1 flex-col p-5">
                 <h3 className="text-xl font-bold text-[#1A1A1A]">{r?.shopName}</h3>

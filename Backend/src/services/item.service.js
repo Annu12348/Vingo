@@ -10,6 +10,12 @@ class itemService {
 
         return items;
     }
+
+    async shopByItemFetch (shopId) {
+        const shop = await this.mongoItemRepository.shopByItemFetch(shopId);
+
+        return shop;
+    }
 }
 
 export default itemService;

@@ -32,17 +32,17 @@ const Router = () => {
       />
 
       <Route
-      path='/restaurants'
-      element={
-        <Resturants />
-      }
+        path='/restaurants'
+        element={
+          <Resturants />
+        }
       />
 
       <Route
-      path='/Contact'
-      element={
-        <Contact />
-      }
+        path='/Contact'
+        element={
+          <Contact />
+        }
       />
 
       <Route
@@ -54,19 +54,19 @@ const Router = () => {
         }
       />
 
-      <Route 
-      path="/register" 
-      element={<Register />} 
+      <Route
+        path="/register"
+        element={<Register />}
       />
 
-      <Route 
-      path="/login" 
-      element={<Login />} 
+      <Route
+        path="/login"
+        element={<Login />}
       />
 
-      <Route 
-      path="/forgot-password" 
-      element={<ForgotPassword />} 
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
       />
 
       <Route
@@ -161,7 +161,7 @@ const Router = () => {
           </ProtectedRoutes>
         }
       />
-      
+
       <Route
         path="/details/:detailsId"
         element={

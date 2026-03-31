@@ -511,6 +511,22 @@ class itemController {
       });
     }
   }
+
+  async shopByItemFetch (req, res) {
+    try {
+      const shopId = req.params.shopId;
+
+      const shop = await this.itemService.shopByItemFetch(shopId)
+
+      res.status(200).json({
+        message: "Shop items fetched by Id successfully",
+        success: true,
+        shop: shop,
+      })
+    } catch (error) {
+
+    }
+  }
 }
 
 export default itemController;
