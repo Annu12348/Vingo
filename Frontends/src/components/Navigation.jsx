@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../utils/axios";
 import { setUser } from "../redux/reducer/AuthenticationSlice";
-import { FaGaugeSimple, FaLocationDot } from "react-icons/fa6";
+import { FaBolt, FaGaugeSimple, FaLocationDot } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { FiMenu } from "react-icons/fi";
 import { FaFileInvoiceDollar } from "react-icons/fa";
@@ -78,13 +78,16 @@ const Navigation = () => {
   }, [query]);
 
   return (
-    <div className="w-full fixed z-20   flex   items-center justify-center     ">
-      <div className="md:w-[60%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
-        <Link
+    <div className="w-full fixed z-20 bg-black flex items-center justify-center  ">
+      <div className="w-full shadow py-3 px-3 flex items-center justify-between gap-4 ">
+      <Link
           to="/"
-          className="text-[rgb(240,107,41)] text-xl tracking-tight leading-none capitalize font-bold "
+          className="flex items-center gap-2.5 shrink-0"
         >
-          vingo
+          <div className="flex h-9 w-9 rotate-45 items-center justify-center rounded-md bg-[#FF7A00] shadow-sm">
+            <FaBolt className="-rotate-45 text-lg text-white" />
+          </div>
+          <span className="text-2xl font-bold tracking-tight font-display text-white">QuickBite</span>
         </Link>
         <div className="flex w-full items-center justify-end ">
           {user && user.role == "user" && (
@@ -150,7 +153,7 @@ const Navigation = () => {
             </Link>
 
             <button
-              onClick={clickedHandlers}
+             
               className="px-3 py-2.5 bg-red-500 md:block cursor-pointer hidden rounded-lg text-white font-semibold tracking-tight leading-none"
             >
               Logout

@@ -1,9 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaLocationDot } from "react-icons/fa6";
-import { IoSearch } from "react-icons/io5";
-import HomeNavbar from "./HomeNavbar";
 import Search from "./Search";
+import Navigation from "../../../components/Navigation";
+import HomeNavbar from "./HomeNavbar";
 
 const HERO_IMG =
   "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1920&q=80";
@@ -23,16 +22,7 @@ const HeroSection = () => {
       <div className="relative z-10 mx-auto flex max-w-[1400px] flex-col gap-10 px-4 pb-16 pt-28 md:flex-row md:items-center md:justify-between md:px-10 lg:px-14 lg:pt-32">
         <div className="w-full max-w-xl shrink-0">
           <Search />
-
-
-
-
-
-
-
-
         </div>
-
         <div className="flex w-full max-w-lg flex-col items-start md:items-end md:text-right">
           <h1 className="font-display text-4xl font-semibold italic leading-tight text-white drop-shadow-md sm:text-5xl lg:text-[2.75rem] lg:leading-[1.15]">
             Fast, Fresh, Delivered to Your Doorstep!
