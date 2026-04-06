@@ -1,14 +1,39 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import useModal from "../../../hook/useModal";
 
 
 const TrendingDishes = () => {
   const scroller = useRef(null);
-  const Navigate = useNavigate()
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const { showModal } = useModal()
   const { itemPublic } = useSelector(store => store.Item);
+
+  const updateScrollVisibility = () => {
+    const el = scroller.current;
+    if (!el) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 2);
+  };
+
+  useEffect(() => {
+    updateScrollVisibility();
+    const el = scroller.current;
+    if (!el) return;
+    el.addEventListener("scroll", updateScrollVisibility);
+    window.addEventListener("resize", updateScrollVisibility);
+    return () => {
+      el.removeEventListener("scroll", updateScrollVisibility);
+      window.removeEventListener("resize", updateScrollVisibility);
+    };
+  }, [itemPublic]);
 
   const scroll = (dir) => {
     const el = scroller.current;
@@ -17,9 +42,12 @@ const TrendingDishes = () => {
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
   };
 
-  const clickedHandler = () => {
-    Navigate("/dashboard")
-  }
+  const clickedhandler = () =>
+    showModal({
+      title: "Order Now",
+      message: "Are you sure you want to order this dish?",
+      type: "confirm",
+    });
 
   return (
     <section id="trending-dishes" className="border-b border-[#E5E5E5] bg-white py-14 md:py-16">
@@ -33,24 +61,28 @@ const TrendingDishes = () => {
             SEE ALL &gt;
           </Link>
         </div>
-
-        <button
-          type="button"
-          onClick={() => scroll(-1)}
-          className="absolute left-2 top-[58%] z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#E0E0E0] bg-[#F0F0F0] text-[#555] shadow-sm transition hover:bg-[#E5E5E5] md:flex lg:left-0"
-          aria-label="Previous"
-        >
-          <FaChevronLeft />
-        </button>
-        <button
-          type="button"
-          onClick={() => scroll(1)}
-          className="absolute right-2 top-[58%] z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#E0E0E0] bg-[#F0F0F0] text-[#555] shadow-sm transition hover:bg-[#E5E5E5] md:flex lg:right-0"
-          aria-label="Next"
-        >
-          <FaChevronRight />
-        </button>
-
+        {canScrollLeft && (
+          <button
+            type="button"
+            onClick={() => scroll(-1)}
+            className="absolute left-2 top-[58%] z-10 h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#E0E0E0] bg-[#F0F0F0] text-[#555] shadow-sm transition hover:bg-[#E5E5E5] md:flex lg:left-0"
+            aria-label="Previous"
+            style={{ display: "flex" }}
+          >
+            <FaChevronLeft />
+          </button>
+        )}
+        {canScrollRight && (
+          <button
+            type="button"
+            onClick={() => scroll(1)}
+            className="absolute right-2 top-[58%] z-10 h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#E0E0E0] bg-[#F0F0F0] text-[#555] shadow-sm transition hover:bg-[#E5E5E5] md:flex lg:right-0"
+            aria-label="Next"
+            style={{ display: "flex" }}
+          >
+            <FaChevronRight />
+          </button>
+        )}
         <div
           ref={scroller}
           className="flex gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] md:gap-6 [&::-webkit-scrollbar]:hidden"
@@ -73,7 +105,7 @@ const TrendingDishes = () => {
                 <div className="mt-4 flex justify-end">
                   <button
                     type="button"
-                    onClick={clickedHandler}
+                    onClick={clickedhandler}
                     className="rounded-lg cursor-pointer bg-[#FF7A00] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#E66D00]"
                   >
                     Order Now

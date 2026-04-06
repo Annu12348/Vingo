@@ -5,14 +5,14 @@ import instance from "../utils/axios";
 import { setitemByCity } from "../redux/reducer/ItemReducer";
 import FoodCard from "./FoodCard";
 
-const UserShopFoodCity = ({data, updatedItemsList}) => {
+const UserShopFoodCity = ({ data, updatedItemsList }) => {
   const scrollRef = useRef(null);
   const dispatch = useDispatch();
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
   const { city } = useSelector((store) => store.Auth);
   const { shopByCity } = useSelector((store) => store.Shop);
-  
+
 
   useEffect(() => {
     const scrollElement = scrollRef.current;
@@ -20,7 +20,7 @@ const UserShopFoodCity = ({data, updatedItemsList}) => {
 
     scrollElement.setAttribute("tabIndex", "-1");
 
-    return () => {};
+    return () => { };
   }, []);
 
   const updateShowArrows = () => {
@@ -90,7 +90,7 @@ const UserShopFoodCity = ({data, updatedItemsList}) => {
         data.length > 0 ? (
           <section className="w-full mt-6 mb-4">
             <h1 className="text-2xl sm:text-3xl capitalize font-extrabold tracking-tight leading-none text-gray-900 mb-3">
-              Best Shops in <span className="text-amber-600">{city?.city}</span>
+              Best Shops in <span className="text-amber-600">food</span>
             </h1>
             <div className="w-full relative">
               <div

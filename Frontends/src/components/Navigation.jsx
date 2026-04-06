@@ -78,16 +78,16 @@ const Navigation = () => {
   }, [query]);
 
   return (
-    <div className="w-full fixed z-20 bg-black flex items-center justify-center  ">
-      <div className="w-full shadow py-3 px-3 flex items-center justify-between gap-4 ">
-      <Link
+    <div className="w-full fixed z-20   flex   items-center justify-center     ">
+      <div className="md:w-[60%] w-full bg-zinc-100 shadow rounded      py-2 px-3 flex items-center  justify-between  gap-4 ">
+        <Link
           to="/"
           className="flex items-center gap-2.5 shrink-0"
         >
           <div className="flex h-9 w-9 rotate-45 items-center justify-center rounded-md bg-[#FF7A00] shadow-sm">
             <FaBolt className="-rotate-45 text-lg text-white" />
           </div>
-          <span className="text-2xl font-bold tracking-tight font-display text-white">QuickBite</span>
+          <span className="text-sm mb-1 font-bold  tracking-tight font-display text-[rgb(240,107,41)]">QuickBite</span>
         </Link>
         <div className="flex w-full items-center justify-end ">
           {user && user.role == "user" && (

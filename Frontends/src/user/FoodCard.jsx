@@ -44,17 +44,7 @@ const FoodCard = ({ item }) => {
   };
 
   return (
-    <div className="
-      bg-white shadow-lg rounded-xl flex flex-col 
-      w-full
-      max-w-[98vw]
-      xs:max-w-[360px]
-      sm:max-w-sm
-      md:max-w-md
-      lg:max-w-[320px]
-      transition-all duration-300
-      mx-auto
-    ">
+    <div className="bg-white shadow-lg rounded-xl flex flex-col w-full max-w-[98vw] xs:max-w-[360px] sm:max-w-sm md:max-w-md lg:max-w-[320px] transition-all duration-300">
       <div
         key={item?._id}
         className="w-full rounded-t-xl overflow-hidden relative group transition-all duration-300"

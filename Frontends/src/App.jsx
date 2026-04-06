@@ -12,6 +12,7 @@ import { addDeliveryAssignment } from './redux/reducer/AssignmentReducer';
 import { removeSocket, setSocket } from './redux/reducer/socketSlice';
 import { useAllShop } from './hook/useShop';
 import { useAllItem } from './hook/useItem';
+import ModalPortal from './components/ModalPortal';
 
 const App = () => {
   const { user } = useSelector(store => store.Auth)
@@ -79,6 +80,7 @@ const App = () => {
   return (
     <div className='w-full min-h-screen bg-zinc-200 '>
       <Router />
+      <ModalPortal />
       <ToastContainer
         position='top-right'
         autoClose={5000}

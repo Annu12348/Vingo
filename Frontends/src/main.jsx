@@ -9,11 +9,11 @@ import { PersistGate } from "redux-persist/integration/react";
 import "leaflet/dist/leaflet.css";
 
 createRoot(document.getElementById("root")).render(
-  <Provider store={store} >
-  <PersistGate persistor={persistor}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </PersistGate>
   </Provider>
 );

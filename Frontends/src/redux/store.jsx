@@ -17,6 +17,7 @@ import  MapReducer  from './reducer/MapReducer';
 import  OrderReducer  from './reducer/OrderReducer';
 import AssignmentReducer from './reducer/AssignmentReducer';
 import socketReducer from "./reducer/socketSlice";
+import modalReducer from './reducer/ModelReducer'
 
 const persistConfig = {
   key: 'Vingo_root',
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   Order: OrderReducer,
   Assignment: AssignmentReducer,
   socket: socketReducer,
+  Modal: modalReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

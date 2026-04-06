@@ -19,7 +19,7 @@ const UserShopCity = () => {
 
     scrollElement.setAttribute("tabIndex", "-1");
 
-    return () => {};
+    return () => { };
   }, []);
 
   const updateShowArrows = () => {
@@ -87,7 +87,7 @@ const UserShopCity = () => {
       {shopByCity.length > 0 ? (
         <div className="w-full mt-5  ">
           <h1 className="text-xl capitalize font-bold tracking-tight leading-none ">
-            best shop in {city?.city}
+            best shop in <span className="text-amber-600">{city?.city}</span>
           </h1>
           <div className="w-full relative   ">
             {showLeft && (
