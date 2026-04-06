@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useModal from "../../../hook/useModal";
 
 
@@ -11,6 +11,8 @@ const TrendingDishes = () => {
   const [canScrollRight, setCanScrollRight] = useState(false);
   const { showModal } = useModal()
   const { itemPublic } = useSelector(store => store.Item);
+  const { user } = useSelector(store => store.Auth);
+  const navigate = useNavigate();
 
   const updateScrollVisibility = () => {
     const el = scroller.current;
@@ -42,12 +44,22 @@ const TrendingDishes = () => {
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
   };
 
-  const clickedhandler = () =>
-    showModal({
-      title: "Order Now",
-      message: "Are you sure you want to order this dish?",
-      type: "confirm",
-    });
+  
+  const clickedhandler = () => {
+    if(!user) {
+      navigate("/login")
+    } else {
+      if (user.role == "user") {
+        navigate("/dashboard")
+      } else {
+        showModal({
+          title: "Order Now",
+          message: "Are you sure you want to order this dish?",
+          type: "confirm",
+        });
+      }
+    }
+  }
 
   return (
     <section id="trending-dishes" className="border-b border-[#E5E5E5] bg-white py-14 md:py-16">
@@ -121,3 +133,10 @@ const TrendingDishes = () => {
 };
 
 export default TrendingDishes;
+
+
+//main ye home mein order ki button clicked kare to agar koi login nhi hai to use login page per le jaayega agar koi
+// login hai hai to useka role user hai to use dashboard mein le jaayega lekin agar login ke baad bhi uska role deliveryBoy
+// and owner hone per ek popup open hoga jismein likha hoga order kewal user hi order buy karka baaki role usmein agar agar
+// uska pahle user ka account hai to login button clicked karega agar pahle se koi account nhi hai to register per clicked kar
+// sakta hai    

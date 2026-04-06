@@ -2,14 +2,31 @@ import React from "react";
 import { FaStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import useModal from "../../../hook/useModal";
 
 const PopularRestaurants = () => {
   const { publicShop } = useSelector(store => store.Shop)
   const Navigate = useNavigate()
+  const { showModal } = useModal()
+  const { user } = useSelector(store => store.Auth);
 
-  const clickedHandler = () => {
-    Navigate("/dashboard")
+  const clickedhandler = () => {
+    if(!user) {
+      Navigate("/login")
+    } else {
+      if (user.role == "owner") {
+        Navigate("/dashboard")
+      } else {
+        showModal({
+          title: "Order Now",
+          message: "Are you sure you want to order this dish?",
+          type: "confirm",
+        });
+      }
+    }
   }
+
+  
   return (
     <section id="popular-restaurants" className="border-b border-[#E5E5E5] bg-white py-14 md:py-16">
       <div className="mx-auto max-w-[1400px] px-4 md:px-10 lg:px-14">
@@ -32,7 +49,7 @@ const PopularRestaurants = () => {
               <div className="relative h-[200px] w-full shrink-0">
                 <img src={r?.image} alt="" className="h-full w-full object-cover" loading="lazy" />
                 <button
-                onClick={clickedHandler} 
+                onClick={clickedhandler} 
                 className="absolute bottom-3 cursor-pointer right-3 rounded-md bg-[#4CAF50] px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white shadow-md">
                   OPEN NOW
                 </button>

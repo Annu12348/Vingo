@@ -1,13 +1,35 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Search from "./Search";
 import Navigation from "../../../components/Navigation";
 import HomeNavbar from "./HomeNavbar";
+import { useSelector } from "react-redux";
+import useModal from "../../../hook/useModal";
 
 const HERO_IMG =
   "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1920&q=80";
 
 const HeroSection = () => {
+  const { showModal } = useModal()
+  const navigate = useNavigate()
+  const { user } = useSelector(store => store.Auth);
+
+  const clickedhandler = () => {
+    if(!user) {
+      navigate("/login")
+    } else {
+      if (user.role == "user") {
+        navigate("/dashboard")
+      } else {
+        showModal({
+          title: "Order Now",
+          message: "Are you sure you want to order this dish?",
+          type: "confirm",
+        });
+      }
+    }
+  }
+
   return (
     <section className="relative min-h-[min(100vh,920px)] w-full overflow-hidden rounded-b-3xl">
       <img
@@ -28,12 +50,12 @@ const HeroSection = () => {
             Fast, Fresh, Delivered to Your Doorstep!
           </h1>
           <div className="mt-8 flex flex-wrap gap-4 md:justify-end">
-            <Link
-              to="/login"
+            <button
+              onClick={clickedhandler}
               className="rounded-lg bg-[#FF7A00] px-7 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#E66D00]"
             >
               Explore Menu
-            </Link>
+            </button>
             <Link
               to="/restaurants"
               className="rounded-lg border-2 border-[#1A1A1A] bg-white px-7 py-3 text-sm font-semibold text-[#1A1A1A] transition hover:bg-[#F5F5F5]"
