@@ -1,21 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import instance from "../utils/axios";
-import { setUser } from "../redux/reducer/AuthenticationSlice";
-import { FaBolt, FaGaugeSimple, FaLocationDot } from "react-icons/fa6";
+import { setSearchItem } from "../redux/reducer/ItemReducer";
+import { FaBolt, FaLocationDot } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { FiMenu } from "react-icons/fi";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { IoMdAdd } from "react-icons/io";
-import { persistor } from "../redux/store";
-import { setShop } from "../redux/reducer/ShopReducer";
-import { setItem, setSearchItem } from "../redux/reducer/ItemReducer";
 import { RiShoppingCartFill } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
-import gsap from 'gsap'
+import { useAuth } from "../hook/useAuth";
 
 const Navigation = () => {
   const { user } = useSelector((store) => store.Auth);
@@ -28,25 +24,10 @@ const Navigation = () => {
   const [query, setQuery] = useState("");
   const [manuBar, setManuBar] = useState(false)
 
-  const logoutApi = async () => {
-    try {
-      const result = await instance.delete("/auth/logout", { withCredentials: true });
-      dispatch(setUser(null));
-      dispatch(setShop([]));
-      dispatch(setItem([]));
-      persistor.purge();
-      toast.success("Successfully logged out user");
-      navigate("/login");
-      console.log(result.data.data);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to log out. Please try again.");
-    }
-  };
-
-  const clickedHandlers = () => {
-    logoutApi();
-  };
+  const { logout } = useAuth();
+  const clickHandlers = () => {
+    logout();
+  }
 
   const clickHandler = () => {
     setValues((prev) => !prev);
@@ -58,9 +39,9 @@ const Navigation = () => {
         withCredentials: true,
       });
       dispatch(setSearchItem(result.data.data))
-      console.log(result.data.data);
+      // console.log(result.data.data);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       dispatch(setSearchItem([]));
     }
   };
@@ -90,7 +71,7 @@ const Navigation = () => {
           <span className="text-sm mb-1 font-bold  tracking-tight font-display text-[rgb(240,107,41)]">QuickBite</span>
         </Link>
         <div className="flex w-full items-center justify-end ">
-          {user && user.role == "user" && (
+          {user && user.role === "user" && (
             <div className="shadow bg-zinc-100 rounded md:mr-13 p-1.5 flex items-center justify-between w-full   md:w-[59.5%]">
               <div className="flex items-center  gap-1">
                 <span className="text-xl text-[rgb(240,107,41)] ">
@@ -149,11 +130,11 @@ const Navigation = () => {
             )}
 
             <Link to="/profile" className="bg-[rgb(240,107,41)] md:block hidden uppercase py-0.5 px-2.5 text-white rounded-full ">
-              {user?.FullName.slice(0, 1)}
+              {user?.FullName ? user.FullName.slice(0, 1) : ""}
             </Link>
 
             <button
-             
+              onClick={clickHandlers}
               className="px-3 py-2.5 bg-red-500 md:block cursor-pointer hidden rounded-lg text-white font-semibold tracking-tight leading-none"
             >
               Logout
@@ -220,7 +201,7 @@ const Navigation = () => {
               </Link>
             )}
             <button
-              onClick={clickedHandlers}
+              onClick={clickHandlers}
               className="px-3 py-2.5 bg-red-500 text-xl capitalize mt-4 cursor-pointer w-full   rounded-lg text-white font-semibold tracking-tight leading-none"
             >
               logout

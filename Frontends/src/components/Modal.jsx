@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import useModal from '../hook/useModal';
+import { Link } from 'react-router-dom';
 
 const Modal = () => {
     const { isOpen, title, message } = useSelector(store => store.Modal);
@@ -30,18 +31,20 @@ const Modal = () => {
         )}
 
         <div className="flex flex-row-reverse justify-center gap-3 mt-2">
-          <button
+          <Link
             onClick={hideModal}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl px-6 py-2 shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-200"
+            to='/register'
+            className="bg-orange-500 hover:bg-orange-600 capitalize text-white font-semibold rounded-xl px-6 py-2 shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-200"
           >
-            Confirm
-          </button>
-          <button
+            create account
+          </Link>
+          <Link
             onClick={hideModal}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-xl px-6 py-2 border border-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
+            to='/login'
+            className="bg-gray-100 hover:bg-gray-200 capitalize text-gray-800 font-medium rounded-xl px-6 py-2 border border-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-100"
           >
-            Cancel
-          </button>
+            login
+          </Link>
         </div>
       </div>
     </div>
