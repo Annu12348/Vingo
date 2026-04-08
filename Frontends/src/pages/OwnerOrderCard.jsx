@@ -77,7 +77,7 @@ const OwnerOrderCard = ({ data }) => {
             >
               <img
                 className=" w-full h-[14vh] object-cover rounded "
-                src={item.item.image}
+                src={item?.item?.image}
                 alt="Order Item"
               />
               <h1 className="text-md capitalize mt-2 font-semibold tracking-tight leading-none">

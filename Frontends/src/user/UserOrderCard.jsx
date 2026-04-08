@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import instance from "../utils/axios";
 
 const UserOrderCard = ({ data }) => {
+  console.log(data)
   const navigate = useNavigate();
   const [selectedRating, setSelectedRating] = useState({});
 
@@ -89,8 +90,8 @@ const UserOrderCard = ({ data }) => {
                       {[1, 2, 3, 4, 5].map((star) => (
                         <button
                           key={star}
-                          onClick={() => handleRating(orderItem.item._id, star)}
-                          className={`text-lg ${selectedRating[orderItem.item._id] >= star ? 'text-yellow-400' : 'text-gray-400'}`}
+                          onClick={() => handleRating(orderItem?.item?._id, star)}
+                          className={`text-lg ${selectedRating[orderItem?.item?._id] >= star ? 'text-yellow-400' : 'text-gray-400'}`}
                         >
                           ★
                         </button>
