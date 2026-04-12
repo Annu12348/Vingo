@@ -3,10 +3,12 @@ import HomeNavbar from '../home/components/HomeNavbar';
 import HomeFooter from "../home/components/HomeFooter"
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Search from '../home/components/Search';
 import { FaLocationCrosshairs } from 'react-icons/fa6';
+import useModal from '../../hook/useModal';
 
+// Fixed: extractUniqueCategories should NOT be a hook/useNavigate/useModal; it should be pure.
 const extractUniqueCategories = (shops) => {
   const categories = shops?.map(
     s => typeof s.category === "string" ? s.category.trim() : ""
@@ -21,21 +23,43 @@ const extractUniqueCategories = (shops) => {
 const Resturants = () => {
   const { publicShop = [] } = useSelector(store => store.Shop);
 
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  // Fix: get hooks inside the component
+  const navigate = useNavigate();
+  const { showModal } = useModal();
+  const { user } = useSelector(store => store.Auth);
+
   const shopCategories = extractUniqueCategories(publicShop);
   const categoryOptions = [
     { label: 'All', value: 'all' },
     ...shopCategories
   ];
 
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
   const filteredShop = selectedCategory === 'all'
     ? publicShop
     : publicShop.filter(
-        item =>
-          typeof item?.category === "string" &&
-          item.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase()
-      );
+      item =>
+        typeof item?.category === "string" &&
+        item.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase()
+    );
+
+  const handleOrderNow = (id) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (user.role === "user") {
+      navigate(`/details/${id}`);
+    } else {
+      showModal({
+        title: "Order Restricted",
+        message:
+          "Only 'user' accounts can place orders. Please log in with a user account.",
+        type: "confirm",
+      });
+    }
+  };
 
   return (
     <div className="w-full min-h-screen bg-white relative">
@@ -78,7 +102,7 @@ const Resturants = () => {
               ))}
             </div>
           </div>
-          <div className="py-8 sm:py-14 px-2 sm:px-4 md:px-10 flex flex-wrap items-center justify-center gap-4 sm:gap-5 md:gap-6 rounded-lg w-full">
+          <div className="py-8 sm:py-14 px-2  sm:px-4 md:px-10 flex flex-wrap items-center justify-center gap-4 sm:gap-5 md:gap-6  rounded-lg w-full">
             {filteredShop.length > 0 ? (
               filteredShop.map(item => (
                 <div
@@ -88,18 +112,17 @@ const Resturants = () => {
                     sm:w-[47%]
                     md:w-[31%]
                     lg:w-[23.7%] 
+                    relative
                     cursor-pointer bg-zinc-100 shadow rounded-lg overflow-hidden
                     flex flex-col
                     min-w-[260px] max-w-[420px]
                   "
                 >
-                  <Link to={`/details/${item._id}`}>
-                    <img
-                      className="w-full h-[32vw] min-h-[120px] max-h-[220px] md:h-[180px] lg:h-[30vh] object-cover object-center"
-                      src={item?.image}
-                      alt={item?.shopName || 'restaurant'}
-                    />
-                  </Link>
+                  <img
+                    className="w-full h-[32vw] min-h-[120px] max-h-[220px] md:h-[180px] lg:h-[30vh] object-cover object-center"
+                    src={item?.image}
+                    alt={item?.shopName || 'restaurant'}
+                  />
                   <div className="py-2 px-2 flex flex-col gap-1">
                     <div className="flex items-center border-b pb-2 border-zinc-300 justify-between">
                       <h1 className="text-md font-semibold tracking-tight leading-none truncate max-w-[55%]">
@@ -138,6 +161,12 @@ const Resturants = () => {
                       </span>
                     </div>
                   </div>
+                  <button
+                    onClick={() => handleOrderNow(item._id)}
+                    className='text-sm capitalize absolute bottom-30 bg-green-500 p-3 rounded font-semibold tracking-tight leading-none text-white right-2 cursor-pointer'
+                  >
+                    Shop details
+                  </button>
                 </div>
               ))
             ) : (

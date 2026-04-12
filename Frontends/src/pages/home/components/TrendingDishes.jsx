@@ -28,7 +28,7 @@ const TrendingDishes = () => {
   const { itemPublic } = useSelector((store) => store.Item);
   const { user } = useSelector((store) => store.Auth);
   const navigate = useNavigate();
-
+  console.log(itemPublic)
   // Efficient scroll availability check
   const updateScrollVisibility = useCallback(() => {
     const el = scroller.current;
@@ -68,13 +68,13 @@ const TrendingDishes = () => {
    * - Logged in user ('user' role): redirect to dashboard
    * - Other roles: show restriction popup
    */
-  const handleOrderNow = (dish) => {
+  const handleOrderNow = (id) => {
     if (!user) {
       navigate("/login");
       return;
     }
     if (user.role === "user") {
-      navigate("/dashboard");
+      navigate(`/details/${id}`);
     } else {
       showModal({
         title: "Order Restricted",
@@ -213,7 +213,7 @@ const TrendingDishes = () => {
                   <div className="flex flex-1 items-end justify-end mt-4">
                     <button
                       type="button"
-                      onClick={() => handleOrderNow(d)}
+                      onClick={() => handleOrderNow(shop._id)}
                       className="rounded-lg cursor-pointer bg-[#FF7A00] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#E66D00] disabled:opacity-70"
                       disabled={!isAvailable}
                       aria-label={isAvailable ? `Order ${foodName}` : `${foodName} not available`}
