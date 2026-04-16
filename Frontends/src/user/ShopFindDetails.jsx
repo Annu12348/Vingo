@@ -4,11 +4,13 @@ import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
 import { IoStar, IoStarOutline } from "react-icons/io5";
 import { FiAlignJustify, FiAlignRight } from "react-icons/fi";
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useSingleShopAllItem } from '../hook/useItem';
 import { GoArrowRight } from "react-icons/go";
 import FoodCard from './FoodCard';
 import HomeFooter from '../pages/home/components/HomeFooter';
+import { RiShoppingCartFill } from 'react-icons/ri';
+import { useSelector } from 'react-redux';
 
 const FILTERS = Object.freeze([
     { label: "All", value: "all" },
@@ -17,7 +19,7 @@ const FILTERS = Object.freeze([
     { label: "Bestsellers", value: "bestseller" },
 ]);
 
-// Robust utility, useMemo to avoid recalculating on rerenders
+// Correct: getFoodType should NOT use useSelector
 const getFoodType = (item) => {
     // Defensive checks, normalize, and fallback
     if (!item || typeof item !== 'object') return null;
@@ -63,6 +65,9 @@ const ShopFindDetails = React.memo(() => {
     const { shopData = {}, foodItem = [] } = useSingleShopAllItem(detailsId);
 
     const [activeFilter, setActiveFilter] = useState('all');
+
+    // Redux: get cartItems only once, not in getFoodType
+    const { cartItems } = useSelector(store => store.Item);
 
     // Scroll-to-top on shop switch (could be better with useLayoutEffect but this is enough)
     useEffect(() => { window.scrollTo({ top: 0, behavior: "auto" }); }, [detailsId]);
@@ -319,12 +324,14 @@ const ShopFindDetails = React.memo(() => {
                                 ? "All"
                                 : (FILTERS.find(f => f.value === activeFilter)?.label || "All")}
                         </h1>
-                        <h1 className="text-xs sm:text-sm capitalize flex items-center gap-1 sm:gap-2 cursor-pointer text-primary-700">
-                            view all
-                            <span>
-                                <GoArrowRight />
-                            </span>
-                        </h1>
+                        
+                            <Link to="/cart" className=" text-2xl md:block hidden relative text-[rgb(240,107,41)]">
+                                <RiShoppingCartFill />
+                                <span className="text-[12px] absolute -top-1.5 -right-1.5">
+                                    {cartItems?.length}
+                                </span>
+                            </Link>
+                    
                     </div>
                     <div
                         className="mt-3 flex flex-wrap items-center justify-center gap-3 sm:gap-4"
