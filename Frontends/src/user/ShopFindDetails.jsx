@@ -6,7 +6,6 @@ import { IoStar, IoStarOutline } from "react-icons/io5";
 import { FiAlignJustify, FiAlignRight } from "react-icons/fi";
 import { Link, useParams } from 'react-router-dom';
 import { useSingleShopAllItem } from '../hook/useItem';
-import { GoArrowRight } from "react-icons/go";
 import FoodCard from './FoodCard';
 import HomeFooter from '../pages/home/components/HomeFooter';
 import { RiShoppingCartFill } from 'react-icons/ri';
@@ -19,9 +18,7 @@ const FILTERS = Object.freeze([
     { label: "Bestsellers", value: "bestseller" },
 ]);
 
-// Correct: getFoodType should NOT use useSelector
 const getFoodType = (item) => {
-    // Defensive checks, normalize, and fallback
     if (!item || typeof item !== 'object') return null;
     if (typeof item.foodType === "string") return item.foodType.trim();
     if (typeof item.foodTYpe === "string") return item.foodTYpe.trim();
@@ -61,24 +58,18 @@ const PLACEHOLDER_IMAGE = "https://media.istockphoto.com/id/1163284610/photo/ver
 
 const ShopFindDetails = React.memo(() => {
     const { detailsId } = useParams();
-    // data hook, assume already optimized (loading state, error reporting could be added for true prod!)
     const { shopData = {}, foodItem = [] } = useSingleShopAllItem(detailsId);
 
     const [activeFilter, setActiveFilter] = useState('all');
-
-    // Redux: get cartItems only once, not in getFoodType
     const { cartItems } = useSelector(store => store.Item);
 
-    // Scroll-to-top on shop switch (could be better with useLayoutEffect but this is enough)
     useEffect(() => { window.scrollTo({ top: 0, behavior: "auto" }); }, [detailsId]);
 
-    // Memoize critical derived array for performance
     const filteredFoodItems = useMemo(
         () => filterFoodItems(foodItem, activeFilter),
         [foodItem, activeFilter]
     );
 
-    // Defensive fallback for undefined fields
     const {
         image,
         isOpen = false,
@@ -92,8 +83,6 @@ const ShopFindDetails = React.memo(() => {
         description,
         minOrderAmount = "—"
     } = shopData || {};
-
-    // Utility element renderers (subcomponents can be extracted if complexity grows)
 
     return (
         <main className="w-full min-h-screen relative bg-white">
@@ -194,7 +183,6 @@ const ShopFindDetails = React.memo(() => {
             <section className="
                 bg-white w-[96%] sm:w-[94%] md:w-[92%] shadow-md rounded-lg m-auto flex flex-wrap md:flex-nowrap items-stretch md:items-center justify-between border-t border-b border-gray-100 p-2 sm:p-4 mt-4 sm:mt-6 top-0 z-20
             ">
-                {/* Stats Grid */}
                 <div className="w-1/2 md:w-[25%] p-2 sm:p-4 border-r border-l md:border-l border-zinc-300 flex flex-col items-center justify-center mb-2 md:mb-0">
                     <h1 className="text-2xl sm:text-3xl">
                         <IoStarOutline />
@@ -251,7 +239,6 @@ const ShopFindDetails = React.memo(() => {
 
 
             <section className="w-full pb-8">
-                {/* Filters & Views Bar */}
                 <div
                     className="
                         bg-white flex flex-wrap items-center justify-between border-t border-b border-gray-200
@@ -315,8 +302,6 @@ const ShopFindDetails = React.memo(() => {
                         </button>
                     </div>
                 </div>
-
-                {/* Heading & Food List */}
                 <div className="pt-3 sm:pt-4 px-2 sm:px-6 md:px-8 lg:px-14">
                     <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
                         <h1 className="text-lg sm:text-xl capitalize font-semibold">
@@ -349,7 +334,6 @@ const ShopFindDetails = React.memo(() => {
                     </div>
                 </div>
             </section>
-
             <HomeFooter />
         </main>
     );
