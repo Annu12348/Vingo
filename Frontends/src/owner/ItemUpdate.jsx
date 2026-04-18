@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../utils/axios";
@@ -6,13 +6,30 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { setItem, setSingleItem } from "../redux/reducer/ItemReducer";
 
+// Array constants for categories and food types for maintainability
+const CATEGORIES = [
+  "Snacks",
+  "Main Course",
+  "Desserts",
+  "Pizza",
+  "Burgers",
+  "Sandwiches",
+  "South Indian",
+  "North Indian",
+  "Chinese",
+  "Fast Food",
+  "Others",
+];
+
+const FOOD_TYPES = ["Veg", "Non-Veg", "Vegan"];
+
 const ItemUpdate = () => {
   const dispatch = useDispatch();
   const { itemId } = useParams();
   const navigate = useNavigate();
-  const [ loading, setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false);
 
-  const [foodAdd, setFoodAdd] = useState({
+  const [formData, setFormData] = useState({
     foodName: "",
     price: "",
     image: "",
@@ -21,67 +38,79 @@ const ItemUpdate = () => {
   });
 
   const [imagePreview, setImagePreview] = useState("");
+  const [errors, setErrors] = useState({});
 
-  const ChangeImage = (e) => {
+  // Image Change Handler
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setFoodAdd({ ...foodAdd, image: file });
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-    } else {
-      setImagePreview("");
-    }
+    setFormData(prev => ({ ...prev, image: file }));
+    setImagePreview(file ? URL.createObjectURL(file) : "");
   };
 
-  const shopFoodFetchByIdApi = async () => {
+  // Fetch food by Id using useCallback for perf
+  const fetchItemById = useCallback(async () => {
     try {
-      const response = await instance.get(`/item/fetchBy-Id/${itemId}`, {
-        withCredentials: true,
+      setLoading(true);
+      const response = await instance.get(`/item/fetchBy-Id/${itemId}`, { withCredentials: true });
+      const item = response.data.item;
+      dispatch(setSingleItem(item));
+      setFormData({
+        foodName: item.foodName || "",
+        price: item.price || "",
+        image: item.image || "",
+        category: item.category || "",
+        foodType: item.foodType || "",
       });
-      const dataById = response.data.item;
-      dispatch(setSingleItem(dataById))
-      setFoodAdd({
-        foodName: dataById.foodName,
-        price: dataById.price,
-        image: dataById.image,
-        category: dataById.category,
-        foodType: dataById.foodType
-      })
-      setImagePreview(dataById.image)
+      setImagePreview(item.image || "");
+      setErrors({});
     } catch (error) {
-      console.error(error);
+      toast.error("Unable to fetch item. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [dispatch, itemId]);
 
   useEffect(() => {
-    shopFoodFetchByIdApi()
-  }, [itemId])
+    fetchItemById();
+  }, [fetchItemById]);
 
-  const shopFoodUpdateApi = async () => {
+  // Update handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+
+    // Client-side validation
+    let validationErrors = {};
+    if (!formData.foodName.trim()) validationErrors.foodName = "Food name is required.";
+    if (!formData.price) validationErrors.price = "Price is required.";
+    if (!formData.category) validationErrors.category = "Category is required.";
+    if (!formData.foodType) validationErrors.foodType = "Food type is required.";
+    if (!formData.image) validationErrors.image = "Food image is required.";
+    if (Object.keys(validationErrors).length) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const formData = new FormData();
-      formData.append("foodName", foodAdd.foodName);
-      formData.append("price", foodAdd.price);
-      formData.append("category", foodAdd.category);
-      formData.append("foodType", foodAdd.foodType);
+      const updateData = new FormData();
+      updateData.append("foodName", formData.foodName);
+      updateData.append("price", formData.price);
+      updateData.append("category", formData.category);
+      updateData.append("foodType", formData.foodType);
 
-      if (foodAdd.image) {
-        formData.append("image", foodAdd.image);
+      // Only append image if it's a new file selected by user
+      if (formData.image && typeof formData.image !== "string") {
+        updateData.append("image", formData.image);
       }
 
-      const response = await instance.put(`/item/update/${itemId}`, formData, {
-        withCredentials: true,
-      });
+      const response = await instance.put(`/item/update/${itemId}`, updateData, { withCredentials: true });
       dispatch(setItem(response.data.item));
+      toast.success(response.data.message || "Item updated successfully!");
       navigate("/dashboard");
-      toast.success(response.data.message);
     } catch (error) {
-      if (
-        error.response &&
-        error.response.data &&
-        error.response.data.message
-      ) {
+      if (error?.response?.data?.message) {
         toast.error(error.response.data.message);
       } else if (error.message) {
         toast.error(error.message);
@@ -89,139 +118,191 @@ const ItemUpdate = () => {
         toast.error("Internal server error");
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-    shopFoodUpdateApi();
-  };
+  // Better avatar placeholder logic
+  const AvatarSrc =
+    imagePreview && typeof imagePreview === "string"
+      ? imagePreview
+      : "https://e7.pngegg.com/pngimages/424/789/png-clipart-hamburger-junk-food-fast-food-hamburger-french-fries-pizza-junk-food-s-food-recipe-thumbnail.png";
+
   return (
-    <div className="bg-white min-h-screen w-full px-2 py-2 ">
-      <Link to="/dashboard" className="text-2xl text-zinc-400">
-        <GoArrowLeft />
-      </Link>
-      <div className="w-full min-h-[93vh] md:mt-2  mt-3 flex items-center justify-center ">
-        <div className="md:w-[38%] w-full rounded-lg md:px-5 px-2 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
-          <div className="w-[10vh] rounded-full h-[10vh] bg-zinc-300 overflow-hidden ">
-            <img
-              className="w-full h-full object-cover rounded-full"
-              src="https://e7.pngegg.com/pngimages/424/789/png-clipart-hamburger-junk-food-fast-food-hamburger-french-fries-pizza-junk-food-s-food-recipe-thumbnail.png"
+    <main className="min-h-screen flex flex-col bg-gradient-to-br from-sky-100 to-indigo-100  items-center">
+      <header className="w-full">
+        <Link
+          to="/dashboard"
+          title="Back to Dashboard"
+          className="text-xl text-blue-800 rounded-full p-2 hover:bg-blue-100 transition-all inline-block"
+        >
+          <GoArrowLeft />
+        </Link>
+      </header>
+      <section className="bg-white/90 rounded-3xl shadow-lg mt-5 px-7 py-10 w-full max-w-2xl flex flex-col items-center animate-fadeIn">
+        <div className="p-2 mb-3 shadow-inner rounded-full bg-gradient-to-tr from-yellow-200 to-orange-200 w-28 h-28 flex items-center justify-center border-4 border-blue-200">
+          <img
+            src={AvatarSrc}
+            alt="food-preview"
+            className="object-cover w-full h-full rounded-full transition-transform duration-200 hover:scale-105"
+          />
+        </div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-indigo-900 tracking-tight mb-3 capitalize text-center">
+          Edit Shop Food
+        </h1>
+        <form
+          className="w-full flex flex-col gap-5"
+          onSubmit={handleSubmit}
+          autoComplete="off"
+        >
+          {/* Food Name */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-700">Food Name</label>
+            <input
+              className={`text-base rounded-lg px-3 py-2 border-2 ${
+                errors.foodName
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-blue-300 focus:border-blue-500"
+              } focus:outline-none font-medium text-gray-700 transition-all`}
+              type="text"
+              placeholder="Enter food name"
+              value={formData.foodName}
+              onChange={(e) => setFormData((prev) => ({ ...prev, foodName: e.target.value }))}
+              disabled={loading}
+              maxLength={64}
             />
+            {errors.foodName && <span className="text-xs text-red-500">{errors.foodName}</span>}
           </div>
-          <h1 className="text-xl mt-1 capitalize font-bold tracking-tight leading-none">
-            add shop food edit
-          </h1>
-          <form className="w-full mt-5" onSubmit={submitHandler}>
-            <div className="flex flex-col w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                food Name
-              </label>
-              <input
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none "
-                type="text"
-                placeholder="enter your food name"
-                required
-                value={foodAdd.foodName}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, foodName: e.target.value })
-                }
-              />
-            </div>
-            <div className="flex flex-col mt-4 w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                food price
-              </label>
-              <input
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none "
-                type="number"
-                placeholder="enter your food price"
-                required
-                value={foodAdd.price}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, price: e.target.value })
-                }
-              />
-            </div>
-            <div className="flex flex-col mt-4 w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                food image
-              </label>
-              <input
-                className="text-md rounded mt-1 outline-none border-1  border-blue-500 px-2 py-3 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
-                type="file"
-                accept="image/*"
-                required
-                onChange={ChangeImage}
-              />
-            </div>
+
+          {/* Price */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-700">Food Price</label>
+            <input
+              className={`text-base rounded-lg px-3 py-2 border-2 ${
+                errors.price
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-blue-300 focus:border-blue-500"
+              } focus:outline-none font-medium text-gray-700 transition-all`}
+              type="number"
+              placeholder="Enter food price"
+              value={formData.price}
+              onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
+              min={1}
+              step="0.01"
+              disabled={loading}
+            />
+            {errors.price && <span className="text-xs text-red-500">{errors.price}</span>}
+          </div>
+
+          {/* Image */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-700">Food Image</label>
+            <input
+              className={`text-base rounded-lg px-3 py-2 border-2 ${
+                errors.image
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-blue-300 focus:border-blue-500"
+              } focus:outline-none font-medium text-gray-700 bg-white transition-all file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100`}
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              disabled={loading}
+            />
+            {errors.image && <span className="text-xs text-red-500">{errors.image}</span>}
             {imagePreview && (
-              <div className="w-full h-[28vh] border-1 mt-1 border-red-500 rounded  ">
+              <div className="relative w-full aspect-[6/3] mt-2 rounded-xl shadow overflow-hidden bg-gray-100 border border-blue-200">
                 <img
-                  className="w-full h-full object-cover"
-                  src={imagePreview}
-                  alt="image show"
+                  className="w-full h-full object-cover object-center"
+                  src={typeof imagePreview === "string" ? imagePreview : URL.createObjectURL(imagePreview)}
+                  alt="Current Preview"
+                  onError={(e) => { e.target.onerror = null; e.target.src = ""; }}
                 />
+                <span className="absolute right-2 bottom-2 bg-white/70 text-xs text-gray-600 px-2 py-0.5 rounded-full shadow">
+                  Preview
+                </span>
               </div>
+        
             )}
-            <div className="flex flex-col mt-4 w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                food category
-              </label>
-              <select
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
-                required
-                value={foodAdd.category}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, category: e.target.value })
-                }
-              >
-                <option value="">Select category</option>
-                <option value="Snacks">Snacks</option>
-                <option value="Main Course">Main Course</option>
-                <option value="Desserts">Desserts</option>
-                <option value="Pizza">Pizza</option>
-                <option value="Burgers">Burgers</option>
-                <option value="Sandwiches">Sandwiches</option>
-                <option value="South Indian">South Indian</option>
-                <option value="North Indian">North Indian</option>
-                <option value="Chinese">Chinese</option>
-                <option value="Fast Food">Fast Food</option>
-                <option value="Others">Others</option>
-              </select>
-            </div>
-            <div className="flex flex-col mt-4 w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                foodType
-              </label>
-              <select
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
-                required
-                value={foodAdd.foodType}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, foodType: e.target.value })
-                }
-              >
-                <option value="">Select foodtype</option>
-                <option value="Veg">Veg</option>
-                <option value="Non-Veg">Non-Veg</option>
-                <option value="Vegan">Vegan</option>
-              </select>
-            </div>
-            <button
-              type="submit"
-              className="text-md capitalize font-semibold bg-blue-950 w-full p-3.5 mt-5 rounded leading-none tracking-tight text-white flex items-center justify-center "
+          </div>
+
+          {/* Category */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-700">Category</label>
+            <select
+              className={`text-base rounded-lg px-3 py-2 border-2 ${
+                errors.category
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-blue-300 focus:border-blue-500"
+              } focus:outline-none font-medium text-gray-700 capitalize transition-all`}
+              value={formData.category}
+              onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
               disabled={loading}
             >
-              {loading ? (
-                <div className="w-5 h-5 border-white border-b-3 border-t-3 animate-spin rounded-full  "></div>
-              ) : "add shop food"}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+              <option value="">Select category</option>
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+            {errors.category && <span className="text-xs text-red-500">{errors.category}</span>}
+          </div>
+
+          {/* FoodType */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-700">Food Type</label>
+            <select
+              className={`text-base rounded-lg px-3 py-2 border-2 ${
+                errors.foodType
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-blue-300 focus:border-blue-500"
+              } focus:outline-none font-medium text-gray-700 capitalize transition-all`}
+              value={formData.foodType}
+              onChange={(e) => setFormData((prev) => ({ ...prev, foodType: e.target.value }))}
+              disabled={loading}
+            >
+              <option value="">Select foodtype</option>
+              {FOOD_TYPES.map((type) => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+            {errors.foodType && <span className="text-xs text-red-500">{errors.foodType}</span>}
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className={`mt-2 w-full py-3 rounded-xl font-bold text-lg transition-all ${
+              loading
+                ? "bg-indigo-300 cursor-not-allowed"
+                : "bg-gradient-to-r from-blue-800 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:scale-[1.01] shadow"
+            } text-white flex items-center justify-center`}
+            disabled={loading}
+          >
+            {loading ? (
+              <span className="inline-flex items-center">
+                <svg className="w-6 h-6 animate-spin mr-2 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-20"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-80"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                Updating...
+              </span>
+            ) : (
+              "Update Food"
+            )}
+          </button>
+        </form>
+      </section>
+    </main>
   );
 };
 

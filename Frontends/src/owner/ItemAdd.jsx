@@ -1,232 +1,335 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 import instance from "../utils/axios";
 import { toast } from "react-toastify";
 
+// Centralized and maintainable options
+const CATEGORIES = [
+  "Snacks",
+  "Main Course",
+  "Desserts",
+  "Pizza",
+  "Burgers",
+  "Sandwiches",
+  "South Indian",
+  "North Indian",
+  "Chinese",
+  "Fast Food",
+  "Others"
+];
+
+const FOOD_TYPES = ["Veg", "Non-Veg", "Vegan"];
+
+const initialState = {
+  foodName: "",
+  price: "",
+  image: "",
+  category: "",
+  foodType: "",
+  description: ""
+};
+
 const ItemAdd = () => {
-  const [foodAdd, setFoodAdd] = useState({
-    foodName: "",
-    price: "",
-    image: "",
-    category: "",
-    foodType: "",
-    description: ""
-  });
-  const navigate = useNavigate();
-  const [errs, setErrs] = useState({});
+  const [formData, setFormData] = useState(initialState);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
+  const navigate = useNavigate();
 
-  const ChangeImage = (e) => {
+  // Optimized image preview handler
+  const handleImageChange = useCallback((e) => {
     const file = e.target.files[0];
-    setFoodAdd({ ...foodAdd, image: file });
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-    } else {
-      setImagePreview("");
-    }
-  };
+    setFormData((prev) => ({ ...prev, image: file }));
+    setImagePreview(file ? URL.createObjectURL(file) : "");
+  }, []);
 
-  const shopFoodCreatedApi = async () => {
-    try {
-      setErrs({});
-      setLoading(true)
+  // Optimized API with better error parsing and stricter controls
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setErrors({});
+      setLoading(true);
 
-      const formData = new FormData();
-      formData.append("foodName", foodAdd.foodName);
-      formData.append("price", foodAdd.price);
-      formData.append("category", foodAdd.category);
-      formData.append("foodType", foodAdd.foodType);
-      formData.append("description", foodAdd.description)
+      try {
+        const data = new FormData();
+        data.append("foodName", formData.foodName.trim());
+        data.append("price", formData.price);
+        data.append("category", formData.category);
+        data.append("foodType", formData.foodType);
+        data.append("description", formData.description.trim());
+        if (formData.image) {
+          data.append("image", formData.image);
+        }
 
-      if (foodAdd.image) {
-        formData.append("image", foodAdd.image);
+        const res = await instance.post("/item/create", data, { withCredentials: true });
+        toast.success(res.data.message);
+        setFormData(initialState);
+        setImagePreview("");
+        navigate("/dashboard");
+      } catch (error) {
+        if (
+          error.response &&
+          error.response.data &&
+          Array.isArray(error.response.data.errors)
+        ) {
+          // Backend validation errors
+          const fieldsError = {};
+          for (const er of error.response.data.errors) {
+            fieldsError[er.path] = er.msg;
+          }
+          setErrors(fieldsError);
+        } else if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else if (error.message) {
+          toast.error(error.message);
+        } else {
+          toast.error("Internal server error");
+        }
+      } finally {
+        setLoading(false);
       }
+    },
+    [formData, navigate]
+  );
 
-      const response = await instance.post("/item/create", formData, {
-        withCredentials: true,
-      });
-      toast.success(response.data.message);
-      navigate("/dashboard")
-      setFoodAdd({
-        foodName: "",
-        price: "",
-        image: "",
-        category: "",
-        foodType: "",
-        description: ""
-      });
-    } catch (error) {
-      if (error.response && error.response.data && error.response.data.errors) {
-        const err = error.response.data.errors;
-        const fieldsError = {};
-        err.filter((er) => {
-          fieldsError[er.path] = er.msg;
-        });
-        setErrs(fieldsError);
-      } else if(error.response && error.response.data && error.response.data.message) {
-        toast.error(error.response.data.message)
-      } else if (error.message) {
-        toast.error(error.message)
-      } else {
-        toast.error("Internal server error");
-      }
-    } finally {
-      setLoading(false)
-    }
-  };
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    shopFoodCreatedApi();
-  };
   return (
-    <div className=" bg-white min-h-screen w-full md:px-3 px-2 py-3   ">
-      <Link to="/dashboard" className="text-2xl text-zinc-400 block mb-5   ">
-        <GoArrowLeft />
-      </Link>
-      <div className="w-full min-h-[93vh] md:mt-5 -mt-3  flex items-center justify-center ">
-        <div className="md:w-[38%] w-full rounded-lg md:px-5 px-2 py-3 bg-zinc-200 flex items-center justify-center flex-col ">
-          <div className="w-[10vh] rounded-full h-[10vh] bg-zinc-300 overflow-hidden ">
+    <main className="min-h-screen w-full bg-gradient-to-br from-indigo-100 to-blue-50 py-8 px-2 flex flex-col">
+      {/* Back to dashboard */}
+      <div className="flex justify-start items-center mx-auto w-full">
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center gap-2 px-3 py-2 text-lg text-indigo-600 hover:text-blue-900 hover:bg-indigo-100 focus:outline-none rounded transition-colors shadow bg-white"
+        >
+          <GoArrowLeft size={23} />
+          <span className="font-semibold">Dashboard</span>
+        </Link>
+      </div>
+
+      <section className="w-full max-w-lg mx-auto mt-6 flex-1 flex flex-col shadow-2xl rounded-2xl bg-white overflow-hidden">
+        <header className="flex flex-col items-center justify-center bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-500 py-6 px-2 relative">
+          <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center mb-2">
             <img
-              className="w-full h-full object-cover rounded-full"
+              className="w-full h-full object-cover"
               src="https://e7.pngegg.com/pngimages/424/789/png-clipart-hamburger-junk-food-fast-food-hamburger-french-fries-pizza-junk-food-s-food-recipe-thumbnail.png"
+              alt="Food Item"
+              draggable={false}
             />
           </div>
-          <h1 className="text-xl mt-1 capitalize font-bold tracking-tight leading-none">
-            add shop food
+          <h1 className="text-2xl font-extrabold tracking-tight text-white capitalize text-center drop-shadow-lg">
+            Add New Menu Item
           </h1>
-          <form className="w-full mt-5" onSubmit={submitHandler}>
-            <div className="flex flex-col w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                food Name
-              </label>
-              <input
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none "
-                type="text"
-                placeholder="enter your food name...."
-                required
-                value={foodAdd.foodName}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, foodName: e.target.value })
-                }
-              />
-            </div>
-            {errs.foodName && <h1 className="text-red-700 text-[10px] leading-none capitalize font-semibold tracking-tight ">{errs.foodName}</h1>}
-            <div className="flex mt-4 flex-col w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                description
-              </label>
-              <textarea
-                className="text-md rounded resize-none mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none "
-                type="text"
-                rows={6}
-                placeholder="enter your description..."
-                required
-                value={foodAdd.description}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, description: e.target.value })
-                }
-              />
-            </div>
-            {errs.description && <h1 className="text-red-700 text-[10px] leading-none capitalize font-semibold tracking-tight ">{errs.description}</h1>}
-            <div className="flex flex-col mt-4 w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                food price
-              </label>
-              <input
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-800 font-semibold tracking-tight leading-none "
-                type="number"
-                placeholder="enter your food price"
-                //required
-                value={foodAdd.price}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, price: e.target.value })
-                }
-              />
-            </div>
-            {errs.price && <h1 className="text-red-700 text-[10px] leading-none capitalize font-semibold tracking-tight">{errs.price}</h1>}
-            <div className="flex flex-col mt-4 w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                food image
-              </label>
-              <input
-                className="text-md rounded mt-1  outline-none border-1 border-blue-500 px-2 py-3 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
-                type="file"
-                accept="image/*"
-                required
-                onChange={ChangeImage}
-              />
-            </div>
+          <span className="absolute bottom-2 right-4 bg-white/90 text-xs rounded-full px-3 py-1 font-semibold text-blue-600 shadow-inner">
+            Owner Panel
+          </span>
+        </header>
+
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-5 px-6 py-7 md:py-9"
+          autoComplete="off"
+          encType="multipart/form-data"
+        >
+          {/* Food Name */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="foodName" className="text-base font-semibold text-gray-700">
+              Food Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              className={`rounded-lg px-3 py-2 border-2 transition-all font-medium text-gray-800 shadow-sm focus:outline-none ${errors.foodName ? "border-red-500" : "border-blue-300 focus:border-blue-500"}`}
+              type="text"
+              id="foodName"
+              name="foodName"
+              placeholder="e.g., Classic Veg Burger"
+              required
+              value={formData.foodName}
+              onChange={e => setFormData(prev => ({ ...prev, foodName: e.target.value }))}
+              disabled={loading}
+              autoFocus
+              maxLength={64}
+            />
+            {errors.foodName && (
+              <span className="text-xs text-red-500 pt-0.5">{errors.foodName}</span>
+            )}
+          </div>
+
+          {/* Description */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="description" className="text-base font-semibold text-gray-700">
+              Description <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              className={`rounded-lg resize-none px-3 py-2 border-2 transition-all font-medium text-gray-800 shadow-sm focus:outline-none ${errors.description ? "border-red-500" : "border-blue-300 focus:border-blue-500"}`}
+              id="description"
+              name="description"
+              rows={4}
+              placeholder="A brief description of your menu item..."
+              required
+              value={formData.description}
+              onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              disabled={loading}
+              maxLength={512}
+            />
+            {errors.description && (
+              <span className="text-xs text-red-500 pt-0.5">{errors.description}</span>
+            )}
+          </div>
+
+          {/* Price */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="price" className="text-base font-semibold text-gray-700">
+              Price (₹) <span className="text-red-500">*</span>
+            </label>
+            <input
+              className={`rounded-lg px-3 py-2 border-2 transition-all font-medium text-gray-800 shadow-sm focus:outline-none ${errors.price ? "border-red-500" : "border-blue-300 focus:border-blue-500"}`}
+              type="number"
+              id="price"
+              name="price"
+              min={1}
+              max={10000}
+              step="0.01"
+              placeholder="E.g., 129.99"
+              required
+              value={formData.price}
+              onChange={e => setFormData(prev => ({ ...prev, price: e.target.value.replace(/[^\d.]/g, '') }))}
+              disabled={loading}
+            />
+            {errors.price && (
+              <span className="text-xs text-red-500 pt-0.5">{errors.price}</span>
+            )}
+          </div>
+
+          {/* Image */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="image" className="text-base font-semibold text-gray-700">
+              Food Image <span className="text-red-500">*</span>
+            </label>
+            <input
+              className={`rounded-lg px-3 py-2 border-2 transition-all font-medium text-gray-700 bg-white file:mr-2 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-base file:font-semibold file:bg-indigo-50 file:text-blue-700 hover:file:bg-indigo-100 hover:cursor-pointer ${errors.image ? "border-red-500" : "border-blue-300 focus:border-blue-500"}`}
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              required
+              onChange={handleImageChange}
+              disabled={loading}
+              aria-describedby="image-input-desc"
+            />
+            <span className="text-xs text-gray-500" id="image-input-desc">
+              JPG, PNG, or GIF.
+            </span>
+            {errors.image && (
+              <span className="text-xs text-red-500 pt-0.5">{errors.image}</span>
+            )}
             {imagePreview && (
-              <div className="w-full h-[28vh] overflow-hidden border-1 mt-1 border-red-500 rounded  ">
+              <div className="relative w-full aspect-[6/3] mt-2 rounded-xl shadow overflow-hidden bg-gray-50 border border-blue-200">
                 <img
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                   src={imagePreview}
-                  alt="image show"
+                  alt="Preview"
+                  draggable={false}
+                  onError={e => {
+                    e.target.onerror = null;
+                    e.target.src = "";
+                  }}
                 />
+                <span className="absolute right-2 bottom-2 bg-white/80 text-xs text-gray-600 px-2 py-0.5 rounded-full shadow">
+                  Preview
+                </span>
               </div>
             )}
-            <div className="flex flex-col mt-4 w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                food category
-              </label>
-              <select
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
-                required
-                value={foodAdd.category}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, category: e.target.value })
-                }
-              >
-                <option value="">Select category</option>
-                <option value="Snacks">snacks</option>
-                <option value="Main Course">Main Course</option>
-                <option value="Desserts">Desserts</option>
-                <option value="Pizza">Pizza</option>
-                <option value="Burgers">Burgers</option>
-                <option value="Sandwiches">Sandwiches</option>
-                <option value="South Indian">South Indian</option>
-                <option value="North Indian">North Indian</option>
-                <option value="Chinese">Chinese</option>
-                <option value="Fast Food">Fast Food</option>
-                <option value="Others">Others</option>
-              </select>
-            </div>
-            {errs.category && <h1 className="text-red-700 text-[10px] leading-none capitalize font-semibold tracking-tight">{errs.category}</h1>}
-            <div className="flex flex-col mt-4 w-full">
-              <label className="text-md capitalize font-semibold tracking-tight leading-none ">
-                foodType
-              </label>
-              <select
-                className="text-md rounded mt-1 outline-none border-1 border-blue-500 px-2 py-2.5 capitalize text-zinc-500 font-semibold tracking-tight leading-none"
-                required
-                value={foodAdd.foodType}
-                onChange={(e) =>
-                  setFoodAdd({ ...foodAdd, foodType: e.target.value })
-                }
-              >
-                <option value="">Select foodtype</option>
-                <option value="Veg">veg</option>
-                <option value="Non-Veg">Non-Veg</option>
-                <option value="Vegan">Vegan</option>
-              </select>
-            </div>
-            {errs.foodType && <h1 className="text-red-700 text-[10px] leading-none capitalize font-semibold tracking-tight">{errs.foodType}</h1>}
-            <button
-              type="submit"
+          </div>
+
+          {/* Category */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="category" className="text-base font-semibold text-gray-700">
+              Category <span className="text-red-500">*</span>
+            </label>
+            <select
+              className={`rounded-lg px-3 py-2 border-2 transition-all font-medium text-gray-700 capitalize shadow-sm focus:outline-none ${errors.category ? "border-red-500" : "border-blue-300 focus:border-blue-500"}`}
+              id="category"
+              name="category"
+              required
+              value={formData.category}
+              onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
               disabled={loading}
-              className="text-md capitalize flex items-center justify-center font-semibold bg-blue-950 w-full p-3.5 mt-5 rounded leading-none tracking-tight text-white "
             >
-              {loading ? (
-                <div className="w-5 h-5 border-white border-b-3 border-t-3 animate-spin rounded-full  "></div>
-              ) : "add shop food"}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+              <option value="">Select category</option>
+              {CATEGORIES.map((cat) => (
+                <option value={cat} key={cat}>{cat}</option>
+              ))}
+            </select>
+            {errors.category && (
+              <span className="text-xs text-red-500 pt-0.5">{errors.category}</span>
+            )}
+          </div>
+
+          {/* FoodType */}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="foodType" className="text-base font-semibold text-gray-700">
+              Food Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              className={`rounded-lg px-3 py-2 border-2 transition-all font-medium text-gray-700 capitalize shadow-sm focus:outline-none ${errors.foodType ? "border-red-500" : "border-blue-300 focus:border-blue-500"}`}
+              id="foodType"
+              name="foodType"
+              required
+              value={formData.foodType}
+              onChange={e => setFormData(prev => ({ ...prev, foodType: e.target.value }))}
+              disabled={loading}
+            >
+              <option value="">Select foodtype</option>
+              {FOOD_TYPES.map((type) => (
+                <option value={type} key={type}>{type}</option>
+              ))}
+            </select>
+            {errors.foodType && (
+              <span className="text-xs text-red-500 pt-0.5">{errors.foodType}</span>
+            )}
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`mt-3 py-3 rounded-xl text-lg font-bold transition-all flex items-center justify-center shadow-lg 
+              ${
+                loading
+                  ? "bg-indigo-300 cursor-not-allowed"
+                  : "bg-gradient-to-r from-blue-700 to-indigo-600 hover:from-blue-800 hover:to-indigo-700 hover:scale-[1.01]"
+              } text-white`}
+            tabIndex={loading ? -1 : 0}
+          >
+            {loading ? (
+              <span className="inline-flex items-center">
+                <svg
+                  className="w-6 h-6 animate-spin mr-2 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-20"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-80"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  />
+                </svg>
+                Loading...
+              </span>
+            ) : (
+              "Add Menu Item"
+            )}
+          </button>
+        </form>
+      </section>
+    </main>
   );
 };
 
