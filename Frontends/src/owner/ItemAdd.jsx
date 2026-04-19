@@ -94,9 +94,9 @@ const ItemAdd = () => {
   );
 
   return (
-    <main className="min-h-screen w-full bg-gradient-to-br from-indigo-100 to-blue-50 py-8 px-2 flex flex-col">
+    <main className="min-h-screen w-full bg-gradient-to-br from-indigo-100 to-blue-50 py-2 pb-4  px-2 flex flex-col">
       {/* Back to dashboard */}
-      <div className="flex justify-start items-center mx-auto w-full">
+      <div className="flex justify-start fixed items-center mx-auto w-full">
         <Link
           to="/dashboard"
           className="inline-flex items-center gap-2 px-3 py-2 text-lg text-indigo-600 hover:text-blue-900 hover:bg-indigo-100 focus:outline-none rounded transition-colors shadow bg-white"

@@ -11,6 +11,7 @@ import orderRoutes from "./routes/order.routes.js"
 import deliveryAssimentRoutes from "./routes/deliveryAssignment.routes.js"
 import { socketIoHandler } from "./socket/socket.js";
 import messageRoutes from './routes/messgae.routes.js'
+import aiRoutes from './routes/ai.routes.js'
 
 const app = express();
 app.set("trust proxy", 1);  
@@ -47,6 +48,7 @@ app.use("/item", itemRoutes);
 app.use("/order", orderRoutes);
 app.use("/deliveryBoy", deliveryAssimentRoutes);
 app.use("/contact", messageRoutes);
+app.use("/ai", aiRoutes);
 
 socketIoHandler(io)
 export default server;

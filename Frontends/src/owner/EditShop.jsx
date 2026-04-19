@@ -120,8 +120,8 @@ const EditShop = () => {
 
   // UI highly improved, modern, responsive, accessible & professional
   return (
-    <main className="min-h-screen bg-gradient-to-br from-orange-100 to-pink-100 py-8 px-2 flex flex-col">
-      <nav className="flex justify-start items-center mx-auto w-full mb-3 pt-2">
+    <main className="min-h-screen bg-gradient-to-br from-orange-100 to-pink-100 pb-8  px-2 flex flex-col">
+      <nav className="flex justify-start items-center fixed  mx-auto w-full mb-3 pt-2">
         <Link
           to="/dashboard"
           className="inline-flex items-center gap-2 px-3 py-2 text-lg text-orange-700 hover:text-pink-600 hover:bg-orange-100 focus:outline-none rounded transition-colors shadow bg-white"
@@ -132,8 +132,8 @@ const EditShop = () => {
       </nav>
 
       <section className="w-full max-w-lg mx-auto mt-4 flex-1 flex flex-col shadow-2xl rounded-2xl bg-white overflow-hidden">
-        <header className="flex flex-col items-center justify-center bg-gradient-to-r from-orange-400 via-pink-500 to-orange-600 py-7 px-2 relative">
-          <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center mb-3">
+        <header className="flex flex-col items-center justify-center bg-gradient-to-r from-orange-400 via-pink-500 to-orange-600 py-4 px-2 relative">
+          <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg bg-gray-100 flex items-center justify-center ">
             <img
               className="w-full h-full object-cover transition-all duration-200"
               src={imagePreview || "https://imgs.search.brave.com/2OHB7N8AOSzt7IXX88RuaoICC_Hycx_bpIgBH0lZw00/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS12ZWN0b3Iv/Z3JhZGllbnQtc2hv/cC1sb2NhbC1sb2dv/LWRlc2lnbl8yMy0y/MTQ5NjEzMTYwLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA"}
@@ -149,7 +149,7 @@ const EditShop = () => {
           <h1 className="text-3xl font-extrabold tracking-tight text-white capitalize text-center drop-shadow-lg">
             Edit Shop Details
           </h1>
-          <span className="absolute bottom-2 right-4 bg-white/80 text-xs rounded-full px-3 py-1 font-semibold text-orange-600 shadow-inner">
+          <span className="absolute bottom-2 right-4 bg-white/80 text-xs rounded-full px-3 py-1 font-semibold text-orange-600 shadow-inner ">
             Owner Panel
           </span>
         </header>
