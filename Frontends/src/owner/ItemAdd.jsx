@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import { Link, useNavigate } from "react-router-dom";
 import instance from "../utils/axios";
@@ -34,17 +34,17 @@ const ItemAdd = () => {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [fetchingDescription, setFetchingDescription] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
   const navigate = useNavigate();
 
-  // Optimized image preview handler
+  // Image preview handler
   const handleImageChange = useCallback((e) => {
     const file = e.target.files[0];
     setFormData((prev) => ({ ...prev, image: file }));
     setImagePreview(file ? URL.createObjectURL(file) : "");
   }, []);
 
-  // Optimized API with better error parsing and stricter controls
   const handleSubmit = useCallback(
     async (e) => {
       e.preventDefault();
@@ -93,13 +93,65 @@ const ItemAdd = () => {
     [formData, navigate]
   );
 
+  // Reference to cancel duplicate async, for autofill race condition prevention
+  const autofillReqId = useRef(0);
+
+  // CHANGE HERE: Remove auto description onChange, only on enter key!
+  const handleFoodNameChange = e => {
+    const value = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      foodName: value,
+    }));
+    // If cleared, also clear description
+    if (!value.trim()) {
+      setFormData(prev => ({
+        ...prev,
+        description: "",
+      }));
+    }
+    // No generative API call on onChange
+  };
+
+  // On Enter, generate description via API
+  const handleFoodNameKeyDown = async (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (!formData.foodName.trim()) {
+        toast.error("Enter food name first");
+        return;
+      }
+      setFetchingDescription(true);
+      autofillReqId.current += 1;
+      const currReqId = autofillReqId.current;
+      try {
+        const res = await instance.post("/ai/autogenerate-description-byfoodname", { foodName: formData.foodName.trim() });
+        if (currReqId === autofillReqId.current) {
+          setFormData(prev => ({
+            ...prev,
+            description: res.data.description ?? "",
+          }));
+          toast.success("AI Description Generated ✨");
+        }
+      } catch (error) {
+        if (currReqId === autofillReqId.current) {
+          toast.error("AI failed");
+        }
+      } finally {
+        if (currReqId === autofillReqId.current) {
+          setFetchingDescription(false);
+        }
+      }
+    }
+  };
+
   return (
     <main className="min-h-screen w-full bg-gradient-to-br from-indigo-100 to-blue-50 py-2 pb-4  px-2 flex flex-col">
       {/* Back to dashboard */}
-      <div className="flex justify-start fixed items-center mx-auto w-full">
+      <div className="flex justify-start items-center mx-auto w-full">
         <Link
           to="/dashboard"
-          className="inline-flex items-center gap-2 px-3 py-2 text-lg text-indigo-600 hover:text-blue-900 hover:bg-indigo-100 focus:outline-none rounded transition-colors shadow bg-white"
+          className="inline-flex items-center gap-2 px-3 py-2 text-lg text-indigo-600 hover:text-blue-900 hover:bg-indigo-100 focus:outline-none rounded transition-colors "
         >
           <GoArrowLeft size={23} />
           <span className="font-semibold">Dashboard</span>
@@ -143,11 +195,22 @@ const ItemAdd = () => {
               placeholder="e.g., Classic Veg Burger"
               required
               value={formData.foodName}
-              onChange={e => setFormData(prev => ({ ...prev, foodName: e.target.value }))}
+              onChange={handleFoodNameChange}
+              onKeyDown={handleFoodNameKeyDown}
               disabled={loading}
               autoFocus
               maxLength={64}
+              autoComplete="off"
             />
+            {fetchingDescription && formData.foodName.trim() && (
+              <span className="text-xs text-blue-500 pt-1 flex items-center gap-1">
+                <svg className="inline-block w-4 h-4 animate-spin mr-1" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+                Generating description...
+              </span>
+            )}
             {errors.foodName && (
               <span className="text-xs text-red-500 pt-0.5">{errors.foodName}</span>
             )}
@@ -167,8 +230,9 @@ const ItemAdd = () => {
               required
               value={formData.description}
               onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              disabled={loading}
+              disabled={loading || fetchingDescription}
               maxLength={512}
+              autoComplete="off"
             />
             {errors.description && (
               <span className="text-xs text-red-500 pt-0.5">{errors.description}</span>

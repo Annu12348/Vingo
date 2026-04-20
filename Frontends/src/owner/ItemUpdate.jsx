@@ -134,10 +134,12 @@ const ItemUpdate = () => {
         <Link
           to="/dashboard"
           title="Back to Dashboard"
-          className="text-xl text-blue-800 rounded-full p-2 hover:bg-blue-100 transition-all inline-block"
+          className="inline-flex items-center gap-2 text-xl text-blue-800 rounded-full p-2 hover:bg-blue-100 transition-all"
         >
-          <GoArrowLeft />
+          <GoArrowLeft size={24} />
+          <span className="font-semibold">Dashboard</span>
         </Link>
+   
       </header>
       <section className="bg-white/90 rounded-3xl shadow-lg mt-5 px-7 py-10 w-full max-w-2xl flex flex-col items-center animate-fadeIn">
         <div className="p-2 mb-3 shadow-inner rounded-full bg-gradient-to-tr from-yellow-200 to-orange-200 w-28 h-28 flex items-center justify-center border-4 border-blue-200">

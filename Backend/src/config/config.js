@@ -39,4 +39,6 @@ export const config = {
   FRONTEND_URL: process.env.NODE_ENV === "production"
     ? process.env.FRONTEND_LIVE_URL
     : process.env.FRONTEND_URL,
+
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY,  
 };

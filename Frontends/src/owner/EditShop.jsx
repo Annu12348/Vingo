@@ -120,8 +120,8 @@ const EditShop = () => {
 
   // UI highly improved, modern, responsive, accessible & professional
   return (
-    <main className="min-h-screen bg-gradient-to-br from-orange-100 to-pink-100 pb-8  px-2 flex flex-col">
-      <nav className="flex justify-start items-center fixed  mx-auto w-full mb-3 pt-2">
+    <main className="min-h-screen pb-8  px-2 flex flex-col">
+      <nav className="flex justify-start items-center mt-2 mx-auto w-full mb-3 pt-2">
         <Link
           to="/dashboard"
           className="inline-flex items-center gap-2 px-3 py-2 text-lg text-orange-700 hover:text-pink-600 hover:bg-orange-100 focus:outline-none rounded transition-colors shadow bg-white"
