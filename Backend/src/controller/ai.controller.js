@@ -44,7 +44,7 @@ export const aiAutomationDescriptionController = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Description generated successfully",
-      data: description,
+      description: description,
     });
   } catch (error) {
     console.log("AI ERROR:", error?.response?.data || error.message);
