@@ -1,13 +1,14 @@
-# 🍔 Food Delivery Web Application (MERN Stack)
+🍔 Food Delivery Web Application (MERN Stack)
 
-A full-featured Food Delivery Web Application built using the MERN Stack (MongoDB, Express.js, React.js, Node.js).  
-This project includes User, Restaurant Owner, and Delivery Partner systems with real-time order tracking, online payments, and map integration.
+A full-featured Food Delivery Web Application built using the MERN Stack (MongoDB, Express.js, React.js, Node.js).
+
+This project includes User, Restaurant Owner, and Delivery Partner systems with real-time order tracking, online payments, map integration, and AI-powered features.
 
 ---
 
-## 🚀 Features
+🚀 Features
 
-### 👤 User Features
+👤 User Features
 - User Signup & Login
 - Google Authentication
 - Browse Restaurants
@@ -19,7 +20,7 @@ This project includes User, Restaurant Owner, and Delivery Partner systems with 
 - Order Tracking (Realtime)
 - Order History
 
-### 🏪 Restaurant Owner Features
+🏪 Restaurant Owner Features
 - Create Restaurant / Shop
 - Update Restaurant Details
 - Add Food Items
@@ -29,7 +30,7 @@ This project includes User, Restaurant Owner, and Delivery Partner systems with 
 - Accept / Reject Orders
 - Manage Menu
 
-### 🚚 Delivery Partner Features
+🚚 Delivery Partner Features
 - Delivery Partner Login
 - View Assigned Orders
 - Pickup Order
@@ -39,33 +40,49 @@ This project includes User, Restaurant Owner, and Delivery Partner systems with 
 
 ---
 
-## 🧩 Modules Completed
+🤖 AI Features
 
-| Module | Status |
-|--------|--------|
-| Authentication System | ✅ |
-| OTP Verification | ✅ |
-| Google Auth | ✅ |
-| Public Home Page | ✅ |
-| Restaurants Listing | ✅ |
-| Single Restaurant Page | ✅ |
-| Food Items Listing | ✅ |
-| Search System | ✅ |
-| Contact System | ✅ |
-| Restaurant Management | ✅ |
-| Food Management | ✅ |
-| Order System | ⏳ |
-| Cart System | ⏳ |
-| Payment Integration | ⏳ |
-| Delivery System | ⏳ |
-| Realtime Tracking | ⏳ |
-| Maps Integration | ⏳ |
+AI-Powered Food Description Generator
+
+Automatically generates food descriptions based on the food name using Generative AI (Gemini API).
+
+📌 How it works:
+User enters food name → Backend API → Gemini AI → Dynamic description generated
+
+✨ Benefits:
+- Saves time for restaurant owners
+- Enhances menu quality with better descriptions
+- Improves user experience
 
 ---
 
-## 🛠️ Tech Stack
+🧩 Modules Completed
 
-### Frontend
+| Module                     | Status |
+|--------------------------|--------|
+| Authentication System     | ✅     |
+| OTP Verification          | ✅     |
+| Google Auth               | ✅     |
+| Public Home Page          | ✅     |
+| Restaurants Listing       | ✅     |
+| Single Restaurant Page    | ✅     |
+| Food Items Listing        | ✅     |
+| Search System             | ✅     |
+| Contact System            | ✅     |
+| Restaurant Management     | ✅     |
+| Food Management           | ✅     |
+| Order System              | ⏳     |
+| Cart System               | ⏳     |
+| Payment Integration       | ⏳     |
+| Delivery System           | ⏳     |
+| Realtime Tracking         | ⏳     |
+| Maps Integration          | ⏳     |
+
+---
+
+🛠️ Tech Stack
+
+Frontend
 - React.js
 - Redux Toolkit
 - Tailwind CSS
@@ -74,7 +91,7 @@ This project includes User, Restaurant Owner, and Delivery Partner systems with 
 - Socket.io Client
 - Google Maps API
 
-### Backend
+Backend
 - Node.js
 - Express.js
 - MongoDB
@@ -83,7 +100,42 @@ This project includes User, Restaurant Owner, and Delivery Partner systems with 
 - Socket.io
 - Razorpay Payment Gateway
 - Nodemailer (OTP Email)
+- Gemini API (Generative AI)
 
 ---
 
-## 📁 Project Structure
+📁 Project Structure
+
+/client       → React Frontend  
+/server       → Node.js Backend  
+/models       → Mongoose Models  
+/routes       → API Routes  
+/controllers  → Business Logic  
+/middleware   → Auth & Error Handling  
+
+---
+
+🤖 Future Enhancements (AI)
+
+- AI-based food recommendation system  
+- Smart search with AI suggestions  
+- Chatbot for customer support  
+
+---
+
+📌 Conclusion
+
+This project demonstrates a complete full-stack MERN application with real-world features like authentication, payments, real-time tracking, and AI integration.
+
+It showcases my ability to build scalable and modern web applications.
+
+---
+
+👨‍💻 Developer
+
+Annu Singh  
+MERN Stack Developer  
+📧 annu37752@gmail.com  
+📞 8959732124  
+
+Portfolio: https://portfolio-annu-singh-nj6n.onrender.com/
