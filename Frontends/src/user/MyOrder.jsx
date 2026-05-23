@@ -49,7 +49,7 @@ const MyOrder = () => {
   return (
     <div className="w-full min-h-screen p-2">
       <div className="w-full p-2 flex items-center gap-2 ">
-        <Link to="/" className="mt-1 text-xl">
+        <Link to="/dashboard" className="mt-1 text-xl">
           <IoArrowBackSharp />
         </Link>
         <h1 className="text-md capitalize font-bold tracking-tight ">

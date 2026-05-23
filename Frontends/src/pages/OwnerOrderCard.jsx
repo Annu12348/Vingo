@@ -26,7 +26,6 @@ const OwnerOrderCard = ({ data }) => {
       );
       dispatch(ownerUpdateOrderStatus({ orderId, shopId, status }));
       setAvailableBoys(response.data.availableBoys || []);
-      console.log(response.data.availableBoys)
     } catch (error) {
       console.error(error.message);
     }

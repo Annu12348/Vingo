@@ -39,9 +39,7 @@ const Navigation = () => {
         withCredentials: true,
       });
       dispatch(setSearchItem(result.data.data))
-      // console.log(result.data.data);
     } catch (error) {
-      // console.error(error);
       dispatch(setSearchItem([]));
     }
   };
