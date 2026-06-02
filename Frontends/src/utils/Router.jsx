@@ -13,7 +13,7 @@ import CheckOut from "../user/CheckOut";
 import ProtectedItemRoutes from "../components/ProtectedItemRoutes";
 import PlaceOrder from "../user/PlaceOrder";
 import MyOrder from "../user/MyOrder";
-import Profile from "../Auth/Profile";
+import Profile from "../user/Profile";
 import TrackOrder from "../user/TrackOrder";
 import ShopFindDetails from "../user/ShopFindDetails";
 import Dashboard from "../pages/Dashboard";
@@ -79,7 +79,7 @@ const Router = () => {
       />
 
       <Route
-        path="/profile"
+        path="/profile/:ur"
         element={
           <ProtectedRoutes>
             <Profile />
