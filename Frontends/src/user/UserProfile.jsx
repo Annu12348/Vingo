@@ -201,6 +201,7 @@ const UserProfile = React.memo(function UserProfile() {
 
   return (
     <section className="p-3" data-testid="profile-section">
+      <h1 className="mb-3 text-2xl font-semibold tracking-tight leading-none">UserProfile</h1>
       <div className="w-full p-2 bg-white shadow rounded-lg flex flex-col md:flex-row items-center justify-between gap-4">
         {/* === Core Profile Details === */}
         <section className="md:w-[49%] w-full p-6 bg-zinc-100 rounded-xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-md">
