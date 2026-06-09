@@ -8,6 +8,8 @@ import { FaBagShopping } from "react-icons/fa6";
 import { MdOutlineCurrencyRupee } from "react-icons/md";
 import { IoFastFoodOutline } from "react-icons/io5";
 import { FaRegStar } from "react-icons/fa6";
+import { IoDocumentTextOutline } from "react-icons/io5";
+import { MdOutlineFileDownload } from "react-icons/md";
 
 const OwnerProfile = () => {
   const user = useSelector((state) => state.Auth?.user);
@@ -34,6 +36,8 @@ const OwnerProfile = () => {
       text: "avg. rating"
     },
   ]
+
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
   return (
     <div className='p-4 w-full min-h-screen bg-zinc-200 font-inter'>
       <div className='w-full flex items-center justify-between'>
@@ -215,9 +219,9 @@ const OwnerProfile = () => {
               </div>
             </div>
           </div>
-          <div className='w-full bg-white p-5 rounded-lg mt-2'>
+          <div className='w-full bg-white flex p-5 rounded-lg mt-2'>
             <div className='w-[50%] border-r pr-5 border-zinc-300   '>
-            <h1 className='text-xl capitalize font-bold tracking-tight leading-none'>timings & delivery</h1>
+              <h1 className='text-xl capitalize font-bold tracking-tight leading-none'>timings & delivery</h1>
               <div className='text-md flex items-center justify-between  mt-4 '>
                 <h1 className='text-md  w-[46%] font-semibold capitalize tracking-tight  '>prep time</h1>
                 <h1 className='text-md  capitalize  w-[54%] tracking-tight '>20 - 30 mins</h1>
@@ -234,10 +238,34 @@ const OwnerProfile = () => {
                 <h1 className='text-md  w-[46%] font-semibold capitalize tracking-tight  '>minimum order</h1>
                 <h1 className='text-md tracking-tight  w-[54%] '>₹ 150</h1>
               </div>
-              
+
               <div className='text-md flex items-center justify-between border-b pb-2 border-zinc-200 mt-4 '>
                 <h1 className='text-md  w-[46%] font-semibold capitalize tracking-tight  '>delivery charge</h1>
                 <h1 className='text-md  capitalize tracking-tight  w-[54%] '>₹ 25</h1>
+              </div>
+            </div>
+            <div className='w-[50%] ml-7 border-r pr-5 border-zinc-300 flex flex-col items-start justify-end  '>
+              <h1 className='text-xl capitalize font-bold tracking-tight leading-none'>operatings & days</h1>
+              <div className="flex gap-5 my-3 flex-wrap" aria-label="Operating Days">
+                {days.map((day) => (
+                  <span
+                    key={day}
+                    className="py-3 px-4 tracking-tight  rounded-lg bg-zinc-100  text-md font-medium capitalize text-gray-800 border border-zinc-200 shadow-sm"
+                    aria-label={`Operating day: ${day}`}
+                  >
+                    {day}
+                  </span>
+                ))}
+              </div>
+              <h1 className='text-xl capitalize font-bold tracking-tight leading-none'>opening & days</h1>
+              <div className="w-full mt-3 rounded-lg bg-zinc-100 p-3 flex flex-col shadow-sm border border-zinc-200">
+                <span
+                  id="operating-hours"
+                  className="text-lg text-zinc-900 font-medium tracking-wider select-none"
+                  aria-label="Operating Hours"
+                >
+                  08:00 AM - 11:00 PM
+                </span>
               </div>
             </div>
           </div>
@@ -279,8 +307,64 @@ const OwnerProfile = () => {
               )}
             </div>
           </div>
-          <div className='w-full bg-white p-2 rounded-lg mt-2'></div>
-          <div className='w-full bg-white p-2 rounded-lg mt-2'></div>
+          <div className='w-full bg-white p-3  rounded-lg mt-2'>
+            <div className='flex items-center border-b pb-2 border-zinc-300 justify-between'>
+              <h1 className='text-xl tracking-tight leading-none capitalize font-bold'>document</h1>
+              <h1 className='text-blue-500 capitalize tracking-tight leading-none '>view All</h1>
+            </div>
+            <div className='flex items-center justify-between py-3 border-b border-zinc-300'>
+              <div className='flex items-center gap-4'>
+                <h1 className='text-2xl'><IoDocumentTextOutline /></h1>
+                <div>
+                  <h1 className='text-md font-semibold tracking-tight leading-none'>FSSAI LIcense</h1>
+                  <p className='text-md  tracking-tight'>fassai_license.pdf</p>
+                </div>
+              </div>
+              <h1 className='text-2xl'><MdOutlineFileDownload /></h1>
+            </div>
+            <div className='flex items-center justify-between py-3 border-b border-zinc-300'>
+              <div className='flex items-center gap-4'>
+                <h1 className='text-2xl'><IoDocumentTextOutline /></h1>
+                <div>
+                  <h1 className='text-md font-semibold tracking-tight leading-none'>GST Certificate</h1>
+                  <p className='text-md  tracking-tight'>gst_certificate.pdf</p>
+                </div>
+              </div>
+              <h1 className='text-2xl'><MdOutlineFileDownload /></h1>
+            </div>
+            <div className='flex items-center justify-between py-3 border-b border-zinc-300'>
+              <div className='flex items-center gap-4'>
+                <h1 className='text-2xl'><IoDocumentTextOutline /></h1>
+                <div>
+                  <h1 className='text-md font-semibold tracking-tight leading-none'>Shop Registration</h1>
+                  <p className='text-md  tracking-tight'>shop_Registration.pdf</p>
+                </div>
+              </div>
+              <h1 className='text-2xl'><MdOutlineFileDownload /></h1>
+            </div>
+          </div>
+          <div className='w-full bg-white p-2 rounded-lg mt-2'>
+            <div className='flex items-center border-b pb-2 border-zinc-300 justify-between'>
+              <h1 className='text-xl tracking-tight leading-none capitalize font-bold'>bank details</h1>
+              <h1 className='text-blue-500 capitalize tracking-tight leading-none '>edit</h1>
+            </div>
+            <div className='flex items-center justify-between p-3 border-b border-zinc-300'>
+              <h1 className='w-[40%] font-semibold capitalize'>account holder name</h1>
+              <h1>Annu Singh</h1>
+            </div>
+            <div className='flex items-center justify-between p-3 border-b border-zinc-300'>
+              <h1 className='w-[40%] font-semibold capitalize'>bank name</h1>
+              <h1>HDFC bank</h1>
+            </div>
+            <div className='flex items-center justify-between p-3 border-b border-zinc-300'>
+              <h1 className='w-[40%] font-semibold capitalize'>account Number</h1>
+              <h1>XXXX XXXX 4567</h1>
+            </div>
+            <div className='flex items-center justify-between p-3 border-b border-zinc-300'>
+              <h1 className='w-[40%] font-semibold capitalize'>IFSC Code</h1>
+              <h1>HDFCC0001234</h1>
+            </div>
+          </div>
         </div>
       </div>
     </div>
